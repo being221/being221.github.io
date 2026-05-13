@@ -467,7 +467,6 @@
 
   <h2>一张照片</h2>
   <img src="images/人们万岁_upscayl_4x_upscayl-standard-4x.jpg" alt="街景" width="400">
-  <p style="text-align:center;font-size:13px;opacity:0.5;margin-top:6px">人民万岁</p>
 
   <h2>我的兴趣卡片</h2>
   <div class="card-box">
@@ -749,7 +748,7 @@ let renderGrid = () => {
     if (i === gNewTileIdx) {
       cls += " new-tile";
     }
-    if (v > 0 && gMergedValues.includes(v)) {
+    if (v > 0 && gMergedValues.indexOf(v) !== -1) {
       cls += " merged-tile";
       gMergedValues.splice(gMergedValues.indexOf(v), 1);
     }
@@ -866,7 +865,7 @@ let move = (dir) => {
 };
 
 let checkGameOver = () => {
-  if (gGrid.includes(0)) return;
+  if (gGrid.indexOf(0) !== -1) return;
   for (let r = 0; r < 4; r++) {
     for (let c = 0; c < 3; c++) {
       if (gGrid[r * 4 + c] === gGrid[r * 4 + c + 1]) return;
@@ -936,7 +935,16 @@ document.getElementById("g2048-restart").onclick = initGame;
 gUndoBtn.onclick = undoMove;
 gUndoBtn.disabled = true;
 
-initGame();
+try {
+  if (!gScoreEl || !gBestEl || !gTiles || !gUndoBtn) {
+    throw new Error("游戏元素未找到 score=" + !!gScoreEl + " best=" + !!gBestEl + " tiles=" + gTiles.length + " undo=" + !!gUndoBtn);
+  }
+  initGame();
+} catch (err) {
+  let el = document.getElementById("g2048-score");
+  if (el) el.textContent = "ERR";
+  console.error("2048 init error:", err);
+}
   </script>
 
 <div id="g2048-overlay">
