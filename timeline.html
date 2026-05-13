@@ -914,6 +914,156 @@
     // 所有可用的筛选值
     const ALL_COUNTRIES = [...new Set(EVENTS.map(e => e.country))].sort();
     const ALL_CATEGORIES = [...new Set(EVENTS.map(e => e.category))].sort();
+
+    // ===== 筛选状态 =====
+    let activeCountries = new Set(ALL_COUNTRIES);
+    let activeCategories = new Set(ALL_CATEGORIES);
+    let searchQuery = "";
+    let expandedId = null;
+
+    // ===== DOM 引用 =====
+    const timelineEl = document.getElementById("timeline");
+    const searchInput = document.getElementById("search");
+    const filterBtn = document.getElementById("filter-btn");
+    const filterPanel = document.getElementById("filter-panel");
+    const applyFilterBtn = document.getElementById("apply-filter");
+    const countryGrid = document.getElementById("country-grid");
+    const categoryGrid = document.getElementById("category-grid");
+    const svgEl = document.getElementById("causal-svg");
+
+    // ===== 筛选逻辑 =====
+    function getVisibleEvents() {
+      return EVENTS.filter(function(e) {
+        if (!activeCountries.has(e.country)) return false;
+        if (!activeCategories.has(e.category)) return false;
+        if (searchQuery) {
+          var q = searchQuery.toLowerCase();
+          if (e.title.toLowerCase().indexOf(q) === -1 &&
+              e.summary.toLowerCase().indexOf(q) === -1) return false;
+        }
+        return true;
+      });
+    }
+
+    // ===== 年份显示 =====
+    function formatYear(y) {
+      if (y < 0) return "前" + Math.abs(y) + "年";
+      return "公元" + y + "年";
+    }
+
+    // ===== 渲染时间线 =====
+    function renderTimeline() {
+      var visible = getVisibleEvents();
+      timelineEl.innerHTML = "";
+
+      if (visible.length === 0) {
+        timelineEl.innerHTML = '<div class="timeline-empty">没有匹配的事件</div>';
+        svgEl.innerHTML = "";
+        return;
+      }
+
+      // 按年份排序
+      visible.sort(function(a, b) { return a.year - b.year; });
+
+      for (var i = 0; i < visible.length; i++) {
+        var ev = visible[i];
+        var card = document.createElement("div");
+        card.className = "event-card cat-" + ev.category;
+        if (ev.id === expandedId) card.classList.add("expanded");
+        card.setAttribute("data-id", ev.id);
+
+        var causesHTML = "";
+        if (ev.causes.length > 0) {
+          causesHTML += '<div class="causal-links"><h5>前因</h5>';
+          for (var ci = 0; ci < ev.causes.length; ci++) {
+            var cause = EVENTS.find(function(e) { return e.id === ev.causes[ci]; });
+            if (cause) {
+              causesHTML += '<span class="causal-link cause" data-goto="' + cause.id + '">' + cause.title + '</span>';
+            }
+          }
+          causesHTML += '</div>';
+        }
+
+        var effectsHTML = "";
+        if (ev.effects.length > 0) {
+          effectsHTML += '<div class="causal-links"><h5>后果</h5>';
+          for (var ei = 0; ei < ev.effects.length; ei++) {
+            var effect = EVENTS.find(function(e) { return e.id === ev.effects[ei]; });
+            if (effect) {
+              effectsHTML += '<span class="causal-link effect" data-goto="' + effect.id + '">' + effect.title + '</span>';
+            }
+          }
+          effectsHTML += '</div>';
+        }
+
+        card.innerHTML =
+          '<div class="event-year">' + formatYear(ev.year) + '</div>' +
+          '<h3 class="event-title">' + ev.title + '</h3>' +
+          '<div class="event-meta">' +
+            '<span>' + ev.country + '</span>' +
+            '<span>' + ev.category + '</span>' +
+          '</div>' +
+          '<p class="event-summary">' + ev.summary + '</p>' +
+          '<div class="event-detail">' +
+            '<p>' + ev.detail + '</p>' +
+            causesHTML + effectsHTML +
+          '</div>';
+
+        card.addEventListener("click", function(e) {
+          // 如果点击的是因果链接，跳转到对应事件
+          if (e.target.classList.contains("causal-link")) {
+            e.stopPropagation();
+            var gotoId = parseInt(e.target.getAttribute("data-goto"));
+            // 检查目标是否可见，如果不可见则清除筛选使其可见
+            var target = EVENTS.find(function(ev) { return ev.id === gotoId; });
+            if (target && (!activeCountries.has(target.country) || !activeCategories.has(target.category))) {
+              activeCountries.add(target.country);
+              activeCategories.add(target.category);
+              buildFilterUI();
+            }
+            if (searchQuery) {
+              searchQuery = "";
+              searchInput.value = "";
+            }
+            expandedId = gotoId;
+            renderTimeline();
+            // 滚动到目标卡片
+            setTimeout(function() {
+              var targetEl = timelineEl.querySelector('[data-id="' + gotoId + '"]');
+              if (targetEl) targetEl.scrollIntoView({ behavior: "smooth", block: "center" });
+            }, 100);
+            return;
+          }
+
+          // 切换展开
+          var id = ev.id;
+          if (expandedId === id) {
+            expandedId = null;
+          } else {
+            expandedId = id;
+          }
+          renderTimeline();
+        });
+
+        timelineEl.appendChild(card);
+      }
+
+      drawCausalLines(visible);
+    }
+
+    // ===== 搜索 =====
+    searchInput.addEventListener("input", function() {
+      searchQuery = this.value.trim();
+      expandedId = null;
+      renderTimeline();
+    });
+
+    // ===== 初始渲染 =====
+    renderTimeline();
+
+    // ===== 占位函数（Task 5 和 6 将实现） =====
+    function buildFilterUI() {}
+    function drawCausalLines() {}
   </script>
 </body>
 </html>
