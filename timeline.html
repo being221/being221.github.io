@@ -1062,7 +1062,71 @@
     renderTimeline();
 
     // ===== 占位函数（Task 5 和 6 将实现） =====
-    function buildFilterUI() {}
+    function buildFilterUI() {
+      // 国家筛选 chip
+      countryGrid.innerHTML = "";
+      for (var i = 0; i < ALL_COUNTRIES.length; i++) {
+        var c = ALL_COUNTRIES[i];
+        var chip = document.createElement("span");
+        chip.className = "filter-chip" + (activeCountries.has(c) ? " on" : "");
+        chip.textContent = c;
+        chip.addEventListener("click", (function(country) {
+          return function() {
+            if (activeCountries.has(country)) {
+              activeCountries.delete(country);
+            } else {
+              activeCountries.add(country);
+            }
+            this.classList.toggle("on");
+          };
+        })(c));
+        countryGrid.appendChild(chip);
+      }
+
+      // 类型筛选 chip
+      categoryGrid.innerHTML = "";
+      for (var j = 0; j < ALL_CATEGORIES.length; j++) {
+        var cat = ALL_CATEGORIES[j];
+        var chip2 = document.createElement("span");
+        chip2.className = "filter-chip" + (activeCategories.has(cat) ? " on" : "");
+        chip2.textContent = cat;
+        chip2.addEventListener("click", (function(category) {
+          return function() {
+            if (activeCategories.has(category)) {
+              activeCategories.delete(category);
+            } else {
+              activeCategories.add(category);
+            }
+            this.classList.toggle("on");
+          };
+        })(cat));
+        categoryGrid.appendChild(chip2);
+      }
+    }
+
+    buildFilterUI();
+
+    // 筛选按钮切换面板
+    filterBtn.addEventListener("click", function() {
+      var isHidden = filterPanel.classList.contains("hidden");
+      if (isHidden) {
+        filterPanel.classList.remove("hidden");
+        filterBtn.classList.add("active");
+        buildFilterUI(); // 每次打开刷新 chip 状态
+      } else {
+        filterPanel.classList.add("hidden");
+        filterBtn.classList.remove("active");
+      }
+    });
+
+    // 应用筛选
+    applyFilterBtn.addEventListener("click", function() {
+      filterPanel.classList.add("hidden");
+      filterBtn.classList.remove("active");
+      expandedId = null;
+      renderTimeline();
+    });
+
     function drawCausalLines() {}
   </script>
 </body>
