@@ -352,6 +352,9 @@
   padding: 8px;
   border-radius: 6px;
   aspect-ratio: 1;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 .tile {
   background: #cdc1b4;
@@ -377,17 +380,26 @@
 .tile.n1024 { background: #edc53f; color: #f9f6f2; font-size: 16px; }
 .tile.n2048 { background: #edc22e; color: #f9f6f2; font-size: 16px; }
 .tile.new-tile {
-  animation: tilePop 0.15s ease;
+  animation: tilePop 0.2s ease;
+}
+.tile.merged-tile {
+  animation: tileMerge 0.2s ease;
 }
 @keyframes tilePop {
-  from { transform: scale(0); }
-  to   { transform: scale(1); }
+  from { transform: scale(0); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+@keyframes tileMerge {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.2); }
+  100% { transform: scale(1); }
 }
 
 @media (max-width: 480px) {
-  .tile { font-size: 20px; }
-  .tile.n128, .tile.n256, .tile.n512 { font-size: 16px; }
-  .tile.n1024, .tile.n2048 { font-size: 13px; }
+  #game2048 { max-width: 100%; }
+  .tile { font-size: 28px; }
+  .tile.n128, .tile.n256, .tile.n512 { font-size: 22px; }
+  .tile.n1024, .tile.n2048 { font-size: 18px; }
 }
 
   </style>
@@ -673,14 +685,25 @@ let gTiles = document.querySelectorAll("#g2048-grid .tile");
 
 gBestEl.textContent = gBest;
 
+let gPrevGrid = Array(16).fill(0);
+
 let renderGrid = () => {
   gTiles.forEach((el, i) => {
     let v = gGrid[i];
+    let pv = gPrevGrid[i];
     el.textContent = v || "";
-    el.className = "tile" + (v ? " n" + v : "");
-    if (v === 0) {
-      el.style.color = "";
+    let cls = "tile";
+    if (v) cls += " n" + v;
+    // 新出现的瓦片（之前为空，现在有值）
+    if (pv === 0 && v > 0) {
+      cls += " new-tile";
     }
+    // 合并后的瓦片（值变大，且不是新生成的）
+    if (pv > 0 && v > pv) {
+      cls += " merged-tile";
+    }
+    el.className = cls;
+    if (v === 0) el.style.color = "";
   });
   gScoreEl.textContent = gScore;
   if (gScore > gBest) {
@@ -739,6 +762,7 @@ let arraysEqual = (a, b) => {
 let move = (dir) => {
   if (gOver) return;
   let before = gGrid.slice();
+  gPrevGrid = before;
 
   if (dir === 0) {
     for (let r = 0; r < 4; r++) setRow(gGrid, r, slideRow(getRow(gGrid, r)));
@@ -783,17 +807,19 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
+let gGridEl = document.getElementById("g2048-grid");
 let touchStartX = 0, touchStartY = 0;
-document.addEventListener("touchstart", (e) => {
+gGridEl.addEventListener("touchstart", (e) => {
   touchStartX = e.touches[0].clientX;
   touchStartY = e.touches[0].clientY;
 }, { passive: true });
 
-document.addEventListener("touchend", (e) => {
+gGridEl.addEventListener("touchend", (e) => {
   let dx = e.changedTouches[0].clientX - touchStartX;
   let dy = e.changedTouches[0].clientY - touchStartY;
   if (Math.abs(dx) < 20 && Math.abs(dy) < 20) return;
 
+  e.preventDefault();
   if (Math.abs(dx) > Math.abs(dy)) {
     move(dx > 0 ? 1 : 0);
   } else {
