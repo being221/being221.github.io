@@ -1127,7 +1127,76 @@
       renderTimeline();
     });
 
-    function drawCausalLines() {}
+    function drawCausalLines(visibleEvents) {
+      svgEl.innerHTML = "";
+
+      // 创建 ID → 索引映射
+      var idxMap = {};
+      for (var i = 0; i < visibleEvents.length; i++) {
+        idxMap[visibleEvents[i].id] = i;
+      }
+
+      // 获取所有可见卡片的圆点位置
+      var cards = timelineEl.querySelectorAll(".event-card");
+      var timelineRect = timelineEl.getBoundingClientRect();
+      var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+      // 设置 SVG 尺寸覆盖整个时间线区域
+      var totalHeight = timelineEl.scrollHeight;
+      svgEl.setAttribute("width", timelineRect.width);
+      svgEl.setAttribute("height", totalHeight);
+      svgEl.style.cssText = "position:absolute;top:" + (timelineRect.top + scrollTop) + "px;left:" + timelineRect.left + "px;width:" + timelineRect.width + "px;height:" + totalHeight + "px;pointer-events:none;z-index:0;";
+
+      for (var i = 0; i < visibleEvents.length; i++) {
+        var ev = visibleEvents[i];
+        if (!ev.effects) continue;
+
+        for (var j = 0; j < ev.effects.length; j++) {
+          var targetIdx = idxMap[ev.effects[j]];
+          if (targetIdx === undefined) continue;
+
+          var cardA = cards[i];
+          var cardB = cards[targetIdx];
+          if (!cardA || !cardB) continue;
+
+          var rectA = cardA.getBoundingClientRect();
+          var rectB = cardB.getBoundingClientRect();
+
+          // 圆点位置（卡片左边 38px 处，即 timeline::before 的 left:60px 和 card margin-left:90px 之间的位置）
+          var x1 = rectA.left - timelineRect.left - 30;
+          var y1 = rectA.top + 18 - timelineRect.top;
+          var x2 = rectB.left - timelineRect.left - 30;
+          var y2 = rectB.top + 18 - timelineRect.top;
+
+          // 画贝塞尔弧线，向左弯曲
+          var cx = Math.min(x1, x2) - 30;
+          var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+          var d = "M" + x1 + "," + y1 + " C" + cx + "," + y1 + " " + cx + "," + y2 + " " + x2 + "," + y2;
+          path.setAttribute("d", d);
+          path.setAttribute("class", "causal-path");
+          svgEl.appendChild(path);
+        }
+      }
+    }
+
+    // 窗口大小变化时重绘因果连线
+    var resizeTimer;
+    window.addEventListener("resize", function() {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function() {
+        drawCausalLines(getVisibleEvents());
+      }, 200);
+    });
+
+    // 节流滚动重绘（每 150ms 最多一次）
+    var scrollThrottle;
+    window.addEventListener("scroll", function() {
+      if (scrollThrottle) return;
+      scrollThrottle = setTimeout(function() {
+        scrollThrottle = null;
+        drawCausalLines(getVisibleEvents());
+      }, 150);
+    }, { passive: true });
   </script>
 </body>
 </html>
