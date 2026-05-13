@@ -467,7 +467,7 @@
 
   <h2>一张照片</h2>
   <img src="images/人们万岁_upscayl_4x_upscayl-standard-4x.jpg" alt="街景" width="400">
-  <p style="text-align:center;font-size:13px;opacity:0.5;margin-top:6px">2025年街拍 · 人们万岁</p>
+  <p style="text-align:center;font-size:13px;opacity:0.5;margin-top:6px">人民万岁</p>
 
   <h2>我的兴趣卡片</h2>
   <div class="card-box">
@@ -825,9 +825,8 @@ let arraysEqual = (a, b) => {
 
 let move = (dir) => {
   if (gOver) return;
-  gHistory.push({ grid: gGrid.slice(), score: gScore });
-  gUndoBtn.disabled = false;
   let before = gGrid.slice();
+  let scoreBefore = gScore;
   gNewTileIdx = -1;
   gMergedValues = [];
 
@@ -858,6 +857,8 @@ let move = (dir) => {
   }
 
   if (!arraysEqual(before, gGrid)) {
+    gHistory.push({ grid: before, score: scoreBefore });
+    gUndoBtn.disabled = false;
     addTile();
     renderGrid();
     checkGameOver();
