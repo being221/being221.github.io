@@ -395,6 +395,50 @@
   100% { transform: scale(1); }
 }
 
+#g2048-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+}
+#g2048-overlay.show { display: flex; }
+#g2048-overlay-box {
+  background: var(--card-bg);
+  padding: 32px 40px;
+  border-radius: var(--radius);
+  text-align: center;
+  animation: tilePop 0.2s ease;
+}
+#g2048-overlay-msg {
+  font-size: 20px;
+  color: var(--accent);
+  font-weight: bold;
+  margin: 0 0 20px 0;
+}
+#g2048-overlay-btn {
+  padding: 10px 32px;
+}
+#g2048-undo {
+  padding: 6px 14px;
+  font-size: 14px;
+  opacity: 0.6;
+}
+#g2048-undo:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+.g2048-score-pop {
+  animation: scorePop 0.3s ease;
+}
+@keyframes scorePop {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.3); color: var(--accent); }
+  100% { transform: scale(1); }
+}
+
 @media (max-width: 480px) {
   #game2048 { max-width: 100%; }
   .tile { font-size: 28px; }
@@ -411,6 +455,7 @@
       <a href="#">首页</a>
       <a href="#guest">留言</a>
       <a href="#projects">项目</a>
+      <a href="#game2048">游戏</a>
     </div>
   </nav>
 
@@ -422,6 +467,7 @@
 
   <h2>一张照片</h2>
   <img src="images/人们万岁_upscayl_4x_upscayl-standard-4x.jpg" alt="街景" width="400">
+  <p style="text-align:center;font-size:13px;opacity:0.5;margin-top:6px">2025年街拍 · 人们万岁</p>
 
   <h2>我的兴趣卡片</h2>
   <div class="card-box">
@@ -512,6 +558,7 @@
   <div id="g2048-header">
     <span>得分：<strong id="g2048-score">0</strong></span>
     <span>最高：<strong id="g2048-best">0</strong></span>
+    <button id="g2048-undo" style="margin-left:auto">撤销</button>
     <button id="g2048-restart">新游戏</button>
   </div>
   <div id="g2048-grid">
@@ -678,15 +725,20 @@ let gScore = 0;
 let gBest = parseInt(localStorage.getItem("best2048")) || 0;
 let gOver = false;
 let gWon = false;
+let gHistory = [];
 
 let gScoreEl = document.getElementById("g2048-score");
 let gBestEl = document.getElementById("g2048-best");
 let gTiles = document.querySelectorAll("#g2048-grid .tile");
+let gUndoBtn = document.getElementById("g2048-undo");
+let gOverlay = document.getElementById("g2048-overlay");
+let gOverlayMsg = document.getElementById("g2048-overlay-msg");
 
 gBestEl.textContent = gBest;
 
 let gNewTileIdx = -1;
 let gMergedValues = [];
+let gPrevScore = 0;
 
 let renderGrid = () => {
   gTiles.forEach((el, i) => {
@@ -704,6 +756,12 @@ let renderGrid = () => {
     el.className = cls;
     if (v === 0) el.style.color = "";
   });
+  if (gScore > gPrevScore) {
+    gScoreEl.classList.remove("g2048-score-pop");
+    void gScoreEl.offsetWidth;
+    gScoreEl.classList.add("g2048-score-pop");
+  }
+  gPrevScore = gScore;
   gScoreEl.textContent = gScore;
   if (gScore > gBest) {
     gBest = gScore;
@@ -727,6 +785,9 @@ let initGame = () => {
   gWon = false;
   gNewTileIdx = -1;
   gMergedValues = [];
+  gPrevScore = 0;
+  gHistory = [];
+  gUndoBtn.disabled = true;
   addTile();
   addTile();
   renderGrid();
@@ -742,7 +803,7 @@ let slideRow = (row) => {
       mergedVals.push(arr[i]);
       if (arr[i] === 2048 && !gWon) {
         gWon = true;
-        setTimeout(() => alert("恭喜！你达到了 2048！可以继续玩。"), 100);
+        setTimeout(() => showOverlay("恭喜！你达到了 2048！可以继续玩。"), 100);
       }
       arr[i + 1] = 0;
     }
@@ -764,6 +825,8 @@ let arraysEqual = (a, b) => {
 
 let move = (dir) => {
   if (gOver) return;
+  gHistory.push({ grid: gGrid.slice(), score: gScore });
+  gUndoBtn.disabled = false;
   let before = gGrid.slice();
   gNewTileIdx = -1;
   gMergedValues = [];
@@ -815,7 +878,7 @@ let checkGameOver = () => {
   }
   gOver = true;
   if (!gWon) {
-    setTimeout(() => alert("游戏结束！得分：" + gScore), 100);
+    setTimeout(() => showOverlay("游戏结束！得分：" + gScore), 100);
   }
 };
 
@@ -847,9 +910,40 @@ gGridEl.addEventListener("touchend", (e) => {
   }
 });
 
+let showOverlay = (msg) => {
+  gOverlayMsg.textContent = msg;
+  gOverlay.classList.add("show");
+};
+document.getElementById("g2048-overlay-btn").onclick = () => {
+  gOverlay.classList.remove("show");
+};
+
+let undoMove = () => {
+  if (gHistory.length === 0) return;
+  let prev = gHistory.pop();
+  gGrid = prev.grid;
+  gScore = prev.score;
+  gOver = false;
+  gNewTileIdx = -1;
+  gMergedValues = [];
+  gPrevScore = gScore;
+  renderGrid();
+  if (gHistory.length === 0) gUndoBtn.disabled = true;
+};
+
 document.getElementById("g2048-restart").onclick = initGame;
+gUndoBtn.onclick = undoMove;
+gUndoBtn.disabled = true;
 
 initGame();
   </script>
+
+<div id="g2048-overlay">
+  <div id="g2048-overlay-box">
+    <p id="g2048-overlay-msg"></p>
+    <button id="g2048-overlay-btn">继续</button>
+  </div>
+</div>
+
 </body>
 </html>
