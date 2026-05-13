@@ -1,0 +1,112 @@
+.result {
+  padding-bottom: 40px;
+}
+
+.result-empty {
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.empty-icon {
+  font-size: 3rem;
+  margin: 0 0 16px 0;
+}
+
+.result-empty h2 {
+  margin: 0 0 8px 0;
+  color: var(--text);
+}
+
+.result-empty p {
+  color: var(--text-muted);
+  margin: 0 0 24px 0;
+}
+
+.result-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.result-back {
+  background: var(--card-bg);
+  color: var(--text);
+  border: 1px solid rgba(128, 128, 128, 0.15);
+  padding: 6px 14px;
+  border-radius: var(--radius);
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.result-question {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 建议 */
+.result-advice {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.result-advice h3 {
+  margin: 0 0 6px 0;
+  color: var(--accent);
+  font-size: 0.95rem;
+}
+
+.result-advice p {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+/* 操作按钮 */
+.result-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.result-btn {
+  flex: 1;
+  padding: 12px;
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.2s, opacity 0.2s;
+}
+
+.result-btn--primary {
+  background: var(--accent);
+  color: #fff;
+}
+
+.result-btn--primary:hover {
+  background: var(--accent-hover);
+}
+
+.result-btn--secondary {
+  background: var(--card-bg);
+  color: var(--text);
+  border: 1px solid rgba(128, 128, 128, 0.2);
+}
+
+.result-btn--secondary:hover {
+  background: rgba(128, 128, 128, 0.1);
+}
+
+.result-btn--saved {
+  background: rgba(76, 175, 80, 0.15);
+  color: #4caf50;
+  cursor: default;
+}

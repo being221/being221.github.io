@@ -1,0 +1,142 @@
+.history {
+  padding-bottom: 40px;
+}
+
+.history-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.history-header h1 {
+  margin: 0;
+  font-size: 1.3rem;
+  color: var(--accent);
+}
+
+.history-back-btn {
+  background: var(--card-bg);
+  color: var(--text);
+  border: 1px solid rgba(128, 128, 128, 0.15);
+  padding: 6px 14px;
+  border-radius: var(--radius);
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+/* 空状态 */
+.history-empty {
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.history-empty-icon {
+  font-size: 3rem;
+  margin: 0 0 16px 0;
+}
+
+.history-empty h2 {
+  margin: 0 0 8px 0;
+  color: var(--text);
+}
+
+.history-empty p {
+  color: var(--text-muted);
+  margin: 0 0 24px 0;
+}
+
+/* 统计栏 */
+.stats-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.stat-item {
+  flex: 1;
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 12px;
+  text-align: center;
+}
+
+.stat-num {
+  display: block;
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: var(--accent);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* 月份分组 */
+.month-group {
+  margin-bottom: 20px;
+}
+
+.month-label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin: 0 0 8px 0;
+  padding-left: 4px;
+}
+
+.record-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+
+.record-card:active {
+  transform: scale(0.99);
+}
+
+.record-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.record-name {
+  font-weight: bold;
+  color: var(--accent);
+  font-size: 0.95rem;
+}
+
+.record-del {
+  background: none;
+  border: 1px solid rgba(128, 128, 128, 0.2);
+  color: var(--text-muted);
+  padding: 2px 10px;
+  border-radius: var(--radius);
+  font-size: 0.75rem;
+}
+
+.record-del:hover {
+  color: #e94560;
+  border-color: #e94560;
+}
+
+.record-question {
+  margin: 0 0 4px 0;
+  font-size: 0.85rem;
+  color: var(--text);
+}
+
+.record-time {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}

@@ -1,0 +1,41 @@
+.hexagram-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 28px 20px;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.hexagram-symbol {
+  font-size: 4rem;
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+
+.hexagram-name {
+  margin: 0 0 4px 0;
+  color: var(--accent);
+  font-size: 1.4rem;
+}
+
+.hexagram-code {
+  margin: 0 0 12px 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-family: monospace;
+}
+
+.hexagram-desc {
+  margin: 0 0 10px 0;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.hexagram-overall {
+  margin: 12px 0 0 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  border-top: 1px solid rgba(128, 128, 128, 0.15);
+  padding-top: 12px;
+}

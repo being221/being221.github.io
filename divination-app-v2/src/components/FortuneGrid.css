@@ -1,0 +1,32 @@
+.fortune-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.fortune-item {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 14px;
+  text-align: center;
+}
+
+.fortune-icon {
+  font-size: 1.2rem;
+}
+
+.fortune-label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--accent);
+  margin: 4px 0;
+  font-weight: bold;
+}
+
+.fortune-text {
+  margin: 4px 0 0 0;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}

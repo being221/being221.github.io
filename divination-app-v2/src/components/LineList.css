@@ -1,0 +1,50 @@
+.line-list {
+  margin-bottom: 16px;
+}
+
+.line-list-title {
+  margin: 0 0 10px 0;
+  font-size: 1rem;
+  color: var(--accent);
+}
+
+.line-item {
+  background: var(--card-bg);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  margin-bottom: 8px;
+}
+
+.line-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.line-badge {
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.line-header strong {
+  font-size: 0.9rem;
+}
+
+.line-meaning {
+  margin: 0 0 4px 0;
+  font-size: 0.85rem;
+  color: var(--text);
+}
+
+.line-interpretation {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
