@@ -130,45 +130,21 @@
       font-size: 14px;
       opacity: 0.7;
     }
-
-    /* ===== 时间线入口卡片 ===== */
-    .timeline-teaser {
-      text-align: center;
-      margin: 28px 0 8px;
+    .proj-card.tl-highlight {
+      border: 2px solid #5b8c5a;
+      position: relative;
     }
-    .tl-btn {
-      display: inline-block;
-      padding: 16px 36px;
-      border-radius: 10px;
-      text-decoration: none;
-      color: #faf7f0;
+    .proj-card.tl-highlight::after {
+      content: "新";
+      position: absolute;
+      top: -8px;
+      right: -8px;
       background: #5b8c5a;
-      box-shadow: 0 2px 14px rgba(91,140,90,0.35);
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .tl-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 22px rgba(91,140,90,0.5);
-    }
-    .tl-btn-title {
-      display: block;
-      font-size: 17px;
+      color: #faf7f0;
+      font-size: 11px;
       font-weight: bold;
-      letter-spacing: 2px;
-    }
-    .tl-btn-sub {
-      display: block;
-      font-size: 12px;
-      opacity: 0.85;
-      margin-top: 4px;
-    }
-    @media (max-width: 480px) {
-      .tl-btn {
-        display: block;
-        margin: 0 12px;
-        padding: 14px 20px;
-      }
-      .tl-btn-title { font-size: 15px; }
+      padding: 2px 8px;
+      border-radius: 10px;
     }
 
     .card-box {
@@ -589,12 +565,9 @@
       <h3>个人主页</h3>
       <p>原生 HTML/CSS/JS——从零搭建到上线</p>
     </a>
-  </div>
-
-  <div class="timeline-teaser">
-    <a href="timeline.html" class="tl-btn">
-      <span class="tl-btn-title">春秋战国 · 历史时间线</span>
-      <span class="tl-btn-sub">前770 — 前221 · 151条事件 · 竹简风 · 点击探索</span>
+    <a href="timeline.html" class="proj-card tl-highlight">
+      <h3>春秋战国 · 历史时间线</h3>
+      <p>151条事件 · 竹简风 · 筛选/搜索/因果连线</p>
     </a>
   </div>
 
