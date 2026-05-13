@@ -568,6 +568,13 @@
   </div>
 </div>
 
+<div id="g2048-overlay">
+  <div id="g2048-overlay-box">
+    <p id="g2048-overlay-msg"></p>
+    <button id="g2048-overlay-btn">继续</button>
+  </div>
+</div>
+
   <h2>随机名言</h2>
   <button id="myBtn">换一条</button>
   <p id="msg"></p>
@@ -719,6 +726,10 @@
     };
 
 // ===== 2048 游戏 =====
+window.onerror = function(msg) {
+  let dbg = document.getElementById("g2048-score");
+  if (dbg) dbg.textContent = "JS错误: " + String(msg).slice(0, 30);
+};
 let gGrid = Array(16).fill(0);
 let gScore = 0;
 let gBest = parseInt(localStorage.getItem("best2048")) || 0;
@@ -728,7 +739,7 @@ let gHistory = [];
 
 let gScoreEl = document.getElementById("g2048-score");
 let gBestEl = document.getElementById("g2048-best");
-let gTiles = document.querySelectorAll("#g2048-grid .tile");
+let gTiles = [].slice.call(document.querySelectorAll("#g2048-grid .tile"));
 let gUndoBtn = document.getElementById("g2048-undo");
 let gOverlay = document.getElementById("g2048-overlay");
 let gOverlayMsg = document.getElementById("g2048-overlay-msg");
@@ -911,11 +922,12 @@ gGridEl.addEventListener("touchend", (e) => {
 });
 
 let showOverlay = (msg) => {
+  if (!gOverlayMsg || !gOverlay) return;
   gOverlayMsg.textContent = msg;
   gOverlay.classList.add("show");
 };
 document.getElementById("g2048-overlay-btn").onclick = () => {
-  gOverlay.classList.remove("show");
+  if (gOverlay) gOverlay.classList.remove("show");
 };
 
 let undoMove = () => {
@@ -946,13 +958,5 @@ try {
   console.error("2048 init error:", err);
 }
   </script>
-
-<div id="g2048-overlay">
-  <div id="g2048-overlay-box">
-    <p id="g2048-overlay-msg"></p>
-    <button id="g2048-overlay-btn">继续</button>
-  </div>
-</div>
-
 </body>
 </html>
