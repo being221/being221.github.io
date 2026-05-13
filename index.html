@@ -32,6 +32,58 @@
       max-width: 600px;
       margin: 50px auto;
       padding: 20px;
+      padding-top: 70px;  /* 给固定导航栏让位 */    }
+
+    /* ===== Position：固定导航栏 ===== */
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 10;
+      background-color: var(--bg);
+      border-bottom: 1px solid rgba(128,128,128,0.15);
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+      backdrop-filter: blur(8px);
+    }
+    .topbar span {
+      color: var(--accent);
+      font-weight: bold;
+    }
+    .topbar a {
+      text-decoration: none;
+      color: var(--link);
+      margin-left: 16px;
+    }
+
+    /* ===== Position：回到顶部按钮 ===== */
+    #backTop {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 10;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: var(--accent);
+      color: #fff;
+      font-size: 20px;
+      border: none;
+      cursor: pointer;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #backTop.show {
+      opacity: 1;
+      pointer-events: auto;
     }
     h1 {
       color: var(--accent);
@@ -176,6 +228,23 @@
     .msg-card p {
       margin: 6px 0 0 0;
     }
+    .delBtn {
+      float: right;
+      background: none;
+      border: 1px solid rgba(128,128,128,0.3);
+      color: var(--text);
+      opacity: 0.5;
+      padding: 2px 10px;
+      border-radius: var(--radius);
+      font-size: 12px;
+      cursor: pointer;
+      transition: opacity 0.2s, color 0.2s;
+    }
+    .delBtn:hover {
+      opacity: 1;
+      color: var(--accent);
+      border-color: var(--accent);
+    }
 
     blockquote {
       border-left: 4px solid var(--accent);
@@ -258,6 +327,17 @@
   </style>
 </head>
 <body>
+  <nav class="topbar">
+    <span>being</span>
+    <div>
+      <a href="#">首页</a>
+      <a href="#guest">留言</a>
+      <a href="#projects">项目</a>
+    </div>
+  </nav>
+
+  <button id="backTop" title="回到顶部">&#8593;</button>
+
   <p id="clock"></p>
   <h1>你好，我是being</h1>
   <h2>我喜欢的东西</h2>
@@ -294,7 +374,7 @@
 
   <hr>
 
-  <h2>给我留言</h2>
+  <h2 id="guest">给我留言</h2>
   <form id="guestForm">
     <label for="guestName">昵称</label>
     <input type="text" id="guestName" placeholder="你的名字" required>
@@ -303,6 +383,7 @@
     <button type="submit">提交留言</button>
   </form>
   <div id="msgBoard"></div>
+  <p id="msgStats" style="font-size:13px;opacity:0.6;margin-top:4px"></p>
 
   <hr>
 
@@ -314,17 +395,17 @@
     </div>
     <div class="card">
       <h3>CSS</h3>
-      <p>颜色、字体、flexbox、grid、变量、过渡、伪类、媒体查询、@keyframes 动画</p>
+      <p>颜色、字体、flexbox、grid、position、变量、过渡、伪类、媒体查询、@keyframes 动画</p>
     </div>
     <div class="card">
       <h3>JavaScript</h3>
-      <p>事件、数组、随机数、if/else、classList、计时器、localStorage、fetch、async/await、JSON、表单</p>
+      <p>事件、数组、随机数、if/else、classList、计时器、localStorage、fetch、async/await、JSON、表单、forEach/map/filter、事件委托</p>
     </div>
   </div>
 
   <hr>
 
-  <h2>我的小项目</h2>
+  <h2 id="projects">我的小项目</h2>
   <div class="project-grid">
     <a href="card.html" class="proj-card">
       <h3>名片设计</h3>
@@ -416,20 +497,27 @@
     // 渲染留言：清空容器 → 逐条创建 DOM → 塞进去
     let renderMessages = () => {
       msgBoard.innerHTML = "";
-      for (let i = 0; i < messages.length; i++) {
+      messages.forEach((m, i) => {
         let card = document.createElement("div");
         card.className = "msg-card";
 
-        let timeStr = new Date(messages[i].time).toLocaleString("zh-CN");
+        let timeStr = new Date(m.time).toLocaleString("zh-CN");
 
         card.innerHTML = `
-          <strong>${messages[i].name}</strong>
+          <strong>${m.name}</strong>
           <small>${timeStr}</small>
-          <p>${messages[i].text}</p>
+          <button class="delBtn" data-index="${i}">删除</button>
+          <p>${m.text}</p>
         `;
 
         msgBoard.appendChild(card);
-      }
+      });
+
+      // 用 map + filter 统计留言
+      let names = messages.map((m) => m.name);               // 提取名字
+      let unique = names.filter((n, i) => names.indexOf(n) === i); // 去重
+      let stats = document.getElementById("msgStats");
+      stats.textContent = `共 ${messages.length} 条留言，来自 ${unique.length} 位朋友`;
     };
 
     renderMessages();
@@ -446,6 +534,16 @@
 
       renderMessages();
       guestForm.reset();
+    });
+
+    // 事件委托：父容器监听 → 判断谁被点了
+    msgBoard.addEventListener("click", (e) => {
+      if (e.target.classList.contains("delBtn")) {
+        let i = Number(e.target.dataset.index);
+        messages.splice(i, 1);  // 从数组删除
+        localStorage.setItem("messages", JSON.stringify(messages));
+        renderMessages();
+      }
     });
 
     // ===== localStorage：记住主题偏好 =====
@@ -466,6 +564,21 @@
         themeBtn.textContent = "切换浅色模式";
         localStorage.setItem("theme", "dark");
       }
+    };
+
+    // ===== 回到顶部按钮 =====
+    let backTop = document.getElementById("backTop");
+
+    window.addEventListener("scroll", () => {
+      if (window.scrollY > 400) {
+        backTop.classList.add("show");
+      } else {
+        backTop.classList.remove("show");
+      }
+    });
+
+    backTop.onclick = () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
     };
   </script>
 </body>
