@@ -1,1 +1,0 @@
-if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/divination-app/sw.js', { scope: '/divination-app/' })})}

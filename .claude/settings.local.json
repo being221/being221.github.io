@@ -140,7 +140,25 @@
       "Bash(cp divination-app/dist/sw.js divination-app/dist/workbox-*.js divination-app/dist/registerSW.js divination-app/dist/manifest.webmanifest divination-app/)",
       "Bash(ls divination-app/*.js divination-app/*.html divination-app/*.webmanifest)",
       "Bash(git rm *)",
-      "Bash(rm -f card.html counter.html todo.html)"
+      "Bash(rm -f card.html counter.html todo.html)",
+      "WebFetch(domain:being221.github.io)",
+      "Bash(cp -r dist/* .)",
+      "Bash(ls *.html *.js *.webmanifest)",
+      "Bash(xargs -0 ls -l)",
+      "Bash(awk '{sum+=$5} END {print sum/1024/1024 \" MB\"}')",
+      "Bash(taskkill //F //IM node.exe)",
+      "Bash(rm -rf divination-app/assets divination-app/dist divination-app/index.html divination-app/sw.js divination-app/registerSW.js divination-app/manifest.webmanifest divination-app/workbox-e4022e15.js)",
+      "Bash(mkdir -p divination-app)",
+      "Bash(cp -r \"divination-app-v2/dist/\"* divination-app/)",
+      "Bash(git reset *)",
+      "Bash(rm -rf divination-app/assets divination-app/index.html divination-app/registerSW.js divination-app/sw.js divination-app/workbox-*.js)",
+      "Bash(cp -r divination-app-v2/dist/* divination-app/)",
+      "Bash(cp -r divination-app-v2/public/* divination-app/)",
+      "Bash(gh run *)",
+      "WebFetch(domain:www.360doc.com)",
+      "Read(//tmp/**)",
+      "Bash(python3 -c ' *)",
+      "Bash(xxd)"
     ]
   }
 }
