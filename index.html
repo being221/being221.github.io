@@ -726,10 +726,6 @@
     };
 
 // ===== 2048 游戏 =====
-window.onerror = function(msg) {
-  let dbg = document.getElementById("g2048-score");
-  if (dbg) dbg.textContent = "JS错误: " + String(msg).slice(0, 30);
-};
 let gGrid = Array(16).fill(0);
 let gScore = 0;
 let gBest = parseInt(localStorage.getItem("best2048")) || 0;
@@ -947,16 +943,7 @@ document.getElementById("g2048-restart").onclick = initGame;
 gUndoBtn.onclick = undoMove;
 gUndoBtn.disabled = true;
 
-try {
-  if (!gScoreEl || !gBestEl || !gTiles || !gUndoBtn) {
-    throw new Error("游戏元素未找到 score=" + !!gScoreEl + " best=" + !!gBestEl + " tiles=" + gTiles.length + " undo=" + !!gUndoBtn);
-  }
-  initGame();
-} catch (err) {
-  let el = document.getElementById("g2048-score");
-  if (el) el.textContent = "ERR";
-  console.error("2048 init error:", err);
-}
+initGame();
   </script>
 </body>
 </html>
