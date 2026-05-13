@@ -340,36 +340,35 @@
 
   <p id="clock"></p>
   <h1>你好，我是being</h1>
-  <h2>我喜欢的东西</h2>
-  <p>历史哲学小说</p>
-  <ul>
-    <li>读历史</li>
-    <li>思考哲学</li>
-    <li>看推理和科幻小说</li>
-  </ul>
+  <p style="opacity:0.7">临近毕业，喜欢历史和哲学，正在学前端开发。</p>
+
   <h2>我的兴趣卡片</h2>
   <div class="card-box">
     <div class="card">
       <h3>历史</h3>
-      <p>读历史的乐趣在于发现因果。</p>
+      <p>历史不只是故事——每个因果链条背后都有结构性力量在推动。最爱读制度史和思想史。</p>
     </div>
     <div class="card">
       <h3>哲学</h3>
-      <p>喜欢琢磨根本问题。</p>
+      <p>喜欢追问"为什么"直到问不动。存在主义和分析哲学都读，最近在看语言哲学。</p>
     </div>
     <div class="card">
       <h3>小说</h3>
-      <p>推理、科幻、严肃文学都不拒。</p>
+      <p>推理小说解谜的快感、科幻对未来的想象、严肃文学对人性的挖掘——三种完全不同的阅读体验。</p>
     </div>
   </div>
 
-  <p>我常去的网站：<a href="https://www.zhihu.com" target="_blank">知乎</a></p>
+  <p>常逛的地方：
+    <a href="https://www.zhihu.com" target="_blank">知乎</a> ·
+    <a href="https://www.gushiwen.cn" target="_blank">古诗文网</a> ·
+    <a href="https://github.com/being221" target="_blank">我的 GitHub</a>
+  </p>
 
   <hr>
 
   <h2>想法随笔</h2>
   <blockquote id="note" contenteditable="true">
-    在这里写点东西…直接在浏览器里点这段文字就能改。
+    写点随笔…今天读了什么、想到了什么、学到了什么。你的文字会自动保存，刷新不会丢。
   </blockquote>
 
   <hr>
@@ -391,7 +390,7 @@
   <div class="card-box">
     <div class="card">
       <h3>HTML</h3>
-      <p>h1~h6、p、a、img、ul/li、button、div</p>
+      <p>语义化结构、表单元素、锚点导航、响应式 meta</p>
     </div>
     <div class="card">
       <h3>CSS</h3>
@@ -407,32 +406,36 @@
 
   <h2 id="projects">我的小项目</h2>
   <div class="project-grid">
+    <a href="index.html" class="proj-card">
+      <h3>个人主页</h3>
+      <p>你正在看的这个——从零搭建到上线</p>
+    </a>
     <a href="card.html" class="proj-card">
       <h3>名片设计</h3>
-      <p>HTML + CSS 做的个人名片</p>
+      <p>纯 CSS 卡片布局，hover 动效</p>
     </a>
     <a href="counter.html" class="proj-card">
       <h3>计数器</h3>
-      <p>点击加减，JS 操作 DOM</p>
+      <p>DOM 事件操作入门练习</p>
     </a>
     <a href="todo.html" class="proj-card">
       <h3>待办清单</h3>
-      <p>添加删除，localStorage 持久化</p>
+      <p>增删改查 + localStorage 持久化</p>
     </a>
     <a href="divination-app/" class="proj-card">
-      <h3>占卜小应用</h3>
-      <p>随机生成运势解读</p>
+      <h3>占卜应用</h3>
+      <p>Vite + Node.js 全栈小工具</p>
     </a>
   </div>
 
 <hr>
-  <h2>我喜欢的照片</h2>
-  <img src="images/人们万岁_upscayl_4x_upscayl-standard-4x.jpg" alt="我喜欢的照片" width="400">
+  <h2>一张照片</h2>
+  <img src="images/人们万岁_upscayl_4x_upscayl-standard-4x.jpg" alt="街景" width="400">
 
   <hr>
 
-  <h2>一个小互动</h2>
-  <button id="myBtn">点我试试</button>
+  <h2>随机名言</h2>
+  <button id="myBtn">换一条</button>
   <p id="msg"></p>
 
   <button id="themeBtn">切换浅色模式</button>
