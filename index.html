@@ -324,6 +324,72 @@
       animation: fadeUp 0.6s ease backwards;
       animation-delay: 0.3s;
     }
+
+#game2048 {
+  max-width: 400px;
+  margin: 0 auto;
+}
+#g2048-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  font-size: 15px;
+}
+#g2048-header strong {
+  color: var(--accent);
+}
+#g2048-restart {
+  margin-left: auto;
+  padding: 6px 18px;
+  font-size: 14px;
+}
+#g2048-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  background: #bbada0;
+  padding: 8px;
+  border-radius: 6px;
+  aspect-ratio: 1;
+}
+.tile {
+  background: #cdc1b4;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 24px;
+  color: #776e65;
+  aspect-ratio: 1;
+  transition: background-color 0.1s, transform 0.1s;
+}
+.tile.n2  { background: #eee4da; }
+.tile.n4  { background: #ede0c8; }
+.tile.n8  { background: #f2b179; color: #f9f6f2; }
+.tile.n16 { background: #f59563; color: #f9f6f2; }
+.tile.n32 { background: #f67c5f; color: #f9f6f2; }
+.tile.n64 { background: #f65e3b; color: #f9f6f2; }
+.tile.n128 { background: #edcf72; color: #f9f6f2; font-size: 20px; }
+.tile.n256 { background: #edcc61; color: #f9f6f2; font-size: 20px; }
+.tile.n512 { background: #edc850; color: #f9f6f2; font-size: 20px; }
+.tile.n1024 { background: #edc53f; color: #f9f6f2; font-size: 16px; }
+.tile.n2048 { background: #edc22e; color: #f9f6f2; font-size: 16px; }
+.tile.new-tile {
+  animation: tilePop 0.15s ease;
+}
+@keyframes tilePop {
+  from { transform: scale(0); }
+  to   { transform: scale(1); }
+}
+
+@media (max-width: 480px) {
+  .tile { font-size: 20px; }
+  .tile.n128, .tile.n256, .tile.n512 { font-size: 16px; }
+  .tile.n1024, .tile.n2048 { font-size: 13px; }
+}
+
   </style>
 </head>
 <body>
