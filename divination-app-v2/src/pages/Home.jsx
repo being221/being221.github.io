@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLocalStorage } from "../useLocalStorage";
 import { coinDivination, detectShake } from "../utils/divination";
+import { coinFeedback, vibrate } from "../utils/feedback";
 import CoinGroup from "../components/CoinGroup";
 import Modal from "../components/Modal";
 import "./Home.css";
@@ -34,14 +35,17 @@ export default function Home({ theme, onToggleTheme }) {
   const startAnimation = useCallback((q) => {
     setShowModal(false);
     setIsAnimating(true);
+    coinFeedback();
     let count = 0;
     animRef.current = setInterval(() => {
       setCoins([Math.random() > 0.5, Math.random() > 0.5, Math.random() > 0.5]);
+      if (count % 5 === 0) coinFeedback();
       count++;
       if (count >= 30) {
         clearInterval(animRef.current);
         animRef.current = null;
         setIsAnimating(false);
+        vibrate([30, 50, 30]);
         const result = coinDivination();
         navigate("/result", {
           state: { hexagram: result.hexagram, question: q || "今日运势", code: result.code },
@@ -115,11 +119,14 @@ export default function Home({ theme, onToggleTheme }) {
   }, []);
 
   return (
-    <div className="home">
+    <div className="home page-enter">
       <header className="home-header">
         <h1>我的起卦</h1>
         <div className="header-actions">
           <span className="today-badge">今日 {todayCount} 次</span>
+          <button className="theme-btn" onClick={() => navigate("/settings")}>
+            设置
+          </button>
           <button className="theme-btn" onClick={onToggleTheme}>
             {theme === "dark" ? "浅色" : "深色"}
           </button>
@@ -144,6 +151,9 @@ export default function Home({ theme, onToggleTheme }) {
       <div className="quick-actions">
         <button className="quick-btn" onClick={() => navigate("/history")}>
           历史记录
+        </button>
+        <button className="quick-btn" onClick={() => navigate("/templates")}>
+          问题模板
         </button>
         {!shakeGranted && (
           <button className="quick-btn" onClick={requestShake}>

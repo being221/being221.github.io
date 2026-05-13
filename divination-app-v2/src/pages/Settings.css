@@ -1,0 +1,142 @@
+.settings {
+  padding-bottom: 40px;
+}
+
+.settings-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.settings-header h1 {
+  margin: 0;
+  font-size: 1.3rem;
+  color: var(--accent);
+}
+
+.settings-back {
+  background: var(--card-bg);
+  color: var(--text);
+  border: 1px solid rgba(128, 128, 128, 0.15);
+  padding: 6px 14px;
+  border-radius: var(--radius);
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+/* 分区 */
+.setting-section {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.setting-section h3 {
+  margin: 0 0 12px 0;
+  font-size: 0.9rem;
+  color: var(--accent);
+}
+
+.setting-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  font-size: 0.9rem;
+}
+
+.setting-row + .setting-row {
+  border-top: 1px solid rgba(128, 128, 128, 0.08);
+}
+
+/* 下拉选择 */
+.setting-select {
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid rgba(128, 128, 128, 0.2);
+  border-radius: var(--radius);
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  font-family: inherit;
+}
+
+/* 滑块 */
+.setting-range {
+  width: 120px;
+  accent-color: var(--accent);
+}
+
+/* 开关 */
+.toggle {
+  background: rgba(128, 128, 128, 0.15);
+  color: var(--text-muted);
+  border: none;
+  padding: 5px 16px;
+  border-radius: 16px;
+  font-size: 0.8rem;
+  font-family: inherit;
+  min-width: 44px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.toggle--on {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* 危险按钮 */
+.danger-btn {
+  background: transparent;
+  color: #e94560;
+  border: 1px solid #e94560;
+  padding: 5px 16px;
+  border-radius: var(--radius);
+  font-size: 0.8rem;
+  font-family: inherit;
+}
+
+.danger-btn:hover {
+  background: #e94560;
+  color: #fff;
+}
+
+/* 关于 */
+.about-text {
+  margin: 0 0 4px 0;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+/* 清除确认弹窗 */
+.clear-warning {
+  margin: 0 0 14px 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.modal-btn {
+  padding: 8px 20px;
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.modal-btn--secondary {
+  background: rgba(128, 128, 128, 0.15);
+  color: var(--text);
+}
+
+.modal-btn--danger {
+  background: #e94560;
+  color: #fff;
+}

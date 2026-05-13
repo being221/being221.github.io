@@ -68,6 +68,37 @@
   color: var(--text-muted);
 }
 
+/* 笔记 */
+.result-notes {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.result-notes h3 {
+  margin: 0 0 8px 0;
+  color: var(--accent);
+  font-size: 0.95rem;
+}
+
+.notes-input {
+  width: 100%;
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid rgba(128, 128, 128, 0.2);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.notes-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
 /* 操作按钮 */
 .result-actions {
   display: flex;

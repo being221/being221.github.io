@@ -4,6 +4,8 @@ import { useLocalStorage } from "./useLocalStorage";
 import Home from "./pages/Home";
 import Result from "./pages/Result";
 import History from "./pages/History";
+import Templates from "./pages/Templates";
+import Settings from "./pages/Settings";
 
 export default function App() {
   const [theme, setTheme] = useLocalStorage("theme", "dark");
@@ -21,6 +23,8 @@ export default function App() {
           <Route path="/" element={<Home theme={theme} onToggleTheme={toggleTheme} />} />
           <Route path="/result" element={<Result />} />
           <Route path="/history" element={<History />} />
+          <Route path="/templates" element={<Templates />} />
+          <Route path="/settings" element={<Settings />} />
         </Routes>
       </div>
     </HashRouter>

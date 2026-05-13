@@ -24,6 +24,11 @@ body.light {
   padding: 0;
 }
 
+/* 字体大小 */
+body.font-small { font-size: 14px; }
+body.font-medium { font-size: 16px; }
+body.font-large { font-size: 18px; }
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Microsoft YaHei", sans-serif;
   background: var(--bg);
@@ -47,4 +52,14 @@ button {
 a {
   color: inherit;
   text-decoration: none;
+}
+
+/* 页面过渡动画 */
+.page-enter {
+  animation: pageIn 0.3s ease-out;
+}
+
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
 }

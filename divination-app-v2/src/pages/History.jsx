@@ -62,6 +62,7 @@ export default function History() {
         hexagram: record.hexagram,
         question: record.question || "",
         code: record.code || "",
+        notes: record.notes || "",
       },
     });
   };
@@ -80,7 +81,7 @@ export default function History() {
   }
 
   return (
-    <div className="history">
+    <div className="history page-enter">
       <header className="history-header">
         <button className="history-back-btn" onClick={() => navigate("/")}>
           ← 返回
@@ -121,6 +122,9 @@ export default function History() {
                 </button>
               </div>
               <p className="record-question">{record.question || "今日运势"}</p>
+              {record.notes && (
+                <p className="record-notes">{record.notes.slice(0, 50)}{record.notes.length > 50 ? "..." : ""}</p>
+              )}
               <span className="record-time">{formatDate(record.timestamp)}</span>
             </div>
           ))}

@@ -4,7 +4,7 @@ import "./CoinGroup.css";
 
 export default function CoinGroup({ coins, isFlipping }) {
   return (
-    <div className="coin-group">
+    <div className={`coin-group ${isFlipping ? "shadow-pulse" : ""}`}>
       {coins.map((isHead, i) => (
         <img
           key={i}

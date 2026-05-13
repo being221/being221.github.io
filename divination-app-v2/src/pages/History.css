@@ -136,6 +136,13 @@
   color: var(--text);
 }
 
+.record-notes {
+  margin: 4px 0;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
 .record-time {
   font-size: 0.75rem;
   color: var(--text-muted);

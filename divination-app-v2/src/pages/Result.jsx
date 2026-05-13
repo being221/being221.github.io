@@ -17,6 +17,7 @@ export default function Result() {
   const [history, setHistory] = useLocalStorage("divination_history", []);
   const [toast, setToast] = useState(null);
   const [saved, setSaved] = useState(false);
+  const [notes, setNotes] = useState(location.state?.notes || "");
 
   const showToast = useCallback((message, type = "info") => {
     setToast({ message, type });
@@ -45,6 +46,7 @@ export default function Result() {
       hexagram,
       question,
       code,
+      notes,
       timestamp: Date.now(),
     };
     setHistory([record, ...history].slice(0, 100));
@@ -69,7 +71,7 @@ export default function Result() {
   };
 
   return (
-    <div className="result">
+    <div className="result page-enter">
       {toast && <Toast message={toast.message} type={toast.type} onDone={clearToast} />}
 
       <div className="result-header">
@@ -88,6 +90,17 @@ export default function Result() {
           <p>{hexagram.advice}</p>
         </div>
       )}
+
+      <div className="result-notes">
+        <h3>笔记</h3>
+        <textarea
+          className="notes-input"
+          value={notes}
+          onChange={(e) => { setNotes(e.target.value); setSaved(false); }}
+          placeholder="记录你的想法和感悟..."
+          rows={3}
+        />
+      </div>
 
       <LineList lines={hexagram.lines} />
 
