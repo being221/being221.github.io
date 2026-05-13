@@ -46,6 +46,39 @@
       color: var(--link);
     }
 
+    /* Grid 项目展示 */
+    .project-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 14px;
+    }
+    .proj-card {
+      background-color: var(--card-bg);
+      padding: 16px;
+      border-radius: var(--radius);
+      text-decoration: none;
+      color: var(--text);
+      transition: transform 0.2s, box-shadow 0.2s;
+      animation: fadeUp 0.5s ease backwards;
+    }
+    .proj-card:nth-child(1) { animation-delay: 0.1s; }
+    .proj-card:nth-child(2) { animation-delay: 0.2s; }
+    .proj-card:nth-child(3) { animation-delay: 0.3s; }
+    .proj-card:nth-child(4) { animation-delay: 0.4s; }
+    .proj-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+    .proj-card h3 {
+      margin: 0 0 6px 0;
+      color: var(--accent);
+    }
+    .proj-card p {
+      margin: 0;
+      font-size: 14px;
+      opacity: 0.7;
+    }
+
     .card-box {
       display: flex;
       gap: 16px;
@@ -94,6 +127,52 @@
       margin-top: 12px;
       font-style: italic;
       color: var(--link);
+    }
+
+    /* 表单 */
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    label {
+      font-size: 14px;
+      color: var(--accent);
+      font-weight: bold;
+    }
+    input, textarea {
+      background-color: var(--card-bg);
+      color: var(--text);
+      border: 1px solid rgba(128,128,128,0.3);
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      font-size: 15px;
+      font-family: inherit;
+      resize: vertical;
+    }
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    #msgBoard {
+      margin-top: 16px;
+    }
+    .msg-card {
+      background-color: var(--card-bg);
+      padding: 12px 16px;
+      border-radius: var(--radius);
+      margin-bottom: 10px;
+      border-left: 3px solid var(--accent);
+    }
+    .msg-card strong {
+      color: var(--accent);
+    }
+    .msg-card small {
+      color: var(--text);
+      opacity: 0.5;
+    }
+    .msg-card p {
+      margin: 6px 0 0 0;
     }
 
     blockquote {
@@ -213,6 +292,18 @@
 
   <hr>
 
+  <h2>给我留言</h2>
+  <form id="guestForm">
+    <label for="guestName">昵称</label>
+    <input type="text" id="guestName" placeholder="你的名字" required>
+    <label for="guestMsg">留言</label>
+    <textarea id="guestMsg" rows="3" placeholder="说点什么..." required></textarea>
+    <button type="submit">提交留言</button>
+  </form>
+  <div id="msgBoard"></div>
+
+  <hr>
+
   <h2>学习进度</h2>
   <div class="card-box">
     <div class="card">
@@ -221,16 +312,39 @@
     </div>
     <div class="card">
       <h3>CSS</h3>
-      <p>颜色、字体、flexbox、变量、过渡、伪类、媒体查询、@keyframes 动画</p>
+      <p>颜色、字体、flexbox、grid、变量、过渡、伪类、媒体查询、@keyframes 动画</p>
     </div>
     <div class="card">
       <h3>JavaScript</h3>
-      <p>事件、数组、随机数、if/else、classList、计时器、localStorage、fetch API</p>
+      <p>事件、数组、随机数、if/else、classList、计时器、localStorage、fetch、async/await、JSON、表单</p>
     </div>
   </div>
+
+  <hr>
+
+  <h2>我的小项目</h2>
+  <div class="project-grid">
+    <a href="card.html" class="proj-card">
+      <h3>名片设计</h3>
+      <p>HTML + CSS 做的个人名片</p>
+    </a>
+    <a href="counter.html" class="proj-card">
+      <h3>计数器</h3>
+      <p>点击加减，JS 操作 DOM</p>
+    </a>
+    <a href="todo.html" class="proj-card">
+      <h3>待办清单</h3>
+      <p>添加删除，localStorage 持久化</p>
+    </a>
+    <a href="divination-app/" class="proj-card">
+      <h3>占卜小应用</h3>
+      <p>随机生成运势解读</p>
+    </a>
+  </div>
+
 <hr>
   <h2>我喜欢的照片</h2>
-  <img src="images/屏幕截图 2026-01-30 211531.png" alt="描述" width="400">
+  <img src="images/人们万岁_upscayl_4x_upscayl-standard-4x.png" alt="描述" width="400">
 
   <hr>
 
@@ -243,13 +357,13 @@
   <script>
     let clock = document.getElementById("clock");
 
-    function updateTime() {
+    let updateTime = () => {
       let now = new Date();
       let h = String(now.getHours()).padStart(2, "0");
       let m = String(now.getMinutes()).padStart(2, "0");
       let s = String(now.getSeconds()).padStart(2, "0");
-      clock.textContent = h + ":" + m + ":" + s;
-    }
+      clock.textContent = `${h}:${m}:${s}`;
+    };
     updateTime();
     setInterval(updateTime, 1000);
 
@@ -261,7 +375,7 @@
       note.textContent = savedNote;
     }
 
-    note.addEventListener("input", function () {
+    note.addEventListener("input", () => {
       localStorage.setItem("savedNote", note.textContent);
     });
 
@@ -277,22 +391,60 @@
       "凡是过往，皆为序章。——莎士比亚"
     ];
 
-    btn.onclick = function () {
+    btn.onclick = async () => {
       msg.textContent = "加载中...";
 
-      fetch("https://api.quotable.io/random")
-        .then(function (response) {
-          return response.json();
-        })
-        .then(function (data) {
-          msg.textContent = data.content + " ——" + data.author;
-        })
-        .catch(function () {
-          // API 挂了，用备用名言
-          let n = Math.floor(Math.random() * fallbackQuotes.length);
-          msg.textContent = fallbackQuotes[n];
-        });
+      try {
+        let response = await fetch("https://api.quotable.io/random");
+        let data = await response.json();
+        msg.textContent = `${data.content} ——${data.author}`;
+      } catch {
+        let n = Math.floor(Math.random() * fallbackQuotes.length);
+        msg.textContent = fallbackQuotes[n];
+      }
     };
+
+    // ===== 留言板 =====
+    let guestForm = document.getElementById("guestForm");
+    let msgBoard = document.getElementById("msgBoard");
+
+    // 从 localStorage 加载留言（JSON.parse 把字符串还原成数组）
+    let messages = JSON.parse(localStorage.getItem("messages")) || [];
+
+    // 渲染留言：清空容器 → 逐条创建 DOM → 塞进去
+    let renderMessages = () => {
+      msgBoard.innerHTML = "";
+      for (let i = 0; i < messages.length; i++) {
+        let card = document.createElement("div");
+        card.className = "msg-card";
+
+        let timeStr = new Date(messages[i].time).toLocaleString("zh-CN");
+
+        card.innerHTML = `
+          <strong>${messages[i].name}</strong>
+          <small>${timeStr}</small>
+          <p>${messages[i].text}</p>
+        `;
+
+        msgBoard.appendChild(card);
+      }
+    };
+
+    renderMessages();
+
+    guestForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      let name = document.getElementById("guestName").value.trim();
+      let text = document.getElementById("guestMsg").value.trim();
+      if (!name || !text) return;
+
+      messages.push({ name, text, time: Date.now() });
+      localStorage.setItem("messages", JSON.stringify(messages));
+
+      renderMessages();
+      guestForm.reset();
+    });
 
     // ===== localStorage：记住主题偏好 =====
     let themeBtn = document.getElementById("themeBtn");
@@ -303,7 +455,7 @@
       themeBtn.textContent = "切换深色模式";
     }
 
-    themeBtn.onclick = function () {
+    themeBtn.onclick = () => {
       document.body.classList.toggle("light");
       if (document.body.classList.contains("light")) {
         themeBtn.textContent = "切换深色模式";
