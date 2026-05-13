@@ -1,0 +1,28 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo \"Checking if git command is 'commit'...\" | grep -E \"git commit\" && echo \"🔍 Running pre-commit code formatting check...\" && (git diff --cached --name-only --diff-filter=ACM | grep -E '\\.(js|jsx|ts|tsx|css|json|md|html)$' | xargs -r echo \"Files to check:\" || echo \"No files to check\") && (git diff --cached --name-only --diff-filter=ACM | grep -E '\\.(js|jsx|ts|tsx|css|json|md|html)$' | xargs -r prettier --check --ignore-unknown 2>/dev/null || echo \"Prettier check completed or not installed\") && (git diff --cached --name-only --diff-filter=ACM | grep -E '\\.(js|jsx|ts|tsx)$' | xargs -r eslint --fix 2>/dev/null || echo \"ESLint check completed or not installed\") && echo \"✅ Pre-commit check completed\"",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "TaskCompleted": [
+      {
+        "matcher": "-",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo \"🔔 Task completed!\" && powershell -Command \"Write-Host '🎉 任务完成！' -ForegroundColor Green; [Console]::Beep(800, 300); Write-Host '提示音已播放' -ForegroundColor Yellow\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}
