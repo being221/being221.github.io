@@ -659,6 +659,151 @@
     backTop.onclick = () => {
       window.scrollTo({ top: 0, behavior: "smooth" });
     };
+
+// ===== 2048 游戏 =====
+let gGrid = Array(16).fill(0);
+let gScore = 0;
+let gBest = parseInt(localStorage.getItem("best2048")) || 0;
+let gOver = false;
+let gWon = false;
+
+let gScoreEl = document.getElementById("g2048-score");
+let gBestEl = document.getElementById("g2048-best");
+let gTiles = document.querySelectorAll("#g2048-grid .tile");
+
+gBestEl.textContent = gBest;
+
+let renderGrid = () => {
+  gTiles.forEach((el, i) => {
+    let v = gGrid[i];
+    el.textContent = v || "";
+    el.className = "tile" + (v ? " n" + v : "");
+    if (v === 0) {
+      el.style.color = "";
+    }
+  });
+  gScoreEl.textContent = gScore;
+  if (gScore > gBest) {
+    gBest = gScore;
+    gBestEl.textContent = gBest;
+    localStorage.setItem("best2048", gBest);
+  }
+};
+
+let addTile = () => {
+  let empty = gGrid.reduce((a, v, i) => { if (v === 0) a.push(i); return a; }, []);
+  if (empty.length === 0) return;
+  let i = empty[Math.floor(Math.random() * empty.length)];
+  gGrid[i] = Math.random() < 0.9 ? 2 : 4;
+};
+
+let initGame = () => {
+  gGrid = Array(16).fill(0);
+  gScore = 0;
+  gOver = false;
+  gWon = false;
+  addTile();
+  addTile();
+  renderGrid();
+};
+
+let slideRow = (row) => {
+  let arr = row.filter(v => v);
+  for (let i = 0; i < arr.length - 1; i++) {
+    if (arr[i] === arr[i + 1]) {
+      arr[i] *= 2;
+      gScore += arr[i];
+      let merged = (arr[i] === 2048);
+      arr[i + 1] = 0;
+      if (merged && !gWon) {
+        gWon = true;
+        setTimeout(() => alert("恭喜！你达到了 2048！可以继续玩。"), 100);
+      }
+    }
+  }
+  arr = arr.filter(v => v);
+  while (arr.length < 4) arr.push(0);
+  return arr;
+};
+
+let getRow = (g, r) => [g[r*4], g[r*4+1], g[r*4+2], g[r*4+3]];
+let setRow = (g, r, row) => { g[r*4]=row[0]; g[r*4+1]=row[1]; g[r*4+2]=row[2]; g[r*4+3]=row[3]; };
+let getCol = (g, c) => [g[c], g[c+4], g[c+8], g[c+12]];
+let setCol = (g, c, col) => { g[c]=col[0]; g[c+4]=col[1]; g[c+8]=col[2]; g[c+12]=col[3]; };
+
+let arraysEqual = (a, b) => {
+  for (let i = 0; i < 16; i++) { if (a[i] !== b[i]) return false; }
+  return true;
+};
+
+let move = (dir) => {
+  if (gOver) return;
+  let before = gGrid.slice();
+
+  if (dir === 0) {
+    for (let r = 0; r < 4; r++) setRow(gGrid, r, slideRow(getRow(gGrid, r)));
+  } else if (dir === 1) {
+    for (let r = 0; r < 4; r++) setRow(gGrid, r, slideRow(getRow(gGrid, r).reverse()).reverse());
+  } else if (dir === 2) {
+    for (let c = 0; c < 4; c++) setCol(gGrid, c, slideRow(getCol(gGrid, c)));
+  } else if (dir === 3) {
+    for (let c = 0; c < 4; c++) setCol(gGrid, c, slideRow(getCol(gGrid, c).reverse()).reverse());
+  }
+
+  if (!arraysEqual(before, gGrid)) {
+    addTile();
+    renderGrid();
+    checkGameOver();
+  }
+};
+
+let checkGameOver = () => {
+  if (gGrid.includes(0)) return;
+  for (let r = 0; r < 4; r++) {
+    for (let c = 0; c < 3; c++) {
+      if (gGrid[r * 4 + c] === gGrid[r * 4 + c + 1]) return;
+    }
+  }
+  for (let c = 0; c < 4; c++) {
+    for (let r = 0; r < 3; r++) {
+      if (gGrid[r * 4 + c] === gGrid[(r + 1) * 4 + c]) return;
+    }
+  }
+  gOver = true;
+  if (!gWon) {
+    setTimeout(() => alert("游戏结束！得分：" + gScore), 100);
+  }
+};
+
+document.addEventListener("keydown", (e) => {
+  let map = { ArrowLeft: 0, ArrowRight: 1, ArrowUp: 2, ArrowDown: 3 };
+  if (e.key in map) {
+    e.preventDefault();
+    move(map[e.key]);
+  }
+});
+
+let touchStartX = 0, touchStartY = 0;
+document.addEventListener("touchstart", (e) => {
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+}, { passive: true });
+
+document.addEventListener("touchend", (e) => {
+  let dx = e.changedTouches[0].clientX - touchStartX;
+  let dy = e.changedTouches[0].clientY - touchStartY;
+  if (Math.abs(dx) < 20 && Math.abs(dy) < 20) return;
+
+  if (Math.abs(dx) > Math.abs(dy)) {
+    move(dx > 0 ? 1 : 0);
+  } else {
+    move(dy > 0 ? 3 : 2);
+  }
+});
+
+document.getElementById("g2048-restart").onclick = initGame;
+
+initGame();
   </script>
 </body>
 </html>
