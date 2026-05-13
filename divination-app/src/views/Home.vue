@@ -40,6 +40,10 @@
           📝 问题模板
         </button>
       </div>
+
+      <div class="disclaimer">
+        <p>温馨提示：本应用仅供娱乐，请相信科学、拒绝迷信。作者尚在学习前端开发，卦象结果由随机算法生成，切勿当真。</p>
+      </div>
     </main>
 
     <!-- 问题输入弹窗 -->
@@ -377,5 +381,21 @@ export default {
 
 .primary-btn:hover {
   background: #5a67d8;
+}
+
+.disclaimer {
+  margin-top: 1.5rem;
+  padding: 0.75rem 1rem;
+  background: #f5f5f5;
+  border-radius: 10px;
+  text-align: center;
+  border-left: 3px solid #ccc;
+}
+
+.disclaimer p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #999;
+  line-height: 1.6;
 }
 </style>
