@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>这是我的主页</title>
+  <style>
+    :root {
+      --bg: #1a1a2e;
+      --card-bg: #16213e;
+      --text: #eee;
+      --accent: #e94560;
+      --link: #88c0d0;
+      --h2-color: #0f3460;
+      --h2-bg: #f5f5f5;
+      --radius: 8px;
+    }
+
+    body.light {
+      --bg: #f8f8f8;
+      --card-bg: #fff;
+      --text: #333;
+      --accent: #c0392b;
+      --link: #2471a3;
+      --h2-color: #2c3e50;
+      --h2-bg: #ecf0f1;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: "Microsoft YaHei", sans-serif;
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+    }
+    h1 {
+      color: var(--accent);
+    }
+    h2 {
+      color: var(--h2-color);
+      background-color: var(--h2-bg);
+      padding: 8px 12px;
+      border-left: 4px solid var(--accent);
+    }
+    a {
+      color: var(--link);
+    }
+
+    .card-box {
+      display: flex;
+      gap: 16px;
+    }
+    .card {
+      background-color: var(--card-bg);
+      padding: 16px;
+      border-radius: var(--radius);
+      flex: 1;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+    .card h3 {
+      margin-top: 0;
+      color: var(--accent);
+    }
+
+    img {
+      border-radius: var(--radius);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      display: block;
+      margin: 0 auto;
+    }
+
+    button {
+      background-color: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 10px 24px;
+      border-radius: var(--radius);
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.2s, transform 0.1s;
+    }
+    button:hover {
+      background-color: #c12e4a;
+    }
+    button:active {
+      transform: scale(0.96);
+    }
+
+    #msg {
+      margin-top: 12px;
+      font-style: italic;
+      color: var(--link);
+    }
+
+    blockquote {
+      border-left: 4px solid var(--accent);
+      margin: 0;
+      padding: 16px 20px;
+      background-color: var(--card-bg);
+      border-radius: var(--radius);
+      font-style: italic;
+      line-height: 1.8;
+    }
+
+    #clock {
+      text-align: center;
+      font-size: 28px;
+      margin: 0 0 32px 0;
+      color: var(--text);
+      opacity: 0.7;
+    }
+
+    @media (max-width: 640px) {
+      body {
+        max-width: 100%;
+        margin: 20px auto;
+        padding: 16px;
+      }
+      .card-box {
+        flex-direction: column;
+      }
+      img {
+        width: 100%;
+      }
+      h1 {
+        font-size: 24px;
+      }
+    }
+
+    /* ===== CSS 动画 ===== */
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50%      { transform: scale(1.04); }
+    }
+
+    h2 {
+      animation: fadeUp 0.6s ease backwards;
+    }
+    h2:nth-child(2) { animation-delay: 0.1s; }
+
+    .card {
+      animation: fadeUp 0.5s ease backwards;
+    }
+    .card:nth-child(1) { animation-delay: 0.15s; }
+    .card:nth-child(2) { animation-delay: 0.25s; }
+    .card:nth-child(3) { animation-delay: 0.35s; }
+
+    #clock {
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    blockquote {
+      animation: fadeUp 0.5s ease backwards;
+      animation-delay: 0.2s;
+    }
+
+    img {
+      animation: fadeUp 0.6s ease backwards;
+      animation-delay: 0.3s;
+    }
+  </style>
+</head>
+<body>
+  <p id="clock"></p>
+  <h1>你好，我是being</h1>
+  <h2>我喜欢的东西</h2>
+  <p>历史哲学小说</p>
+  <ul>
+    <li>读历史</li>
+    <li>思考哲学</li>
+    <li>看推理和科幻小说</li>
+  </ul>
+  <h2>我的兴趣卡片</h2>
+  <div class="card-box">
+    <div class="card">
+      <h3>历史</h3>
+      <p>读历史的乐趣在于发现因果。</p>
+    </div>
+    <div class="card">
+      <h3>哲学</h3>
+      <p>喜欢琢磨根本问题。</p>
+    </div>
+    <div class="card">
+      <h3>小说</h3>
+      <p>推理、科幻、严肃文学都不拒。</p>
+    </div>
+  </div>
+
+  <p>我常去的网站：<a href="https://www.zhihu.com" target="_blank">知乎</a></p>
+
+  <hr>
+
+  <h2>想法随笔</h2>
+  <blockquote id="note" contenteditable="true">
+    在这里写点东西…直接在浏览器里点这段文字就能改。
+  </blockquote>
+
+  <hr>
+
+  <h2>学习进度</h2>
+  <div class="card-box">
+    <div class="card">
+      <h3>HTML</h3>
+      <p>h1~h6、p、a、img、ul/li、button、div</p>
+    </div>
+    <div class="card">
+      <h3>CSS</h3>
+      <p>颜色、字体、flexbox、变量、过渡、伪类、媒体查询、@keyframes 动画</p>
+    </div>
+    <div class="card">
+      <h3>JavaScript</h3>
+      <p>事件、数组、随机数、if/else、classList、计时器、localStorage、fetch API</p>
+    </div>
+  </div>
+<hr>
+  <h2>我喜欢的照片</h2>
+  <img src="images/屏幕截图 2026-01-30 211531.png" alt="描述" width="400">
+
+  <hr>
+
+  <h2>一个小互动</h2>
+  <button id="myBtn">点我试试</button>
+  <p id="msg"></p>
+
+  <button id="themeBtn">切换浅色模式</button>
+
+  <script>
+    let clock = document.getElementById("clock");
+
+    function updateTime() {
+      let now = new Date();
+      let h = String(now.getHours()).padStart(2, "0");
+      let m = String(now.getMinutes()).padStart(2, "0");
+      let s = String(now.getSeconds()).padStart(2, "0");
+      clock.textContent = h + ":" + m + ":" + s;
+    }
+    updateTime();
+    setInterval(updateTime, 1000);
+
+    // ===== localStorage：随笔自动保存 =====
+    let note = document.getElementById("note");
+
+    let savedNote = localStorage.getItem("savedNote");
+    if (savedNote) {
+      note.textContent = savedNote;
+    }
+
+    note.addEventListener("input", function () {
+      localStorage.setItem("savedNote", note.textContent);
+    });
+
+    let btn = document.getElementById("myBtn");
+    let msg = document.getElementById("msg");
+
+    // 备用名言（API 挂了也不慌）
+    let fallbackQuotes = [
+      "人不能两次踏入同一条河流。——赫拉克利特",
+      "我思故我在。——笛卡尔",
+      "知之为知之，不知为不知，是知也。——《论语》",
+      "存在先于本质。——萨特",
+      "凡是过往，皆为序章。——莎士比亚"
+    ];
+
+    btn.onclick = function () {
+      msg.textContent = "加载中...";
+
+      fetch("https://api.quotable.io/random")
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (data) {
+          msg.textContent = data.content + " ——" + data.author;
+        })
+        .catch(function () {
+          // API 挂了，用备用名言
+          let n = Math.floor(Math.random() * fallbackQuotes.length);
+          msg.textContent = fallbackQuotes[n];
+        });
+    };
+
+    // ===== localStorage：记住主题偏好 =====
+    let themeBtn = document.getElementById("themeBtn");
+
+    let savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "light") {
+      document.body.classList.add("light");
+      themeBtn.textContent = "切换深色模式";
+    }
+
+    themeBtn.onclick = function () {
+      document.body.classList.toggle("light");
+      if (document.body.classList.contains("light")) {
+        themeBtn.textContent = "切换深色模式";
+        localStorage.setItem("theme", "light");
+      } else {
+        themeBtn.textContent = "切换浅色模式";
+        localStorage.setItem("theme", "dark");
+      }
+    };
+  </script>
+</body>
+</html>
