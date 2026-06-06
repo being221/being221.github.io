@@ -1,0 +1,20 @@
+[
+  {
+    "id": "be0a4049-4a0c-43bd-9607-adb1c0c7892f",
+    "type": "income",
+    "amount": 5000,
+    "category": "现金",
+    "note": "已有的",
+    "date": "2026-06-06",
+    "createdAt": "2026-06-06T12:55:19.989Z"
+  },
+  {
+    "id": "b26f4a46-f98c-4550-9cba-d41ffb39cbc7",
+    "type": "expense",
+    "amount": 1,
+    "category": "现金",
+    "note": "水",
+    "date": "2026-06-06",
+    "createdAt": "2026-06-06T13:08:25.861Z"
+  }
+]
