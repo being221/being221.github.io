@@ -130,18 +130,18 @@ msg.textContent = nextFallback();
       let replyHTML = "";
       if (m.reply) {
         let replyTime = m.reply_time ? new Date(m.reply_time).toLocaleString("zh-CN") : "";
-        replyHTML = `<div style="margin-top:8px;padding:8px 12px;background:var(--bg);border-radius:6px;border-left:3px solid var(--accent)">
+        replyHTML = `<div class="reply-section">
           <strong style="color:var(--accent)">此泽 回复：</strong>
-          <small style="opacity:0.5">${replyTime}</small>
-          <p style="margin:4px 0 0;font-size:14px">${m.reply}</p>
+          <small>${replyTime}</small>
+          <p>${m.reply}</p>
         </div>`;
       }
 
       // 管理员显示设备标识 + 回复按钮
       let adminHTML = "";
       if (isAdmin()) {
-        adminHTML = `<small style="opacity:0.4">｜设备：${m.device_id.slice(0, 8)}</small>
-          <button class="replyBtn" data-id="${m.id}" style="float:right;font-size:12px;padding:4px 12px;border:1px solid var(--accent);color:var(--accent);background:none;border-radius:14px;cursor:pointer">回复</button>`;
+        adminHTML = `<small style="opacity:0.35">${m.device_id.slice(0, 6)}</small>
+          <button class="replyBtn" data-id="${m.id}" style="float:right;font-size:11px;padding:2px 10px;border:1px solid var(--accent);color:var(--accent);background:none;border-radius:14px;cursor:pointer">回复</button>`;
       }
 
       card.innerHTML = `
