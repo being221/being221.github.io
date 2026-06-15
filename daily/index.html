@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>每日一题 · DailyQuestion</title>
+<meta name="description" content="每天一道开放式思考题。写下你的答案，明天看到别人的回答。">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+  background: #0f172a; color: #e2e8f0; min-height: 100vh;
+}
+a { color: inherit; text-decoration: none; }
+
+.navbar {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(15,23,42,0.9); backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,0.06); padding: 0 20px;
+}
+.nav-inner {
+  max-width: 720px; margin: 0 auto; display: flex;
+  align-items: center; justify-content: space-between; height: 56px;
+}
+.nav-brand { font-size: 18px; font-weight: 700; }
+.nav-actions { display: flex; align-items: center; gap: 12px; }
+.nav-actions a { font-size: 13px; opacity: 0.6; transition: opacity 0.2s; }
+.nav-actions a:hover { opacity: 1; }
+
+.container { max-width: 720px; margin: 0 auto; padding: 32px 20px 60px; }
+
+/* 问题卡片 */
+.question-card {
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px; padding: 40px 32px; text-align: center; margin-bottom: 32px;
+}
+.question-date { font-size: 12px; color: #64748b; margin-bottom: 16px; }
+.question-text { font-size: 24px; line-height: 1.6; font-weight: 600; }
+
+/* 回答输入 */
+.answer-form {
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px; padding: 20px; margin-bottom: 32px;
+}
+.answer-form textarea {
+  width: 100%; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px; padding: 14px; color: #e2e8f0; font-size: 15px;
+  font-family: inherit; resize: vertical; min-height: 100px; margin-bottom: 12px;
+}
+.answer-form textarea:focus { outline: none; border-color: #60a5fa; }
+.answer-form .form-row { display: flex; gap: 8px; align-items: center; }
+.answer-form input {
+  flex: 1; padding: 8px 14px; border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04);
+  color: #e2e8f0; font-size: 13px; font-family: inherit; max-width: 160px;
+}
+.answer-form input:focus { outline: none; border-color: #60a5fa; }
+.answer-form button {
+  padding: 10px 28px; border-radius: 10px; border: none;
+  background: #3b82f6; color: #fff; font-size: 14px; cursor: pointer;
+  font-family: inherit; transition: background 0.2s; font-weight: 600;
+}
+.answer-form button:hover { background: #2563eb; }
+.answer-form button:disabled { opacity: 0.4; cursor: default; }
+
+/* 回答列表 */
+.answers-header { font-size: 15px; color: #94a3b8; margin-bottom: 16px; }
+.answer-card {
+  border-bottom: 1px solid rgba(255,255,255,0.05); padding: 16px 0;
+}
+.answer-card:last-child { border-bottom: none; }
+.answer-text { font-size: 15px; line-height: 1.7; margin-bottom: 8px; }
+.answer-meta { display: flex; align-items: center; gap: 12px; font-size: 12px; color: #64748b; }
+.answer-meta .like-btn {
+  background: none; border: none; color: #64748b; cursor: pointer;
+  font-size: 13px; padding: 2px 8px; transition: color 0.15s; font-family: inherit;
+}
+.answer-meta .like-btn:hover { color: #f87171; }
+.answer-meta .like-btn.liked { color: #f87171; }
+
+/* 空态 */
+.empty-state { text-align: center; padding: 40px 20px; color: #475569; }
+
+/* Toast */
+.toast {
+  position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 600;
+  padding: 10px 24px; border-radius: 20px; background: #1e293b; color: #fff;
+  font-size: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  animation: fadeIn 0.3s ease; pointer-events: none;
+}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+/* 管理按钮 */
+.admin-actions { margin-top: 24px; }
+.admin-actions button {
+  padding: 6px 14px; margin-right: 6px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.15);
+  background: transparent; color: #94a3b8; font-size: 12px; cursor: pointer;
+  font-family: inherit; transition: all 0.15s;
+}
+.admin-actions button:hover { border-color: rgba(255,255,255,0.4); color: #fff; }
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="https://being221.github.io" class="nav-brand">💭 每日一题</a>
+    <div class="nav-actions">
+      <a href="history.html">📅 历史</a>
+      <a href="https://being221.github.io">← 主页</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="question-card" id="questionCard">
+    <p class="question-date" id="questionDate"></p>
+    <h1 class="question-text" id="questionText">加载中...</h1>
+  </div>
+
+  <div class="answer-form">
+    <textarea id="answerText" placeholder="写下你的答案..."></textarea>
+    <div class="form-row">
+      <input id="answerAuthor" placeholder="署名（可选，留空即匿名）">
+      <button id="submitAnswer">提交回答</button>
+    </div>
+  </div>
+
+  <div class="answers-header" id="answersHeader"></div>
+  <div id="answersList"></div>
+
+  <div class="admin-actions" id="adminActions" style="display:none"></div>
+</div>
+
+<div id="toast" class="toast" style="display:none"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+(function() {
+  var sb = window.supabase.createClient(
+    "https://codndkieecddabbqhdtg.supabase.co",
+    "sb_publishable_wgX79e2z2kgcWKkhmDZIuw_Pd3FCj8E"
+  );
+
+  var deviceId = localStorage.getItem("sb_device_id");
+  if (!deviceId) { deviceId = crypto.randomUUID(); localStorage.setItem("sb_device_id", deviceId); }
+  var isAdmin = function() { return localStorage.getItem("sb_admin") === "true"; };
+  var today = getToday();
+  var todayQuestion = null;
+  var myLikes = JSON.parse(localStorage.getItem("dq_likes") || "[]");
+
+  // ===== 获取或分配今天的问题 =====
+  async function getTodayQuestion() {
+    // 查今天是否已分配
+    var res = await sb.from("daily_question").select("question_id").eq("date", today).maybeSingle();
+    if (res.data) {
+      var q = await sb.from("questions").select("*").eq("id", res.data.question_id).single();
+      return q.data;
+    }
+    // 未分配：选一道题
+    var pool = await sb.from("questions").select("*").eq("approved", true).order("created_at", { ascending: false }).limit(100);
+    if (!pool.data || pool.data.length === 0) return null;
+    // 优先选未用过的
+    var unused = pool.data.filter(function(q) { return !q.used; });
+    var pick = unused.length > 0 ? unused[Math.floor(Math.random() * unused.length)] : pool.data[Math.floor(Math.random() * pool.data.length)];
+    // 标记已用
+    await sb.from("questions").update({ used: true }).eq("id", pick.id);
+    await sb.from("daily_question").insert({ question_id: pick.id, date: today });
+    return pick;
+  }
+
+  async function loadPage() {
+    todayQuestion = await getTodayQuestion();
+    if (!todayQuestion) {
+      document.getElementById("questionText").textContent = "今天还没有问题 😢";
+      return;
+    }
+    document.getElementById("questionDate").textContent = today + " · 第 " + todayQuestion.id + " 题";
+    document.getElementById("questionText").textContent = todayQuestion.text;
+
+    // 加载回答
+    var ans = await sb.from("answers").select("*").eq("question_id", todayQuestion.id).order("likes", { ascending: false }).order("created_at", { ascending: true });
+    var answers = ans.data || [];
+    var header = document.getElementById("answersHeader");
+    header.textContent = answers.length + " 个回答";
+
+    var list = document.getElementById("answersList");
+    if (answers.length === 0) {
+      list.innerHTML = '<div class="empty-state"><p>还没有回答，来做第一个回答的人 ✍️</p></div>';
+    } else {
+      list.innerHTML = answers.map(function(a) {
+        var liked = myLikes.indexOf(a.id) >= 0;
+        return '<div class="answer-card">' +
+          '<p class="answer-text">' + esc(a.text) + '</p>' +
+          '<div class="answer-meta">' +
+            '<span>' + esc(a.author || "匿名") + '</span>' +
+            '<span>' + formatTime(a.created_at) + '</span>' +
+            '<button class="like-btn' + (liked ? " liked" : "") + '" data-like="' + a.id + '">' +
+              (liked ? "❤️" : "🤍") + ' ' + (a.likes || 0) +
+            '</button>' +
+            (isAdmin() ? '<button style="background:none;border:none;color:#f87171;cursor:pointer;font-size:11px" data-del="' + a.id + '">删除</button>' : '') +
+          '</div>' +
+        '</div>';
+      }).join("");
+    }
+
+    // 管理员
+    if (isAdmin()) {
+      document.getElementById("adminActions").style.display = "block";
+      document.getElementById("adminActions").innerHTML =
+        '<button id="changeQuestion">🔄 换一题</button>' +
+        '<button id="approveQuestions">📋 审核问题</button>';
+    }
+  }
+
+  // ===== 提交回答 =====
+  document.getElementById("submitAnswer").addEventListener("click", async function() {
+    var text = document.getElementById("answerText").value.trim();
+    var author = document.getElementById("answerAuthor").value.trim();
+    if (!text) { toastMsg("请输入回答内容"); return; }
+
+    var res = await sb.from("answers").insert({
+      question_id: todayQuestion.id, text: text, author: author || null, device_id: deviceId
+    });
+    if (res.error) { toastMsg("提交失败: " + res.error.message); return; }
+    document.getElementById("answerText").value = "";
+    document.getElementById("answerAuthor").value = "";
+    toastMsg("回答已提交 ✨");
+    loadPage();
+  });
+
+  // ===== 点赞 =====
+  document.getElementById("answersList").addEventListener("click", async function(e) {
+    var btn = e.target.closest("[data-like]");
+    if (!btn) return;
+    var id = parseInt(btn.dataset.like);
+    var idx = myLikes.indexOf(id);
+    if (idx >= 0) return; // 已点赞
+    myLikes.push(id);
+    localStorage.setItem("dq_likes", JSON.stringify(myLikes));
+    await sb.rpc("increment_likes", { answer_id: id }); // fallback: direct update
+    // direct update
+    var cur = await sb.from("answers").select("likes").eq("id", id).single();
+    var newLikes = (cur.data?.likes || 0) + 1;
+    await sb.from("answers").update({ likes: newLikes }).eq("id", id);
+    loadPage();
+  });
+
+  // ===== 删除回答（管理员） =====
+  document.getElementById("answersList").addEventListener("click", async function(e) {
+    var btn = e.target.closest("[data-del]");
+    if (!btn) return;
+    if (!confirm("删除这条回答？")) return;
+    var id = parseInt(btn.dataset.del);
+    await sb.from("answers").delete().eq("id", id);
+    loadPage();
+    toastMsg("已删除");
+  });
+
+  // ===== 管理员：换题 =====
+  document.getElementById("adminActions").addEventListener("click", async function(e) {
+    if (e.target.id === "changeQuestion") {
+      var pool = await sb.from("questions").select("*").eq("approved", true).neq("id", todayQuestion.id).order("created_at", { ascending: false }).limit(50);
+      var pick = pool.data[Math.floor(Math.random() * pool.data.length)];
+      if (pick) {
+        await sb.from("daily_question").delete().eq("date", today);
+        await sb.from("daily_question").insert({ question_id: pick.id, date: today });
+        await sb.from("questions").update({ used: true }).eq("id", pick.id);
+        toastMsg("问题已更换 🔄");
+        loadPage();
+      }
+    }
+  });
+
+  // ===== 工具 =====
+  function getToday() { var d = new Date(); return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0"); }
+  function esc(s) { var d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
+  function formatTime(ts) { var d = new Date(ts); return d.getHours().toString().padStart(2,"0") + ":" + d.getMinutes().toString().padStart(2,"0"); }
+  function toastMsg(msg) {
+    var el = document.getElementById("toast");
+    el.textContent = msg; el.style.display = "block";
+    setTimeout(function() { el.style.display = "none"; }, 2500);
+  }
+
+  loadPage();
+})();
+</script>
+</body>
+</html>
