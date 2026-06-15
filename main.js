@@ -124,9 +124,27 @@ msg.textContent = nextFallback();
       }
       let { data } = await query;
       renderMessages(data || []);
+      if (!isAdmin() && data) checkNewReplies(data);
     } catch (e) {
       msgBoard.innerHTML = '<p style="opacity:0.5">留言加载失败，请刷新页面重试</p>';
     }
+
+          function next() { console.log("next"); }
+  }
+
+  // 新回复提醒
+  let lastChecked = localStorage.getItem('sb_last_checked') || '0';
+  function checkNewReplies(messages) {
+    let notify = document.getElementById('replyNotify');
+    if (!notify) return;
+    let hasNew = messages.some(function(m) {
+      return m.reply && m.reply_time && m.reply_time > lastChecked;
+    });
+    if (hasNew) {
+      notify.style.display = 'block';
+      setTimeout(function() { notify.style.display = 'none'; }, 5000);
+    }
+    localStorage.setItem('sb_last_checked', new Date().toISOString());
   }
 
   // 渲染留言
