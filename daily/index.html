@@ -6,6 +6,20 @@
 <title>每日一题 · DailyQuestion</title>
 <meta name="description" content="每天一道开放式思考题。写下你的答案，明天看到别人的回答。">
 <style>
+/* 帮助弹窗 */
+.hp-btn{position:fixed;top:16px;right:16px;z-index:9999;width:32px;height:32px;border-radius:50%;border:1px solid rgba(255,255,255,0.2);background:rgba(0,0,0,0.6);color:#fff;font-size:16px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+.hp-overlay{display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:20px}
+.hp-overlay.open{display:flex}
+.hp-panel{background:#1a1a2e;border-radius:12px;max-width:480px;width:100%;max-height:80vh;overflow-y:auto;box-shadow:0 12px 40px rgba(0,0,0,0.5);color:#e0e0e0;position:relative;animation:modalIn 0.25s ease}
+@keyframes modalIn{from{opacity:0;transform:translateY(24px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+.hp-close{position:absolute;top:12px;right:16px;width:28px;height:28px;border-radius:50%;border:none;background:rgba(255,255,255,0.1);color:#aaa;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.hp-close:hover{background:rgba(255,255,255,0.2);color:#fff}
+.hp-body{padding:28px}
+.hp-body h3{font-size:20px;margin-bottom:14px;color:#fff}
+.hp-body h4{font-size:13px;color:#60a5fa;margin:14px 0 6px}
+.hp-body p,.hp-body li{font-size:13px;color:#b0b0b0;line-height:1.7}
+.hp-body ul{padding-left:16px;margin:4px 0 8px}
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 body {
   font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
@@ -106,7 +120,8 @@ a { color: inherit; text-decoration: none; }
     <a href="https://being221.github.io" class="nav-brand">💭 每日一题</a>
     <div class="nav-actions">
       <a href="history.html">📅 历史</a>
-      <a href="https://being221.github.io">← 主页</a>
+      <button class="hp-btn" id="hp-btn" aria-label="帮助">?</button>
+        <a href="https://being221.github.io">← 主页</a>
     </div>
   </div>
 </nav>
@@ -284,5 +299,30 @@ a { color: inherit; text-decoration: none; }
   loadPage();
 })();
 </script>
-</body>
+<button class="hp-btn" id="hp-btn" aria-label="帮助">?</button>
+<div class="hp-overlay" id="hp-overlay">
+<div class="hp-panel">
+<button class="hp-close" id="hp-close">&times;</button>
+<div class="hp-body">
+<h3>💭 每日一题 · 使用说明</h3>
+<h4>📅 每日机制</h4><p>每天自动从题库中随机抽一道开放式问题。所有人都看到同一道题。次日零点自动换新题。</p>
+<h4>✍️ 回答</h4><p>在下方的文本框写回答，可留署名也可匿名。提交后你的答案会出现在该题的回答列表中。</p>
+<h4>❤️ 点赞</h4><p>给任何回答点赞（每人每条限一次）。点赞多的回答会自动排在上面。</p>
+<h4>📅 历史</h4><p>点击右上角「历史」可以按日期翻阅过去的问题和所有回答。</p>
+<h4>🔐 隐私</h4><p>回答者的身份通过设备 ID 匿名标识（不显示真实身份）。只有管理员可以删除不当回答。</p>
+<h4>👑 管理员</h4><p>在主页 F12 Console 输入 localStorage.setItem("sb_admin","true")，刷新后可删除回答和人工换题。</p>
+</div>
+</div></div>
+<script>
+(function(){
+ var b=document.getElementById("hp-btn"),o=document.getElementById("hp-overlay"),c=document.getElementById("hp-close");
+ if(!b||!o)return;
+ b.onclick=function(){o.classList.add("open")};
+ c.onclick=function(){o.classList.remove("open")};
+ o.onclick=function(e){if(e.target===o)o.classList.remove("open")};
+})();
+</script>
+
+
+<script></body>
 </html>
