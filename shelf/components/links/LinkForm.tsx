@@ -2,9 +2,9 @@
 
 import { useState, useRef } from "react";
 import { Plus, Loader2 } from "lucide-react";
-import { addLink } from "@/app/actions/links";
+import { addLink } from "@/lib/storage";
 
-export function LinkForm() {
+export function LinkForm({ onAdded }: { onAdded: () => void }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [url, setUrl] = useState("");
@@ -16,16 +16,13 @@ export function LinkForm() {
     if (!url.trim()) return;
 
     setLoading(true);
-    const tagList = tags
-      .split(",")
-      .map((t) => t.trim())
-      .filter(Boolean);
-
-    await addLink({ url: url.trim(), tags: tagList });
+    const tagList = tags.split(",").map((t) => t.trim()).filter(Boolean);
+    addLink({ url: url.trim(), tags: tagList });
     setUrl("");
     setTags("");
     setLoading(false);
     setOpen(false);
+    onAdded();
   };
 
   return (
@@ -60,18 +57,10 @@ export function LinkForm() {
             className="w-full bg-zinc-800 border border-zinc-700 rounded-md px-4 py-2 text-sm focus:outline-none focus:border-blue-500 text-zinc-200"
           />
           <div className="flex gap-2 justify-end">
-            <button
-              type="button"
-              onClick={() => setOpen(false)}
-              className="px-4 py-1.5 text-sm text-zinc-400 hover:text-zinc-200 bg-zinc-800 rounded-md"
-            >
+            <button type="button" onClick={() => setOpen(false)} className="px-4 py-1.5 text-sm text-zinc-400 hover:text-zinc-200 bg-zinc-800 rounded-md">
               取消
             </button>
-            <button
-              type="submit"
-              disabled={loading}
-              className="flex items-center gap-1.5 px-4 py-1.5 text-sm bg-blue-600 hover:bg-blue-500 disabled:opacity-50 rounded-md text-white font-medium"
-            >
+            <button type="submit" disabled={loading} className="flex items-center gap-1.5 px-4 py-1.5 text-sm bg-blue-600 hover:bg-blue-500 disabled:opacity-50 rounded-md text-white font-medium">
               {loading && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
               收藏
             </button>

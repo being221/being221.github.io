@@ -3,9 +3,10 @@ import type { Link } from "@/types";
 
 interface LinkGridProps {
   links: Link[];
+  onDelete: () => void;
 }
 
-export function LinkGrid({ links }: LinkGridProps) {
+export function LinkGrid({ links, onDelete }: LinkGridProps) {
   if (links.length === 0) {
     return (
       <div className="text-center py-16 text-zinc-500">
@@ -19,7 +20,7 @@ export function LinkGrid({ links }: LinkGridProps) {
   return (
     <div className="space-y-3">
       {links.map((link) => (
-        <LinkCard key={link.id} link={link} />
+        <LinkCard key={link.id} link={link} onDelete={onDelete} />
       ))}
     </div>
   );
