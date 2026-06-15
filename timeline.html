@@ -108,8 +108,8 @@
       border-radius: 4px; border-left: 3px solid #c4b998;
       cursor: pointer; transition: box-shadow 0.2s, border-color 0.2s;
     }
-    .event-card:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
-    .event-card.expanded { border-left-color: #5b8c5a; box-shadow: 0 2px 16px rgba(0,0,0,0.08); }
+    .event-card:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.06); border-left-color: #5b8c5a; }
+    .event-card.highlight { border-left-color: #5b8c5a; box-shadow: 0 0 0 2px #5b8c5a; }
 
     /* 时间线圆点 */
     .event-card::before {
@@ -147,28 +147,88 @@
       margin-top: 8px; font-size: 14px; color: #5c4a3a; line-height: 1.6;
     }
 
-    /* ===== 展开详情 ===== */
-    .event-detail {
-      display: none; margin-top: 12px; padding-top: 12px;
-      border-top: 1px dashed #d4c5a0;
-      font-size: 14px; color: #5c4a3a; line-height: 1.8;
+    /* ===== 详情弹窗 ===== */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,0.55); backdrop-filter: blur(4px);
+      align-items: center; justify-content: center; padding: 20px;
     }
-    .event-card.expanded .event-detail { display: block; }
-
-    .event-detail p { margin-bottom: 10px; }
-
-    .causal-links { margin-top: 10px; }
-    .causal-links h5 {
-      font-size: 12px; color: #8b7355; margin-bottom: 6px;
+    .modal-overlay.open { display: flex; }
+    .modal-panel {
+      background: #faf7f0; border-radius: 8px; max-width: 700px; width: 100%;
+      max-height: 85vh; overflow-y: auto; box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+      animation: modalIn 0.25s ease;
+      position: relative;
     }
-    .causal-link {
-      display: inline-block; margin: 2px 6px 2px 0; padding: 3px 10px;
-      font-size: 12px; color: #5b8c5a; text-decoration: none;
+    @keyframes modalIn {
+      from { opacity: 0; transform: translateY(24px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .modal-close {
+      position: absolute; top: 12px; right: 16px; z-index: 10;
+      width: 32px; height: 32px; border-radius: 50%; border: none;
+      background: #e8e0d0; color: #5c4a3a; font-size: 18px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s;
+    }
+    .modal-close:hover { background: #d4c5a0; }
+    .modal-header {
+      padding: 28px 28px 0;
+      border-left: 4px solid #5b8c5a; margin: 24px 28px 0;
+    }
+    .modal-header .modal-year {
+      font-size: 13px; color: #8b7355; font-weight: bold;
+    }
+    .modal-header .modal-title {
+      font-size: 22px; color: #3d3226; margin: 4px 0 8px;
+    }
+    .modal-body {
+      padding: 16px 28px 28px;
+      font-size: 15px; color: #5c4a3a; line-height: 1.9;
+    }
+    .modal-body p { margin-bottom: 12px; }
+    .modal-nav {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0 28px 20px;
+    }
+    .modal-nav button {
+      padding: 8px 18px; font-size: 13px; cursor: pointer;
+      border: 1px solid #c4b998; border-radius: 4px;
+      background: #f5f0e8; color: #3d3226; font-family: inherit;
+      transition: background 0.15s;
+    }
+    .modal-nav button:hover { background: #e8e0d0; }
+    .modal-nav button:disabled { opacity: 0.3; cursor: default; }
+    .modal-causal { margin-top: 16px; padding-top: 14px; border-top: 1px dashed #d4c5a0; }
+    .modal-causal h5 { font-size: 12px; color: #8b7355; margin-bottom: 8px; }
+    .modal-causal .causal-link {
+      display: inline-block; margin: 2px 6px 2px 0; padding: 4px 12px;
+      font-size: 13px; color: #5b8c5a; text-decoration: none;
       background: #e8e8d8; border-radius: 10px; cursor: pointer;
+      transition: background 0.15s;
     }
-    .causal-link:hover { background: #d4d4c0; }
-    .causal-link.cause { background: #e8e0d0; }
-    .causal-link.effect { background: #d8e8d8; }
+    .modal-causal .causal-link:hover { background: #d4d4c0; }
+    .modal-causal .causal-link.cause { background: #e8e0d0; }
+    .modal-causal .causal-link.effect { background: #d8e8d8; }
+
+    /* 暗色模式弹窗 */
+    @media (prefers-color-scheme: dark) {
+      .modal-overlay { background: rgba(0,0,0,0.7); }
+      .modal-panel { background: #3d3226; }
+      .modal-close { background: #2a2418; color: #b8a88a; }
+      .modal-close:hover { background: #5c4a3a; }
+      .modal-header { border-left-color: #7ab87a; }
+      .modal-header .modal-year { color: #a89878; }
+      .modal-header .modal-title { color: #d4c5a0; }
+      .modal-body { color: #b8a88a; }
+      .modal-nav button { background: #2a2418; border-color: #5c4a3a; color: #d4c5a0; }
+      .modal-nav button:hover { background: #4a3a2a; }
+      .modal-causal { border-top-color: #5c4a3a; }
+      .modal-causal .causal-link { background: #2a2418; color: #7ab87a; }
+      .modal-causal .causal-link:hover { background: #4a3a2a; }
+      .modal-causal .causal-link.cause { background: #3d3226; }
+      .modal-causal .causal-link.effect { background: #2a3a28; }
+    }
 
     /* ===== 无结果 ===== */
     .timeline-empty {
@@ -215,14 +275,12 @@
       .apply-btn { background: #5b8c5a; }
       .event-card { background: #3d3226; border-left-color: #5c4a3a; }
       .event-card:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.2); }
-      .event-card.expanded { border-left-color: #7ab87a; }
+      .event-card.highlight { border-left-color: #7ab87a; box-shadow: 0 0 0 2px #7ab87a; }
       .event-card::before { border-color: #3d3226; }
       .event-year { color: #a89878; }
       .event-title { color: #d4c5a0; }
       .event-meta span { background: #2a2418; color: #b8a88a; }
       .event-summary { color: #b8a88a; }
-      .event-detail { color: #b8a88a; border-top-color: #5c4a3a; }
-      .causal-link { background: #2a2418; }
       .timeline-empty { color: #7a6a5a; }
       .causal-path { stroke: #5c4a3a; }
     }
@@ -256,6 +314,22 @@
   <main id="timeline" class="timeline"></main>
 
   <svg id="causal-svg" class="causal-svg"></svg>
+
+  <!-- 事件详情弹窗 -->
+  <div class="modal-overlay" id="modal">
+    <div class="modal-panel" role="dialog" aria-modal="true" aria-label="事件详情">
+      <button class="modal-close" id="modal-close" aria-label="关闭">&times;</button>
+      <div class="modal-header">
+        <div class="modal-year" id="modal-year"></div>
+        <h2 class="modal-title" id="modal-title"></h2>
+        <div class="event-meta" id="modal-meta"></div>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+      <div class="modal-causal" id="modal-causes"></div>
+      <div class="modal-causal" id="modal-effects"></div>
+      <div class="modal-nav" id="modal-nav"></div>
+    </div>
+  </div>
 
   <script>
     // ===== 事件数据 =====
@@ -919,17 +993,30 @@
     let activeCountries = new Set(ALL_COUNTRIES);
     let activeCategories = new Set(ALL_CATEGORIES);
     let searchQuery = "";
-    let expandedId = null;
-
     // ===== DOM 引用 =====
-    const timelineEl = document.getElementById("timeline");
-    const searchInput = document.getElementById("search");
-    const filterBtn = document.getElementById("filter-btn");
-    const filterPanel = document.getElementById("filter-panel");
+    const timelineEl   = document.getElementById("timeline");
+    const searchInput  = document.getElementById("search");
+    const filterBtn    = document.getElementById("filter-btn");
+    const filterPanel  = document.getElementById("filter-panel");
     const applyFilterBtn = document.getElementById("apply-filter");
-    const countryGrid = document.getElementById("country-grid");
+    const countryGrid  = document.getElementById("country-grid");
     const categoryGrid = document.getElementById("category-grid");
-    const svgEl = document.getElementById("causal-svg");
+    const svgEl        = document.getElementById("causal-svg");
+
+    // 弹窗 DOM
+    const modal        = document.getElementById("modal");
+    const modalClose   = document.getElementById("modal-close");
+    const modalYear    = document.getElementById("modal-year");
+    const modalTitle   = document.getElementById("modal-title");
+    const modalMeta    = document.getElementById("modal-meta");
+    const modalBody    = document.getElementById("modal-body");
+    const modalCauses  = document.getElementById("modal-causes");
+    const modalEffects = document.getElementById("modal-effects");
+    const modalNav     = document.getElementById("modal-nav");
+
+    // 当前弹窗显示的事件 + 当前可见事件列表（用于前后翻页）
+    let modalEventId   = null;
+    let modalVisibleIds = [];
 
     // ===== 筛选逻辑 =====
     function getVisibleEvents() {
@@ -955,6 +1042,7 @@
     function renderTimeline() {
       var visible = getVisibleEvents();
       timelineEl.innerHTML = "";
+      modalVisibleIds = visible.map(function(e) { return e.id; });
 
       if (visible.length === 0) {
         timelineEl.innerHTML = '<div class="timeline-empty">没有匹配的事件</div>';
@@ -962,39 +1050,14 @@
         return;
       }
 
-      // 按年份排序
       visible.sort(function(a, b) { return a.year - b.year; });
 
       for (var i = 0; i < visible.length; i++) {
         var ev = visible[i];
         var card = document.createElement("div");
         card.className = "event-card cat-" + ev.category;
-        if (ev.id === expandedId) card.classList.add("expanded");
+        if (ev.id === modalEventId) card.classList.add("highlight");
         card.setAttribute("data-id", ev.id);
-
-        var causesHTML = "";
-        if (ev.causes.length > 0) {
-          causesHTML += '<div class="causal-links"><h5>前因</h5>';
-          for (var ci = 0; ci < ev.causes.length; ci++) {
-            var cause = EVENTS.find(function(e) { return e.id === ev.causes[ci]; });
-            if (cause) {
-              causesHTML += '<span class="causal-link cause" data-goto="' + cause.id + '">' + cause.title + '</span>';
-            }
-          }
-          causesHTML += '</div>';
-        }
-
-        var effectsHTML = "";
-        if (ev.effects.length > 0) {
-          effectsHTML += '<div class="causal-links"><h5>后果</h5>';
-          for (var ei = 0; ei < ev.effects.length; ei++) {
-            var effect = EVENTS.find(function(e) { return e.id === ev.effects[ei]; });
-            if (effect) {
-              effectsHTML += '<span class="causal-link effect" data-goto="' + effect.id + '">' + effect.title + '</span>';
-            }
-          }
-          effectsHTML += '</div>';
-        }
 
         card.innerHTML =
           '<div class="event-year">' + formatYear(ev.year) + '</div>' +
@@ -1003,46 +1066,12 @@
             '<span>' + ev.country + '</span>' +
             '<span>' + ev.category + '</span>' +
           '</div>' +
-          '<p class="event-summary">' + ev.summary + '</p>' +
-          '<div class="event-detail">' +
-            '<p>' + ev.detail + '</p>' +
-            causesHTML + effectsHTML +
-          '</div>';
+          '<p class="event-summary">' + ev.summary + '</p>';
 
         card.addEventListener("click", function(e) {
-          // 如果点击的是因果链接，跳转到对应事件
-          if (e.target.classList.contains("causal-link")) {
-            e.stopPropagation();
-            var gotoId = parseInt(e.target.getAttribute("data-goto"));
-            // 检查目标是否可见，如果不可见则清除筛选使其可见
-            var target = EVENTS.find(function(ev) { return ev.id === gotoId; });
-            if (target && (!activeCountries.has(target.country) || !activeCategories.has(target.category))) {
-              activeCountries.add(target.country);
-              activeCategories.add(target.category);
-              buildFilterUI();
-            }
-            if (searchQuery) {
-              searchQuery = "";
-              searchInput.value = "";
-            }
-            expandedId = gotoId;
-            renderTimeline();
-            // 滚动到目标卡片
-            setTimeout(function() {
-              var targetEl = timelineEl.querySelector('[data-id="' + gotoId + '"]');
-              if (targetEl) targetEl.scrollIntoView({ behavior: "smooth", block: "center" });
-            }, 100);
-            return;
-          }
-
-          // 切换展开
-          var id = ev.id;
-          if (expandedId === id) {
-            expandedId = null;
-          } else {
-            expandedId = id;
-          }
-          renderTimeline();
+          // 如果点击的是因果链接，跳过卡片点击
+          if (e.target.classList.contains("causal-link")) return;
+          openModal(ev.id);
         });
 
         timelineEl.appendChild(card);
@@ -1051,10 +1080,138 @@
       drawCausalLines(visible);
     }
 
+    // ===== 弹窗相关 =====
+
+    function openModal(id) {
+      var ev = EVENTS.find(function(e) { return e.id === id; });
+      if (!ev) return;
+
+      modalEventId = id;
+      modalYear.textContent = formatYear(ev.year);
+      modalTitle.textContent = ev.title;
+      modalMeta.innerHTML = '<span>' + ev.country + '</span><span>' + ev.category + '</span>';
+      modalBody.innerHTML = '<p>' + ev.detail + '</p>';
+
+      // 前因
+      modalCauses.innerHTML = "";
+      if (ev.causes.length > 0) {
+        var ch = '<h5>前因</h5>';
+        for (var ci = 0; ci < ev.causes.length; ci++) {
+          var cause = EVENTS.find(function(e) { return e.id === ev.causes[ci]; });
+          if (cause) {
+            ch += '<span class="causal-link cause" data-goto="' + cause.id + '">' + cause.title + '</span>';
+          }
+        }
+        modalCauses.innerHTML = ch;
+        modalCauses.style.display = "block";
+      } else {
+        modalCauses.style.display = "none";
+      }
+
+      // 后果
+      modalEffects.innerHTML = "";
+      if (ev.effects.length > 0) {
+        var eh = '<h5>后果</h5>';
+        for (var ei = 0; ei < ev.effects.length; ei++) {
+          var effect = EVENTS.find(function(e) { return e.id === ev.effects[ei]; });
+          if (effect) {
+            eh += '<span class="causal-link effect" data-goto="' + effect.id + '">' + effect.title + '</span>';
+          }
+        }
+        modalEffects.innerHTML = eh;
+        modalEffects.style.display = "block";
+      } else {
+        modalEffects.style.display = "none";
+      }
+
+      // 前后翻页
+      var idx = modalVisibleIds.indexOf(id);
+      var prevBtn = '<button ' + (idx <= 0 ? 'disabled' : '') + ' data-nav="prev">← 上一个</button>';
+      var posText = '<span style="font-size:12px;color:#8b7355">' + (idx + 1) + ' / ' + modalVisibleIds.length + '</span>';
+      var nextBtn = '<button ' + (idx >= modalVisibleIds.length - 1 ? 'disabled' : '') + ' data-nav="next">下一个 →</button>';
+      modalNav.innerHTML = prevBtn + posText + nextBtn;
+
+      modal.classList.add("open");
+      document.body.style.overflow = "hidden";
+
+      // 高亮时间线中对应卡片
+      renderTimeline();
+      setTimeout(function() {
+        var card = timelineEl.querySelector('[data-id="' + id + '"]');
+        if (card) card.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 80);
+    }
+
+    function closeModal() {
+      modal.classList.remove("open");
+      document.body.style.overflow = "";
+      modalEventId = null;
+      renderTimeline();
+    }
+
+    // 关闭按钮
+    modalClose.addEventListener("click", closeModal);
+    // 点击遮罩关闭
+    modal.addEventListener("click", function(e) {
+      if (e.target === modal) closeModal();
+    });
+    // ESC 关闭
+    document.addEventListener("keydown", function(e) {
+      if (e.key === "Escape" && modal.classList.contains("open")) {
+        closeModal();
+      }
+    });
+
+    // 弹窗内因果链接点击
+    modal.addEventListener("click", function(e) {
+      if (e.target.classList.contains("causal-link")) {
+        var gotoId = parseInt(e.target.getAttribute("data-goto"));
+        if (gotoId) {
+          // 确保目标在筛选范围内
+          var target = EVENTS.find(function(ev) { return ev.id === gotoId; });
+          if (target) {
+            if (!activeCountries.has(target.country) || !activeCategories.has(target.category)) {
+              activeCountries.add(target.country);
+              activeCategories.add(target.category);
+              buildFilterUI();
+            }
+            if (searchQuery) {
+              searchQuery = "";
+              searchInput.value = "";
+            }
+          }
+          openModal(gotoId);
+        }
+      }
+    });
+
+    // 弹窗内前后翻页
+    modal.addEventListener("click", function(e) {
+      var btn = e.target.closest("[data-nav]");
+      if (!btn) return;
+      var dir = btn.getAttribute("data-nav");
+      var idx = modalVisibleIds.indexOf(modalEventId);
+      if (dir === "prev" && idx > 0) {
+        openModal(modalVisibleIds[idx - 1]);
+      } else if (dir === "next" && idx < modalVisibleIds.length - 1) {
+        openModal(modalVisibleIds[idx + 1]);
+      }
+    });
+
     // ===== 搜索 =====
     searchInput.addEventListener("input", function() {
       searchQuery = this.value.trim();
-      expandedId = null;
+      modalEventId = null;
+      if (modal.classList.contains("open")) closeModal();
+      renderTimeline();
+    });
+
+    // ===== 应用筛选 =====
+    applyFilterBtn.addEventListener("click", function() {
+      filterPanel.classList.add("hidden");
+      filterBtn.classList.remove("active");
+      modalEventId = null;
+      if (modal.classList.contains("open")) closeModal();
       renderTimeline();
     });
 
@@ -1119,13 +1276,7 @@
       }
     });
 
-    // 应用筛选
-    applyFilterBtn.addEventListener("click", function() {
-      filterPanel.classList.add("hidden");
-      filterBtn.classList.remove("active");
-      expandedId = null;
-      renderTimeline();
-    });
+    // (筛选逻辑已在上方合并)
 
     function drawCausalLines(visibleEvents) {
       svgEl.innerHTML = "";
