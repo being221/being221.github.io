@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // basePath: '/shelf',  // 部署时取消注释
+  // output: 'export',  // 部署到 GitHub Pages 时取消注释
+  // basePath: '/shelf',
   images: {
     unoptimized: true,
   },
