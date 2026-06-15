@@ -230,6 +230,49 @@
       .modal-causal .causal-link.effect { background: #2a3a28; }
     }
 
+    /* ===== 帮助弹窗 ===== */
+    .help-overlay {
+      display: none; position: fixed; inset: 0; z-index: 300;
+      background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+      align-items: center; justify-content: center; padding: 20px;
+    }
+    .help-overlay.open { display: flex; }
+    .help-panel {
+      background: #faf7f0; border-radius: 8px; max-width: 520px; width: 100%;
+      max-height: 80vh; overflow-y: auto; box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+      animation: modalIn 0.25s ease; position: relative;
+    }
+    .help-close {
+      position: absolute; top: 12px; right: 16px; z-index: 10;
+      width: 32px; height: 32px; border-radius: 50%; border: none;
+      background: #e8e0d0; color: #5c4a3a; font-size: 18px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .help-close:hover { background: #d4c5a0; }
+    .help-body { padding: 28px; }
+    .help-body h3 { font-size: 22px; margin-bottom: 16px; color: #3d3226; }
+    .help-body h4 { font-size: 14px; color: #5b8c5a; margin: 14px 0 6px; }
+    .help-body p, .help-body li { font-size: 14px; color: #5c4a3a; line-height: 1.7; }
+    .help-body ul { padding-left: 18px; margin: 4px 0 8px; }
+    .help-btn {
+      position: fixed; top: 16px; right: 16px; z-index: 100;
+      width: 32px; height: 32px; border-radius: 50%; border: 1px solid #c4b998;
+      background: rgba(245,240,232,0.9); color: #5b8c5a; font-size: 18px;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      backdrop-filter: blur(4px); transition: background 0.15s;
+    }
+    .help-btn:hover { background: #e8e0d0; }
+
+    @media (prefers-color-scheme: dark) {
+      .help-overlay { background: rgba(0,0,0,0.7); }
+      .help-panel { background: #3d3226; }
+      .help-close { background: #2a2418; color: #b8a88a; }
+      .help-close:hover { background: #5c4a3a; }
+      .help-body h3 { color: #d4c5a0; }
+      .help-body p, .help-body li { color: #b8a88a; }
+      .help-btn { background: rgba(42,36,24,0.9); border-color: #5c4a3a; }
+    }
+
     /* ===== 无结果 ===== */
     .timeline-empty {
       text-align: center; padding: 60px 20px; color: #b8a88a; font-size: 15px;
@@ -288,6 +331,26 @@
 </head>
 <body>
   <a href="index.html" class="back-link">← 返回主页</a>
+  <button class="help-btn" id="help-btn" aria-label="使用帮助">?</button>
+
+  <div class="help-overlay" id="help-overlay">
+    <div class="help-panel" role="dialog" aria-modal="true" aria-label="使用帮助">
+      <button class="help-close" id="help-close" aria-label="关闭">&times;</button>
+      <div class="help-body">
+        <h3>🧭 使用说明</h3>
+        <h4>📌 浏览事件</h4>
+        <p>页面按时间顺序展示春秋战国 151 个重大事件，从早期（前 770 年）到晚期（前 221 年）。顶部筛选栏可以按国家和类型过滤。</p>
+        <h4>🔍 搜索</h4>
+        <p>在搜索框中输入关键词（如"孔子""长平之战""变法"）即可快速定位相关事件。</p>
+        <h4>🖱️ 点击查看详情</h4>
+        <p><strong>点击任意事件卡片</strong> — 弹出详情面板，展示完整解释、前因后果。点击前因/后果链接可跳转到关联事件；用「← 上一个 / 下一个 →」按钮在同屏事件中前后翻页。</p>
+        <h4>❌ 关闭面板</h4>
+        <ul><li>点右上角 ✕</li><li>点弹窗外的灰色区域</li><li>按键盘 ESC 键</li></ul>
+        <h4>🎨 筛选</h4>
+        <p>点「筛选」按钮展开筛选面板 — 勾选/取消国家和事件类型，再点「应用筛选」即可只看关心的内容。</p>
+      </div>
+    </div>
+  </div>
 
   <header class="page-header">
     <h1>春秋战国</h1>
@@ -1158,9 +1221,31 @@
     });
     // ESC 关闭
     document.addEventListener("keydown", function(e) {
-      if (e.key === "Escape" && modal.classList.contains("open")) {
-        closeModal();
+      if (e.key === "Escape") {
+        var helpEl = document.getElementById("help-overlay");
+        if (helpEl && helpEl.classList.contains("open")) {
+          helpEl.classList.remove("open");
+          return;
+        }
+        if (modal.classList.contains("open")) {
+          closeModal();
+        }
       }
+    });
+
+    // ===== 帮助弹窗 =====
+    var helpBtn = document.getElementById("help-btn");
+    var helpOverlay = document.getElementById("help-overlay");
+    var helpClose = document.getElementById("help-close");
+
+    helpBtn.addEventListener("click", function() {
+      helpOverlay.classList.add("open");
+    });
+    helpClose.addEventListener("click", function() {
+      helpOverlay.classList.remove("open");
+    });
+    helpOverlay.addEventListener("click", function(e) {
+      if (e.target === helpOverlay) helpOverlay.classList.remove("open");
     });
 
     // 弹窗内因果链接点击

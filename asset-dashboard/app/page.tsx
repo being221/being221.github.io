@@ -23,6 +23,7 @@ export default function Home() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
   const [syncStatus, setSyncStatus] = useState<SyncStatus>('synced');
   const [syncError, setSyncError] = useState('');
   const loadedRef = useRef(false);
@@ -144,6 +145,13 @@ export default function Home() {
               📥 CSV
             </button>
             <button
+              onClick={() => setShowHelp(true)}
+              className="p-1.5 rounded-lg border border-slate-600/50 text-slate-400 text-sm hover:border-slate-500 hover:text-slate-300 transition"
+              title="使用帮助"
+            >
+              ?
+            </button>
+            <button
               onClick={() => setShowSettings(true)}
               className="p-1.5 rounded-lg border border-slate-600/50 text-slate-400 text-sm hover:border-slate-500 hover:text-slate-300 transition"
               title="同步设置"
@@ -196,6 +204,40 @@ export default function Home() {
       {/* 同步设置弹窗 */}
       {showSettings && (
         <SyncSettings onClose={() => setShowSettings(false)} />
+      )}
+
+      {/* 使用帮助弹窗 */}
+      {showHelp && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{background:'rgba(0,0,0,0.6)',backdropFilter:'blur(4px)'}} onClick={(e) => { if (e.target === e.currentTarget) setShowHelp(false); }}>
+          <div className="bg-slate-900 border border-slate-700 rounded-xl max-w-md w-full max-h-[80vh] overflow-y-auto shadow-2xl" style={{animation:'modalIn 0.25s ease'}}>
+            <div className="flex items-center justify-between p-4 border-b border-slate-800">
+              <h2 className="text-lg font-semibold">📦 使用说明</h2>
+              <button onClick={() => setShowHelp(false)} className="w-7 h-7 rounded-full bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center text-sm">✕</button>
+            </div>
+            <div className="p-5 text-sm text-slate-300 space-y-4">
+              <div>
+                <h4 className="text-sky-400 font-medium mb-1">💰 记账</h4>
+                <p className="text-slate-400">点击「+ 记一笔」选择收入/支出、输入金额、类别和日期。支持多种资产类别（现金/基金/股票/黄金/加密货币/房产）。</p>
+              </div>
+              <div>
+                <h4 className="text-sky-400 font-medium mb-1">📊 图表</h4>
+                <p className="text-slate-400">顶部 KPI 卡片展示净资产、总资产、总负债和月变化。饼图展示资产配置比例，折线图展示月度净值变化趋势。</p>
+              </div>
+              <div>
+                <h4 className="text-sky-400 font-medium mb-1">🔄 同步</h4>
+                <p className="text-slate-400">点击 ⚙️ 设置 → 输入 GitHub Token 和仓库信息 → 数据同步到 GitHub。换设备时可以拉取回来。Token 如何申请请看设置页面的指引。</p>
+              </div>
+              <div>
+                <h4 className="text-sky-400 font-medium mb-1">📥 导出</h4>
+                <p className="text-slate-400">点击「📥 CSV」将交易记录导出为 Excel 兼容的 CSV 文件。</p>
+              </div>
+              <div>
+                <h4 className="text-sky-400 font-medium mb-1">💾 数据存储</h4>
+                <p className="text-slate-400">数据默认保存在浏览器 localStorage 中，仅当前设备可见。如果配置了 GitHub 同步，数据会额外备份到你的 GitHub 仓库。</p>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </main>
   );
