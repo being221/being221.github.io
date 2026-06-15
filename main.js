@@ -71,16 +71,8 @@ let nextFallback = () => {
   return quoteQueue.pop();
 };
 
-btn.onclick = async () => {
-  msg.textContent = "加载中...";
-
-  try {
-    let response = await fetch("https://api.quotable.io/random");
-    let data = await response.json();
-    msg.textContent = `${data.content} ——${data.author}`;
-  } catch {
-    msg.textContent = nextFallback();
-  }
+btn.onclick = () => {
+  msg.textContent = nextFallback();
 };
 
 // ===== 留言板 =====
