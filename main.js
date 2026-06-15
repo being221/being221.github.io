@@ -11,6 +11,26 @@ let updateTime = () => {
 updateTime();
 setInterval(updateTime, 1000);
 
+// ===== 折叠面板 =====
+document.querySelectorAll(".collapse-toggle").forEach(function(toggle) {
+  var targetId = toggle.dataset.target;
+  var body = document.getElementById(targetId);
+  if (!body) return;
+
+  // 从 localStorage 读取状态
+  var saved = localStorage.getItem("collapse-" + targetId);
+  if (saved === "hidden") {
+    body.classList.add("hidden");
+    toggle.classList.add("collapsed");
+  }
+
+  toggle.addEventListener("click", function() {
+    var isHidden = body.classList.toggle("hidden");
+    toggle.classList.toggle("collapsed");
+    localStorage.setItem("collapse-" + targetId, isHidden ? "hidden" : "visible");
+  });
+});
+
 // ===== localStorage：随笔自动保存 =====
 let note = document.getElementById("note");
 let noteCount = document.getElementById("note-count");

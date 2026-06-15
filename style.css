@@ -115,6 +115,26 @@ body {
 h1 {
   color: var(--accent);
 }
+/* ===== 折叠面板 ===== */
+.collapse-toggle {
+  cursor: pointer; user-select: none;
+  display: flex; align-items: center; gap: 8px;
+}
+.collapse-toggle::after {
+  content: "▾"; font-size: 14px; transition: transform 0.25s;
+  opacity: 0.5;
+}
+.collapse-toggle.collapsed::after {
+  transform: rotate(-90deg);
+}
+.collapse-body {
+  overflow: hidden; transition: max-height 0.35s ease;
+  max-height: 2000px;
+}
+.collapse-body.hidden {
+  max-height: 0;
+}
+
 h2 {
   color: var(--h2-color);
   background-color: var(--h2-bg);
