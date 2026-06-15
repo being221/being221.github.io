@@ -6,6 +6,7 @@ import StarterKit from "@tiptap/starter-kit";
 import LinkExtension from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
 import { Save } from "lucide-react";
+import { AIPanel } from "@/components/ai/AIPanel";
 
 interface NoteEditorProps {
   initialTitle: string;
@@ -59,6 +60,9 @@ export function NoteEditor({ initialTitle, initialContent, onSave, isNew }: Note
         </button>
       </div>
       <EditorContent editor={editor} className="min-h-[60vh]" />
+      <div className="mt-6">
+        <AIPanel content={editor?.getHTML() || ""} title={title} />
+      </div>
     </div>
   );
 }
