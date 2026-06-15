@@ -1,8 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: 'export',
-  basePath: '/shelf',
+  // basePath: '/shelf',  // 部署时取消注释
   images: {
     unoptimized: true,
   },
