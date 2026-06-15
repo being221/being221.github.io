@@ -1069,9 +1069,9 @@
           '<p class="event-summary">' + ev.summary + '</p>';
 
         card.addEventListener("click", function(e) {
-          // 如果点击的是因果链接，跳过卡片点击
           if (e.target.classList.contains("causal-link")) return;
-          openModal(ev.id);
+          var id = parseInt(this.getAttribute("data-id"));
+          openModal(id);
         });
 
         timelineEl.appendChild(card);
