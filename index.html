@@ -2,490 +2,115 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <title>这是我的主页</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>此泽being_zephyr - 个人主页</title>
+  <meta name="description" content="此泽being_zephyr 的个人主页——喜欢历史和哲学的前端学习者，分享读书笔记、占卜应用、2048小游戏等项目。">
+  <meta name="author" content="此泽being_zephyr">
+  <meta name="keywords" content="个人主页,此泽being_zephyr,前端开发,历史,哲学,读书笔记">
+
+  <!-- Open Graph / 社交媒体分享 -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="此泽being_zephyr - 个人主页">
+  <meta property="og:description" content="喜欢历史和哲学，正在学前端开发。来看看我的项目和想法吧。">
+  <meta property="og:url" content="https://being221.github.io">
+  <meta property="og:site_name" content="此泽being_zephyr 的主页">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="此泽being_zephyr - 个人主页">
+  <meta name="twitter:description" content="喜欢历史和哲学，正在学前端开发。来看看我的项目和想法吧。">
+
+  <!-- 搜索引擎 -->
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://being221.github.io">
+  <meta name="color-scheme" content="dark light">
+
+  <!-- 性能：预连接外部域名 -->
+  <link rel="preconnect" href="https://api.quotable.io" crossorigin>
+
+  <!-- 性能：预加载首屏大图 -->
+  <link rel="preload" as="image" href="images/人们万岁_upscayl_4x_upscayl-standard-4x.webp" type="image/webp">
+
+  <!-- 关键 CSS 内联：首屏样式直接写在 HTML，不阻塞渲染 -->
   <style>
-    :root {
-      --bg: #1a1a2e;
-      --card-bg: #16213e;
-      --text: #eee;
-      --accent: #e94560;
-      --link: #88c0d0;
-      --h2-color: #0f3460;
-      --h2-bg: #f5f5f5;
-      --radius: 8px;
-    }
-
-    body.light {
-      --bg: #f8f8f8;
-      --card-bg: #fff;
-      --text: #333;
-      --accent: #c0392b;
-      --link: #2471a3;
-      --h2-color: #2c3e50;
-      --h2-bg: #ecf0f1;
-    }
-
-    body {
-      background-color: var(--bg);
-      color: var(--text);
-      font-family: "Microsoft YaHei", sans-serif;
-      max-width: 600px;
-      margin: 50px auto;
-      padding: 20px;
-      padding-top: 70px;  /* 给固定导航栏让位 */    }
-
-    /* ===== Position：固定导航栏 ===== */
-    .topbar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 10;
-      background-color: var(--bg);
-      border-bottom: 1px solid rgba(128,128,128,0.15);
-      padding: 12px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 14px;
-      backdrop-filter: blur(8px);
-    }
-    .topbar span {
-      color: var(--accent);
-      font-weight: bold;
-    }
-    .topbar a {
-      text-decoration: none;
-      color: var(--link);
-      margin-left: 16px;
-    }
-
-    /* ===== Position：回到顶部按钮 ===== */
-    #backTop {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      z-index: 10;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background-color: var(--accent);
-      color: #fff;
-      font-size: 20px;
-      border: none;
-      cursor: pointer;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    #backTop.show {
-      opacity: 1;
-      pointer-events: auto;
-    }
-    h1 {
-      color: var(--accent);
-    }
-    h2 {
-      color: var(--h2-color);
-      background-color: var(--h2-bg);
-      padding: 8px 12px;
-      border-left: 4px solid var(--accent);
-    }
-    a {
-      color: var(--link);
-    }
-
-    /* Grid 项目展示 */
-    .project-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 14px;
-    }
-    .proj-card {
-      background-color: var(--card-bg);
-      padding: 16px;
-      border-radius: var(--radius);
-      text-decoration: none;
-      color: var(--text);
-      transition: transform 0.2s, box-shadow 0.2s;
-      animation: fadeUp 0.5s ease backwards;
-    }
-    .proj-card:nth-child(1) { animation-delay: 0.1s; }
-    .proj-card:nth-child(2) { animation-delay: 0.2s; }
-    .proj-card:nth-child(3) { animation-delay: 0.3s; }
-    .proj-card:nth-child(4) { animation-delay: 0.4s; }
-    .proj-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-    }
-    .proj-card h3 {
-      margin: 0 0 6px 0;
-      color: var(--accent);
-    }
-    .proj-card p {
-      margin: 0;
-      font-size: 14px;
-      opacity: 0.7;
-    }
-    .proj-card.tl-highlight {
-      border: 2px solid #5b8c5a;
-      position: relative;
-    }
-    .proj-card.tl-highlight::after {
-      content: "新";
-      position: absolute;
-      top: -8px;
-      right: -8px;
-      background: #5b8c5a;
-      color: #faf7f0;
-      font-size: 11px;
-      font-weight: bold;
-      padding: 2px 8px;
-      border-radius: 10px;
-    }
-
-    .card-box {
-      display: flex;
-      gap: 16px;
-    }
-    .card {
-      background-color: var(--card-bg);
-      padding: 16px;
-      border-radius: var(--radius);
-      flex: 1;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-    }
-    .card h3 {
-      margin-top: 0;
-      color: var(--accent);
-    }
-
-    img {
-      max-width: 100%;
-      height: auto;
-      border-radius: var(--radius);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-      display: block;
-      margin: 0 auto;
-    }
-
-    button {
-      background-color: var(--accent);
-      color: #fff;
-      border: none;
-      padding: 10px 24px;
-      border-radius: var(--radius);
-      font-size: 16px;
-      cursor: pointer;
-      transition: background-color 0.2s, transform 0.1s;
-    }
-    button:hover {
-      background-color: #c12e4a;
-    }
-    button:active {
-      transform: scale(0.96);
-    }
-
-    #msg {
-      margin-top: 12px;
-      font-style: italic;
-      color: var(--link);
-    }
-
-    /* 表单 */
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    label {
-      font-size: 14px;
-      color: var(--accent);
-      font-weight: bold;
-    }
-    input, textarea {
-      background-color: var(--card-bg);
-      color: var(--text);
-      border: 1px solid rgba(128,128,128,0.3);
-      border-radius: var(--radius);
-      padding: 10px 14px;
-      font-size: 15px;
-      font-family: inherit;
-      resize: vertical;
-    }
-    input:focus, textarea:focus {
-      outline: none;
-      border-color: var(--accent);
-    }
-    #msgBoard {
-      margin-top: 16px;
-    }
-    .msg-card {
-      background-color: var(--card-bg);
-      padding: 12px 16px;
-      border-radius: var(--radius);
-      margin-bottom: 10px;
-      border-left: 3px solid var(--accent);
-    }
-    .msg-card strong {
-      color: var(--accent);
-    }
-    .msg-card small {
-      color: var(--text);
-      opacity: 0.5;
-    }
-    .msg-card p {
-      margin: 6px 0 0 0;
-    }
-    .delBtn {
-      float: right;
-      background: none;
-      border: 1px solid rgba(128,128,128,0.3);
-      color: var(--text);
-      opacity: 0.5;
-      padding: 2px 10px;
-      border-radius: var(--radius);
-      font-size: 12px;
-      cursor: pointer;
-      transition: opacity 0.2s, color 0.2s;
-    }
-    .delBtn:hover {
-      opacity: 1;
-      color: var(--accent);
-      border-color: var(--accent);
-    }
-
-    blockquote {
-      border-left: 4px solid var(--accent);
-      margin: 0;
-      padding: 16px 20px;
-      background-color: var(--card-bg);
-      border-radius: var(--radius);
-      font-style: italic;
-      line-height: 1.8;
-    }
-
-    #clock {
-      text-align: center;
-      font-size: 28px;
-      margin: 0 0 32px 0;
-      color: var(--text);
-      opacity: 0.7;
-    }
-
-    @media (max-width: 640px) {
-      body {
-        max-width: 100%;
-        margin: 20px auto;
-        padding: 16px;
-      }
-      .card-box {
-        flex-direction: column;
-      }
-      img {
-        width: 100%;
-      }
-      h1 {
-        font-size: 24px;
-      }
-    }
-
-    /* ===== CSS 动画 ===== */
-
-    @keyframes fadeUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50%      { transform: scale(1.04); }
-    }
-
-    h2 {
-      animation: fadeUp 0.6s ease backwards;
-    }
-    h2:nth-child(2) { animation-delay: 0.1s; }
-
-    .card {
-      animation: fadeUp 0.5s ease backwards;
-    }
-    .card:nth-child(1) { animation-delay: 0.15s; }
-    .card:nth-child(2) { animation-delay: 0.25s; }
-    .card:nth-child(3) { animation-delay: 0.35s; }
-
-    #clock {
-      animation: pulse 2s ease-in-out infinite;
-    }
-
-    blockquote {
-      animation: fadeUp 0.5s ease backwards;
-      animation-delay: 0.2s;
-    }
-
-    img {
-      animation: fadeUp 0.6s ease backwards;
-      animation-delay: 0.3s;
-    }
-
-#game2048 {
-  max-width: 400px;
-  margin: 0 auto;
-}
-#g2048-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 12px;
-  font-size: 15px;
-}
-#g2048-header strong {
-  color: var(--accent);
-}
-#g2048-restart {
-  margin-left: auto;
-  padding: 6px 18px;
-  font-size: 14px;
-}
-#g2048-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-  background: #bbada0;
-  padding: 8px;
-  border-radius: 6px;
-  aspect-ratio: 1;
-  touch-action: none;
-  user-select: none;
-  -webkit-user-select: none;
-}
-.tile {
-  background: #cdc1b4;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 24px;
-  color: #776e65;
-  aspect-ratio: 1;
-  transition: background-color 0.1s, transform 0.1s;
-}
-.tile.n2  { background: #eee4da; }
-.tile.n4  { background: #ede0c8; }
-.tile.n8  { background: #f2b179; color: #f9f6f2; }
-.tile.n16 { background: #f59563; color: #f9f6f2; }
-.tile.n32 { background: #f67c5f; color: #f9f6f2; }
-.tile.n64 { background: #f65e3b; color: #f9f6f2; }
-.tile.n128 { background: #edcf72; color: #f9f6f2; font-size: 20px; }
-.tile.n256 { background: #edcc61; color: #f9f6f2; font-size: 20px; }
-.tile.n512 { background: #edc850; color: #f9f6f2; font-size: 20px; }
-.tile.n1024 { background: #edc53f; color: #f9f6f2; font-size: 16px; }
-.tile.n2048 { background: #edc22e; color: #f9f6f2; font-size: 16px; }
-.tile.new-tile {
-  animation: tilePop 0.2s ease;
-}
-.tile.merged-tile {
-  animation: tileMerge 0.2s ease;
-}
-@keyframes tilePop {
-  from { transform: scale(0); opacity: 0; }
-  to   { transform: scale(1); opacity: 1; }
-}
-@keyframes tileMerge {
-  0%   { transform: scale(1); }
-  50%  { transform: scale(1.2); }
-  100% { transform: scale(1); }
-}
-
-#g2048-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.6);
-  z-index: 100;
-  align-items: center;
-  justify-content: center;
-}
-#g2048-overlay.show { display: flex; }
-#g2048-overlay-box {
-  background: var(--card-bg);
-  padding: 32px 40px;
-  border-radius: var(--radius);
-  text-align: center;
-  animation: tilePop 0.2s ease;
-}
-#g2048-overlay-msg {
-  font-size: 20px;
-  color: var(--accent);
-  font-weight: bold;
-  margin: 0 0 20px 0;
-}
-#g2048-overlay-btn {
-  padding: 10px 32px;
-}
-#g2048-undo {
-  padding: 6px 14px;
-  font-size: 14px;
-  opacity: 0.6;
-}
-#g2048-undo:disabled {
-  opacity: 0.3;
-  cursor: default;
-}
-.g2048-score-pop {
-  animation: scorePop 0.3s ease;
-}
-@keyframes scorePop {
-  0%   { transform: scale(1); }
-  50%  { transform: scale(1.3); color: var(--accent); }
-  100% { transform: scale(1); }
-}
-
-@media (max-width: 480px) {
-  #game2048 { max-width: 100%; }
-  .tile { font-size: 28px; }
-  .tile.n128, .tile.n256, .tile.n512 { font-size: 22px; }
-  .tile.n1024, .tile.n2048 { font-size: 18px; }
-}
-
+    :root{--bg:#1a1a2e;--card-bg:#16213e;--text:#eee;--accent:#e94560;--link:#88c0d0;--h2-color:#0f3460;--h2-bg:#f5f5f5;--radius:8px}
+    body.light{--bg:#f8f8f8;--card-bg:#fff;--text:#333;--accent:#c0392b;--link:#2471a3;--h2-color:#2c3e50;--h2-bg:#ecf0f1}
+    body{background-color:var(--bg);color:var(--text);font-family:"Microsoft YaHei",sans-serif;max-width:600px;margin:50px auto;padding:20px;padding-top:70px}
+    .skip-link{position:absolute;top:-100px;left:16px;background:var(--accent);color:#fff;padding:8px 16px;border-radius:var(--radius);z-index:20;font-size:14px;text-decoration:none}
+    .skip-link:focus{top:8px}
+    .topbar{position:fixed;top:0;left:0;right:0;z-index:10;background-color:var(--bg);border-bottom:1px solid rgba(128,128,128,.15);padding:12px 20px;display:flex;justify-content:space-between;align-items:center;font-size:14px;backdrop-filter:blur(8px)}
+    .topbar span{color:var(--accent);font-weight:bold}
+    .topbar a{text-decoration:none;color:var(--link);margin-left:16px}
+    h1{color:var(--accent)}
+    #clock{text-align:center;font-size:28px;margin:0 0 32px 0;color:var(--text);opacity:.7}
+    img{max-width:100%;height:auto;border-radius:var(--radius);box-shadow:0 4px 12px rgba(0,0,0,.3);display:block;margin:0 auto}
+    a{color:var(--link)}
+    #backTop{position:fixed;bottom:24px;right:24px;z-index:10;width:40px;height:40px;border-radius:50%;background-color:var(--accent);color:#fff;font-size:20px;border:none;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .3s;display:flex;align-items:center;justify-content:center}
+    #backTop.show{opacity:1;pointer-events:auto}
+    @media(max-width:640px){body{max-width:100%;margin:20px auto;padding:16px}h1{font-size:24px}img{width:100%}}
   </style>
+
+  <!-- 完整 CSS 异步加载：不阻塞首屏渲染 -->
+  <link rel="stylesheet" href="style.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="style.css"></noscript>
+
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+
+  <!-- 结构化数据：Person schema，帮助搜索引擎理解页面内容 -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "此泽being_zephyr",
+    "url": "https://being221.github.io",
+    "sameAs": [
+      "https://github.com/being221"
+    ],
+    "knowsAbout": ["前端开发", "历史", "哲学"],
+    "description": "临近毕业，喜欢历史和哲学，正在学前端开发。"
+  }
+  </script>
 </head>
 <body>
-  <nav class="topbar">
-    <span>being</span>
+  <a href="#main-content" class="skip-link">跳转到主要内容</a>
+  <header>
+    <nav class="topbar" aria-label="主导航">
+      <span>此泽</span>
     <div>
-      <a href="#">首页</a>
+      <a href="#" aria-current="page">首页</a>
       <a href="#guest">留言</a>
       <a href="#projects">项目</a>
-      <a href="#game2048">游戏</a>
+      <a href="#game">游戏</a>
       <a href="timeline.html">时间线</a>
     </div>
   </nav>
 
-  <button id="backTop" title="回到顶部">&#8593;</button>
+  <button id="backTop" title="回到顶部" aria-label="回到页面顶部">&#8593;</button>
 
-  <p id="clock"></p>
-  <h1>你好，我是being</h1>
-  <p style="opacity:0.7">临近毕业，喜欢历史和哲学，正在学前端开发。</p>
+  <p id="clock" aria-live="polite" aria-atomic="true"></p>
+  <h1>你好，我是此泽</h1>
+  <p>一个对历史和哲学充满好奇的前端学习者，id 此泽，being_zephyr。在这里分享我的读书笔记、个人项目和想法随笔。最近在用原生 HTML/CSS/JS 和 React 做个人网站，也喜欢写点小游戏。如果你对春秋战国史、存在主义哲学、或者前端开发感兴趣——欢迎来交流。</p>
+  </header>
 
-  <h2>一张照片</h2>
-  <img src="images/人们万岁_upscayl_4x_upscayl-standard-4x.jpg" alt="街景" width="400">
+  <main id="main-content">
+    <section aria-labelledby="photo-heading">
+      <h2 id="photo-heading">一张照片</h2>
+  <picture>
+    <source srcset="images/人们万岁_upscayl_4x_upscayl-standard-4x.webp" type="image/webp">
+    <img
+      src="images/人们万岁_upscayl_4x_upscayl-standard-4x.jpg"
+      alt="街景"
+      width="800"
+      height="600"
+      loading="lazy"
+      decoding="async"
+      style="width:100%;height:auto;max-width:400px">
+  </picture>
+    </section>
 
-  <h2>我的兴趣卡片</h2>
+    <section aria-labelledby="interests-heading">
+      <h2 id="interests-heading">我的兴趣卡片</h2>
   <div class="card-box">
     <div class="card">
       <h3>历史</h3>
@@ -502,34 +127,37 @@
   </div>
 
   <p>常逛的地方：
-    <a href="https://www.zhihu.com" target="_blank">知乎</a> ·
-    <a href="https://www.gushiwen.cn" target="_blank">古诗文网</a> ·
-    <a href="https://github.com/being221" target="_blank">我的 GitHub</a>
+    <a href="https://www.zhihu.com" target="_blank" rel="noopener noreferrer">知乎<span class="sr-only">（新窗口）</span></a> ·
+    <a href="https://www.gushiwen.cn" target="_blank" rel="noopener noreferrer">古诗文网<span class="sr-only">（新窗口）</span></a> ·
+    <a href="https://github.com/being221" target="_blank" rel="noopener noreferrer">我的 GitHub<span class="sr-only">（新窗口）</span></a>
   </p>
 
-  <hr>
+    </section>
 
-  <h2>想法随笔</h2>
-  <blockquote id="note" contenteditable="true">
+    <section aria-labelledby="note-heading">
+      <h2 id="note-heading">想法随笔</h2>
+  <blockquote id="note" contenteditable="true" aria-label="可编辑的随笔区域，内容自动保存" role="textbox" aria-multiline="true">
     写点随笔…今天读了什么、想到了什么、学到了什么。你的文字会自动保存，刷新不会丢。
   </blockquote>
 
-  <hr>
+    </section>
 
-  <h2 id="guest">给我留言</h2>
-  <form id="guestForm">
+    <section aria-labelledby="guest-heading">
+      <h2 id="guest-heading">给我留言</h2>
+  <form id="guestForm" aria-label="留言表单">
     <label for="guestName">昵称</label>
-    <input type="text" id="guestName" placeholder="你的名字" required>
+    <input type="text" id="guestName" placeholder="你的名字" required aria-required="true">
     <label for="guestMsg">留言</label>
-    <textarea id="guestMsg" rows="3" placeholder="说点什么..." required></textarea>
+    <textarea id="guestMsg" rows="3" placeholder="说点什么..." required aria-required="true"></textarea>
     <button type="submit">提交留言</button>
   </form>
-  <div id="msgBoard"></div>
+  <div id="msgBoard" aria-live="polite" aria-label="留言列表"></div>
   <p id="msgStats" style="font-size:13px;opacity:0.6;margin-top:4px"></p>
 
-  <hr>
+    </section>
 
-  <h2>学习进度</h2>
+    <section aria-labelledby="learning-heading">
+      <h2 id="learning-heading">学习进度</h2>
   <div class="project-grid">
     <div class="card">
       <h3>HTML</h3>
@@ -547,18 +175,35 @@
       <h3>React</h3>
       <p>JSX、组件、Props、useState、useEffect、条件渲染、派生状态、自定义 Hook</p>
     </div>
+    <div class="card">
+      <h3>Next.js</h3>
+      <p>App Router、Server Actions、Server Components、API Routes、Vercel 部署</p>
+    </div>
+    <div class="card">
+      <h3>TypeScript</h3>
+      <p>类型安全全栈开发、接口设计、泛型、从 API 到数据库的类型推导</p>
+    </div>
+    <div class="card">
+      <h3>数据库</h3>
+      <p>SQLite + PostgreSQL · Drizzle ORM · Schema 设计 · Migration · 向量搜索</p>
+    </div>
+    <div class="card">
+      <h3>AI 集成</h3>
+      <p>Vercel AI SDK · Embedding · 流式输出 · Prompt Engineering</p>
+    </div>
   </div>
 
-  <hr>
+    </section>
 
-  <h2 id="projects">我的项目</h2>
+    <section aria-labelledby="projects-heading">
+      <h2 id="projects-heading">我的项目</h2>
   <div class="project-grid">
-    <a href="https://being221.github.io/reading-notes/" class="proj-card" target="_blank">
-      <h3>读书笔记</h3>
+    <a href="https://being221.github.io/reading-notes/" class="proj-card" target="_blank" rel="noopener noreferrer">
+      <h3>读书笔记 <span class="sr-only">（新窗口）</span></h3>
       <p>React 全栈——搜索/编辑/分类/状态追踪</p>
     </a>
-    <a href="https://being221.github.io/divination-app/" class="proj-card" target="_blank">
-      <h3>占卜应用</h3>
+    <a href="https://being221.github.io/divination-app/" class="proj-card" target="_blank" rel="noopener noreferrer">
+      <h3>占卜应用 <span class="sr-only">（新窗口）</span></h3>
       <p>React 重做——铜钱起卦/摇一摇/历史记录</p>
     </a>
     <a href="index.html" class="proj-card">
@@ -569,402 +214,60 @@
       <h3>春秋战国 · 历史时间线</h3>
       <p>151条事件 · 竹简风 · 筛选/搜索/因果连线</p>
     </a>
+    <a href="https://shelf-5raf4vpu0-being-s-projects.vercel.app" class="proj-card tl-highlight" target="_blank" rel="noopener noreferrer">
+      <h3>Shelf · 知识管理 <span class="sr-only">（新窗口）</span></h3>
+      <p>Next.js 16 全栈——收藏/笔记/AI 搜索</p>
+    </a>
+    <a href="https://being221.github.io/dashboard/" class="proj-card" target="_blank" rel="noopener noreferrer">
+      <h3>资产仪表盘 <span class="sr-only">（新窗口）</span></h3>
+      <p>Next.js + Recharts——资产追踪/图表/同步</p>
+    </a>
   </div>
 
-<hr>
+    </section>
 
-<h2>2048</h2>
-<div id="game2048">
+    <section aria-labelledby="game-heading">
+<h2 id="game-heading">2048</h2>
+<div id="game2048" role="application" aria-label="2048 数字滑动游戏，使用方向键或触屏滑动操作">
   <div id="g2048-header">
     <span>得分：<strong id="g2048-score">0</strong></span>
     <span>最高：<strong id="g2048-best">0</strong></span>
-    <button id="g2048-undo" style="margin-left:auto">撤销</button>
-    <button id="g2048-restart">新游戏</button>
+    <button id="g2048-undo" style="margin-left:auto" aria-label="撤销上一步">撤销</button>
+    <button id="g2048-restart" aria-label="重新开始游戏">新游戏</button>
   </div>
-  <div id="g2048-grid">
-    <div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div>
-    <div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div>
-    <div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div>
-    <div class="tile"></div><div class="tile"></div><div class="tile"></div><div class="tile"></div>
+  <div id="g2048-grid" role="grid" aria-label="4x4 游戏棋盘">
+    <div class="tile" role="gridcell"></div><div class="tile" role="gridcell"></div><div class="tile" role="gridcell"></div><div class="tile" role="gridcell"></div>
+    <div class="tile" role="gridcell"></div><div class="tile" role="gridcell"></div><div class="tile" role="gridcell"></div><div class="tile" role="gridcell"></div>
+    <div class="tile" role="gridcell"></div><div class="tile" role="gridcell"></div><div class="tile" role="gridcell"></div><div class="tile" role="gridcell"></div>
+    <div class="tile" role="gridcell"></div><div class="tile" role="gridcell"></div><div class="tile" role="gridcell"></div><div class="tile" role="gridcell"></div>
   </div>
 </div>
 
-<div id="g2048-overlay">
+<div id="g2048-overlay" role="dialog" aria-modal="true" aria-labelledby="g2048-overlay-msg">
   <div id="g2048-overlay-box">
     <p id="g2048-overlay-msg"></p>
-    <button id="g2048-overlay-btn">继续</button>
+    <button id="g2048-overlay-btn" autofocus>继续</button>
   </div>
 </div>
 
   <h2>随机名言</h2>
-  <button id="myBtn">换一条</button>
-  <p id="msg"></p>
+  <button id="myBtn" aria-label="获取一条随机名言">换一条</button>
+  <p id="msg" aria-live="polite" aria-atomic="true"></p>
 
   <button id="themeBtn">切换浅色模式</button>
+    </section>
+  </main>
 
-  <script>
-    let clock = document.getElementById("clock");
+  <footer role="contentinfo">
+    <p>&copy; 2024 此泽being_zephyr · 用原生 HTML/CSS/JS 手写搭建</p>
+  </footer>
 
-    let updateTime = () => {
-      let now = new Date();
-      let h = String(now.getHours()).padStart(2, "0");
-      let m = String(now.getMinutes()).padStart(2, "0");
-      let s = String(now.getSeconds()).padStart(2, "0");
-      clock.textContent = `${h}:${m}:${s}`;
-    };
-    updateTime();
-    setInterval(updateTime, 1000);
-
-    // ===== localStorage：随笔自动保存 =====
-    let note = document.getElementById("note");
-
-    let savedNote = localStorage.getItem("savedNote");
-    if (savedNote) {
-      note.textContent = savedNote;
-    }
-
-    note.addEventListener("input", () => {
-      localStorage.setItem("savedNote", note.textContent);
-    });
-
-    let btn = document.getElementById("myBtn");
-    let msg = document.getElementById("msg");
-
-    // 备用名言（API 挂了也不慌）
-    let fallbackQuotes = [
-      "人不能两次踏入同一条河流。——赫拉克利特",
-      "我思故我在。——笛卡尔",
-      "知之为知之，不知为不知，是知也。——《论语》",
-      "存在先于本质。——萨特",
-      "凡是过往，皆为序章。——莎士比亚"
-    ];
-
-    btn.onclick = async () => {
-      msg.textContent = "加载中...";
-
-      try {
-        let response = await fetch("https://api.quotable.io/random");
-        let data = await response.json();
-        msg.textContent = `${data.content} ——${data.author}`;
-      } catch {
-        let n = Math.floor(Math.random() * fallbackQuotes.length);
-        msg.textContent = fallbackQuotes[n];
-      }
-    };
-
-    // ===== 留言板 =====
-    let guestForm = document.getElementById("guestForm");
-    let msgBoard = document.getElementById("msgBoard");
-
-    // 从 localStorage 加载留言（JSON.parse 把字符串还原成数组）
-    let messages = JSON.parse(localStorage.getItem("messages")) || [];
-
-    // 渲染留言：清空容器 → 逐条创建 DOM → 塞进去
-    let renderMessages = () => {
-      msgBoard.innerHTML = "";
-      messages.forEach((m, i) => {
-        let card = document.createElement("div");
-        card.className = "msg-card";
-
-        let timeStr = new Date(m.time).toLocaleString("zh-CN");
-
-        card.innerHTML = `
-          <strong>${m.name}</strong>
-          <small>${timeStr}</small>
-          <button class="delBtn" data-index="${i}">删除</button>
-          <p>${m.text}</p>
-        `;
-
-        msgBoard.appendChild(card);
-      });
-
-      // 用 map + filter 统计留言
-      let names = messages.map((m) => m.name);               // 提取名字
-      let unique = names.filter((n, i) => names.indexOf(n) === i); // 去重
-      let stats = document.getElementById("msgStats");
-      stats.textContent = `共 ${messages.length} 条留言，来自 ${unique.length} 位朋友`;
-    };
-
-    renderMessages();
-
-    guestForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-
-      let name = document.getElementById("guestName").value.trim();
-      let text = document.getElementById("guestMsg").value.trim();
-      if (!name || !text) return;
-
-      messages.push({ name, text, time: Date.now() });
-      localStorage.setItem("messages", JSON.stringify(messages));
-
-      renderMessages();
-      guestForm.reset();
-    });
-
-    // 事件委托：父容器监听 → 判断谁被点了
-    msgBoard.addEventListener("click", (e) => {
-      if (e.target.classList.contains("delBtn")) {
-        let i = Number(e.target.dataset.index);
-        messages.splice(i, 1);  // 从数组删除
-        localStorage.setItem("messages", JSON.stringify(messages));
-        renderMessages();
-      }
-    });
-
-    // ===== localStorage：记住主题偏好 =====
-    let themeBtn = document.getElementById("themeBtn");
-
-    let savedTheme = localStorage.getItem("theme");
-    if (savedTheme === "light") {
-      document.body.classList.add("light");
-      themeBtn.textContent = "切换深色模式";
-    }
-
-    themeBtn.onclick = () => {
-      document.body.classList.toggle("light");
-      if (document.body.classList.contains("light")) {
-        themeBtn.textContent = "切换深色模式";
-        localStorage.setItem("theme", "light");
-      } else {
-        themeBtn.textContent = "切换浅色模式";
-        localStorage.setItem("theme", "dark");
-      }
-    };
-
-    // ===== 回到顶部按钮 =====
-    let backTop = document.getElementById("backTop");
-
-    window.addEventListener("scroll", () => {
-      if (window.scrollY > 400) {
-        backTop.classList.add("show");
-      } else {
-        backTop.classList.remove("show");
-      }
-    });
-
-    backTop.onclick = () => {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    };
-
-// ===== 2048 游戏 =====
-let gGrid = Array(16).fill(0);
-let gScore = 0;
-let gBest = parseInt(localStorage.getItem("best2048")) || 0;
-let gOver = false;
-let gWon = false;
-let gHistory = [];
-
-let gScoreEl = document.getElementById("g2048-score");
-let gBestEl = document.getElementById("g2048-best");
-let gTiles = [].slice.call(document.querySelectorAll("#g2048-grid .tile"));
-let gUndoBtn = document.getElementById("g2048-undo");
-let gOverlay = document.getElementById("g2048-overlay");
-let gOverlayMsg = document.getElementById("g2048-overlay-msg");
-
-gBestEl.textContent = gBest;
-
-let gNewTileIdx = -1;
-let gMergedValues = [];
-let gPrevScore = 0;
-
-let renderGrid = () => {
-  gTiles.forEach((el, i) => {
-    let v = gGrid[i];
-    el.textContent = v || "";
-    let cls = "tile";
-    if (v) cls += " n" + v;
-    if (i === gNewTileIdx) {
-      cls += " new-tile";
-    }
-    if (v > 0 && gMergedValues.indexOf(v) !== -1) {
-      cls += " merged-tile";
-      gMergedValues.splice(gMergedValues.indexOf(v), 1);
-    }
-    el.className = cls;
-    if (v === 0) el.style.color = "";
-  });
-  if (gScore > gPrevScore) {
-    gScoreEl.classList.remove("g2048-score-pop");
-    void gScoreEl.offsetWidth;
-    gScoreEl.classList.add("g2048-score-pop");
+<script>
+  // 注册 Service Worker（PWA 离线支持）
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(function() {});
   }
-  gPrevScore = gScore;
-  gScoreEl.textContent = gScore;
-  if (gScore > gBest) {
-    gBest = gScore;
-    gBestEl.textContent = gBest;
-    localStorage.setItem("best2048", gBest);
-  }
-};
-
-let addTile = () => {
-  let empty = gGrid.reduce((a, v, i) => { if (v === 0) a.push(i); return a; }, []);
-  if (empty.length === 0) return;
-  let i = empty[Math.floor(Math.random() * empty.length)];
-  gGrid[i] = Math.random() < 0.9 ? 2 : 4;
-  gNewTileIdx = i;
-};
-
-let initGame = () => {
-  gGrid = Array(16).fill(0);
-  gScore = 0;
-  gOver = false;
-  gWon = false;
-  gNewTileIdx = -1;
-  gMergedValues = [];
-  gPrevScore = 0;
-  gHistory = [];
-  gUndoBtn.disabled = true;
-  addTile();
-  addTile();
-  renderGrid();
-};
-
-let slideRow = (row) => {
-  let arr = row.filter(v => v);
-  let mergedVals = [];
-  for (let i = 0; i < arr.length - 1; i++) {
-    if (arr[i] === arr[i + 1]) {
-      arr[i] *= 2;
-      gScore += arr[i];
-      mergedVals.push(arr[i]);
-      if (arr[i] === 2048 && !gWon) {
-        gWon = true;
-        setTimeout(() => showOverlay("恭喜！你达到了 2048！可以继续玩。"), 100);
-      }
-      arr[i + 1] = 0;
-    }
-  }
-  arr = arr.filter(v => v);
-  while (arr.length < 4) arr.push(0);
-  return { row: arr, merged: mergedVals };
-};
-
-let getRow = (g, r) => [g[r*4], g[r*4+1], g[r*4+2], g[r*4+3]];
-let setRow = (g, r, row) => { g[r*4]=row[0]; g[r*4+1]=row[1]; g[r*4+2]=row[2]; g[r*4+3]=row[3]; };
-let getCol = (g, c) => [g[c], g[c+4], g[c+8], g[c+12]];
-let setCol = (g, c, col) => { g[c]=col[0]; g[c+4]=col[1]; g[c+8]=col[2]; g[c+12]=col[3]; };
-
-let arraysEqual = (a, b) => {
-  for (let i = 0; i < 16; i++) { if (a[i] !== b[i]) return false; }
-  return true;
-};
-
-let move = (dir) => {
-  if (gOver) return;
-  let before = gGrid.slice();
-  let scoreBefore = gScore;
-  gNewTileIdx = -1;
-  gMergedValues = [];
-
-  if (dir === 0) {
-    for (let r = 0; r < 4; r++) {
-      let result = slideRow(getRow(gGrid, r));
-      setRow(gGrid, r, result.row);
-      gMergedValues.push(...result.merged);
-    }
-  } else if (dir === 1) {
-    for (let r = 0; r < 4; r++) {
-      let result = slideRow(getRow(gGrid, r).reverse());
-      setRow(gGrid, r, result.row.reverse());
-      gMergedValues.push(...result.merged);
-    }
-  } else if (dir === 2) {
-    for (let c = 0; c < 4; c++) {
-      let result = slideRow(getCol(gGrid, c));
-      setCol(gGrid, c, result.row);
-      gMergedValues.push(...result.merged);
-    }
-  } else if (dir === 3) {
-    for (let c = 0; c < 4; c++) {
-      let result = slideRow(getCol(gGrid, c).reverse());
-      setCol(gGrid, c, result.row.reverse());
-      gMergedValues.push(...result.merged);
-    }
-  }
-
-  if (!arraysEqual(before, gGrid)) {
-    gHistory.push({ grid: before, score: scoreBefore });
-    gUndoBtn.disabled = false;
-    addTile();
-    renderGrid();
-    checkGameOver();
-  }
-};
-
-let checkGameOver = () => {
-  if (gGrid.indexOf(0) !== -1) return;
-  for (let r = 0; r < 4; r++) {
-    for (let c = 0; c < 3; c++) {
-      if (gGrid[r * 4 + c] === gGrid[r * 4 + c + 1]) return;
-    }
-  }
-  for (let c = 0; c < 4; c++) {
-    for (let r = 0; r < 3; r++) {
-      if (gGrid[r * 4 + c] === gGrid[(r + 1) * 4 + c]) return;
-    }
-  }
-  gOver = true;
-  if (!gWon) {
-    setTimeout(() => showOverlay("游戏结束！得分：" + gScore), 100);
-  }
-};
-
-document.addEventListener("keydown", (e) => {
-  let map = { ArrowLeft: 0, ArrowRight: 1, ArrowUp: 2, ArrowDown: 3 };
-  if (e.key in map) {
-    e.preventDefault();
-    move(map[e.key]);
-  }
-});
-
-let gGridEl = document.getElementById("g2048-grid");
-let touchStartX = 0, touchStartY = 0;
-gGridEl.addEventListener("touchstart", (e) => {
-  touchStartX = e.touches[0].clientX;
-  touchStartY = e.touches[0].clientY;
-}, { passive: true });
-
-gGridEl.addEventListener("touchend", (e) => {
-  let dx = e.changedTouches[0].clientX - touchStartX;
-  let dy = e.changedTouches[0].clientY - touchStartY;
-  if (Math.abs(dx) < 20 && Math.abs(dy) < 20) return;
-
-  e.preventDefault();
-  if (Math.abs(dx) > Math.abs(dy)) {
-    move(dx > 0 ? 1 : 0);
-  } else {
-    move(dy > 0 ? 3 : 2);
-  }
-});
-
-let showOverlay = (msg) => {
-  if (!gOverlayMsg || !gOverlay) return;
-  gOverlayMsg.textContent = msg;
-  gOverlay.classList.add("show");
-};
-document.getElementById("g2048-overlay-btn").onclick = () => {
-  if (gOverlay) gOverlay.classList.remove("show");
-};
-
-let undoMove = () => {
-  if (gHistory.length === 0) return;
-  let prev = gHistory.pop();
-  gGrid = prev.grid;
-  gScore = prev.score;
-  gOver = false;
-  gNewTileIdx = -1;
-  gMergedValues = [];
-  gPrevScore = gScore;
-  renderGrid();
-  if (gHistory.length === 0) gUndoBtn.disabled = true;
-};
-
-document.getElementById("g2048-restart").onclick = initGame;
-gUndoBtn.onclick = undoMove;
-gUndoBtn.disabled = true;
-
-initGame();
-  </script>
+</script>
+<script src="main.js" defer></script>
 </body>
 </html>
