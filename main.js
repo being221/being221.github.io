@@ -75,6 +75,9 @@ btn.onclick = () => {
   msg.textContent = nextFallback();
 };
 
+// 页面加载时自动显示第一条
+msg.textContent = nextFallback();
+
 // ===== 留言板 =====
 let guestForm = document.getElementById("guestForm");
 let msgBoard = document.getElementById("msgBoard");
