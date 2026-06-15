@@ -51,6 +51,26 @@ let fallbackQuotes = [
   "善良一点，因为每个人都在打一场硬仗。——柏拉图（误传，但流传很广）"
 ];
 
+// 洗牌算法：Fisher-Yates
+let shuffleArr = (arr) => {
+  let a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+};
+
+// 备选队列：每轮把所有 20 条洗乱，然后逐个弹出，弹完再洗一轮
+let quoteQueue = [];
+
+let nextFallback = () => {
+  if (quoteQueue.length === 0) {
+    quoteQueue = shuffleArr(fallbackQuotes);
+  }
+  return quoteQueue.pop();
+};
+
 btn.onclick = async () => {
   msg.textContent = "加载中...";
 
@@ -59,8 +79,7 @@ btn.onclick = async () => {
     let data = await response.json();
     msg.textContent = `${data.content} ——${data.author}`;
   } catch {
-    let n = Math.floor(Math.random() * fallbackQuotes.length);
-    msg.textContent = fallbackQuotes[n];
+    msg.textContent = nextFallback();
   }
 };
 
