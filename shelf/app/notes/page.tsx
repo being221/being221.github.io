@@ -44,7 +44,7 @@ export default function NotesPage() {
             updateNoteSimple(editingNote.id, title, content);
             setEditingNote(null);
             loadNotes();
-            router.push("/shelf/notes");
+            router.push("/notes");
           }}
         />
       </div>

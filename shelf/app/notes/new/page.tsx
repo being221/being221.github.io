@@ -18,7 +18,7 @@ export default function NewNotePage() {
         initialContent=""
         onSave={async (title, content) => {
           createNoteSimple(title, content);
-          router.push("/shelf/notes");
+          router.push("/notes");
         }}
       />
     </div>

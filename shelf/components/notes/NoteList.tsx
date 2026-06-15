@@ -27,7 +27,7 @@ export function NoteList({ notes, onDelete }: NoteListProps) {
     <div className="space-y-2">
       {notes.map((note) => (
         <div key={note.id} className="group flex items-center gap-4 p-4 rounded-lg border border-zinc-800 bg-zinc-900 hover:border-zinc-700 transition-colors">
-          <Link href={`/shelf/notes?id=${note.id}`} className="flex-1 min-w-0">
+          <Link href={`/notes?id=${note.id}`} className="flex-1 min-w-0">
             <h3 className="font-medium text-zinc-100 truncate">{note.title}</h3>
             {note.content && (
               <p className="text-sm text-zinc-500 mt-0.5 line-clamp-1">
