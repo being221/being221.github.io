@@ -118,21 +118,32 @@ h1 {
 /* ===== 折叠面板 ===== */
 .collapse-toggle {
   cursor: pointer; user-select: none;
-  display: flex; align-items: center; gap: 8px;
+  display: flex; align-items: center; gap: 10px;
+  position: relative;
 }
 .collapse-toggle::after {
-  content: "▾"; font-size: 14px; transition: transform 0.25s;
-  opacity: 0.5;
+  content: "收起 ▴"; font-size: 11px; opacity: 0.55;
+  font-weight: normal; transition: opacity 0.2s;
 }
 .collapse-toggle.collapsed::after {
-  transform: rotate(-90deg);
+  content: "展开 ▾";
+}
+.collapse-toggle:hover::after {
+  opacity: 0.85;
 }
 .collapse-body {
-  overflow: hidden; transition: max-height 0.35s ease;
-  max-height: 2000px;
+  overflow: hidden; transition: max-height 0.4s ease;
+  max-height: 3000px;
 }
-.collapse-body.hidden {
-  max-height: 0;
+.collapse-body.folded {
+  max-height: 170px;  /* 只显示第一行 */
+  position: relative;
+}
+.collapse-body.folded::after {
+  content: ""; position: absolute; bottom: 0; left: 0; right: 0;
+  height: 40px;
+  background: linear-gradient(transparent, var(--bg));
+  pointer-events: none;
 }
 
 h2 {

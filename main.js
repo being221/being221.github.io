@@ -20,14 +20,14 @@ document.querySelectorAll(".collapse-toggle").forEach(function(toggle) {
   // 从 localStorage 读取状态
   var saved = localStorage.getItem("collapse-" + targetId);
   if (saved === "hidden") {
-    body.classList.add("hidden");
+    body.classList.add("folded");
     toggle.classList.add("collapsed");
   }
 
   toggle.addEventListener("click", function() {
-    var isHidden = body.classList.toggle("hidden");
+    var isFolded = body.classList.toggle("folded");
     toggle.classList.toggle("collapsed");
-    localStorage.setItem("collapse-" + targetId, isHidden ? "hidden" : "visible");
+    localStorage.setItem("collapse-" + targetId, isFolded ? "hidden" : "visible");
   });
 });
 
