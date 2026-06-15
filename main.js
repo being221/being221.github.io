@@ -78,64 +78,135 @@ btn.onclick = () => {
 // 页面加载时自动显示第一条
 msg.textContent = nextFallback();
 
-// ===== 留言板 =====
-let guestForm = document.getElementById("guestForm");
-let msgBoard = document.getElementById("msgBoard");
+// ===== 留言板（Supabase 云端存储）=====
+(function() {
+  let supabase = window.supabase.createClient(
+    "https://codndkieecddabbqhdtg.supabase.co",
+    "sb_publishable_wgX79e2z2kgcWKkhmDZIuw_Pd3FCj8E"
+  );
 
-// 从 localStorage 加载留言（JSON.parse 把字符串还原成数组）
-let messages = JSON.parse(localStorage.getItem("messages")) || [];
+  let guestForm = document.getElementById("guestForm");
+  let msgBoard = document.getElementById("msgBoard");
 
-// 渲染留言：清空容器 → 逐条创建 DOM → 塞进去
-let renderMessages = () => {
-  msgBoard.innerHTML = "";
-  messages.forEach((m, i) => {
-    let card = document.createElement("div");
-    card.className = "msg-card";
+  // 每台设备一个唯一 ID（存在 localStorage）
+  let deviceId = localStorage.getItem("sb_device_id");
+  if (!deviceId) {
+    deviceId = crypto.randomUUID();
+    localStorage.setItem("sb_device_id", deviceId);
+  }
 
-    let timeStr = new Date(m.time).toLocaleString("zh-CN");
+  // 管理员？（你可以在浏览器控制台运行：localStorage.setItem("sb_admin","true") ）
+  let isAdmin = () => localStorage.getItem("sb_admin") === "true";
 
-    card.innerHTML = `
-      <strong>${m.name}</strong>
-      <small>${timeStr}</small>
-      <button class="delBtn" data-index="${i}">删除</button>
-      <p>${m.text}</p>
-    `;
+  // 从 Supabase 拉取留言
+  async function loadMessages() {
+    try {
+      let query = supabase.from("messages").select("*").order("created_at", { ascending: false });
+      // 普通人只看到自己的留言，管理员看到全部
+      if (!isAdmin()) {
+        query = query.eq("device_id", deviceId);
+      }
+      let { data } = await query;
+      renderMessages(data || []);
+    } catch (e) {
+      msgBoard.innerHTML = '<p style="opacity:0.5">留言加载失败，请刷新页面重试</p>';
+    }
+  }
 
-    msgBoard.appendChild(card);
+  // 渲染留言
+  function renderMessages(messages) {
+    msgBoard.innerHTML = "";
+    if (messages.length === 0) {
+      msgBoard.innerHTML = '<p style="opacity:0.5;font-size:14px">还没有留言，来说点什么吧</p>';
+      return;
+    }
+
+    messages.forEach((m) => {
+      let card = document.createElement("div");
+      card.className = "msg-card";
+
+      let timeStr = new Date(m.created_at).toLocaleString("zh-CN");
+
+      let replyHTML = "";
+      if (m.reply) {
+        let replyTime = m.reply_time ? new Date(m.reply_time).toLocaleString("zh-CN") : "";
+        replyHTML = `<div style="margin-top:8px;padding:8px 12px;background:var(--bg);border-radius:6px;border-left:3px solid var(--accent)">
+          <strong style="color:var(--accent)">此泽 回复：</strong>
+          <small style="opacity:0.5">${replyTime}</small>
+          <p style="margin:4px 0 0;font-size:14px">${m.reply}</p>
+        </div>`;
+      }
+
+      // 管理员显示设备标识 + 回复按钮
+      let adminHTML = "";
+      if (isAdmin()) {
+        adminHTML = `<small style="opacity:0.4">｜设备：${m.device_id.slice(0, 8)}</small>
+          <button class="replyBtn" data-id="${m.id}" style="float:right;font-size:12px;padding:4px 12px;border:1px solid var(--accent);color:var(--accent);background:none;border-radius:14px;cursor:pointer">回复</button>`;
+      }
+
+      card.innerHTML = `
+        <strong>${m.nickname}</strong>
+        <small>${timeStr}</small>
+        ${adminHTML}
+        <p>${m.message}</p>
+        ${replyHTML}
+      `;
+
+      msgBoard.appendChild(card);
+    });
+
+    // 统计
+    let names = [...new Set(messages.map((m) => m.nickname))];
+    let stats = document.getElementById("msgStats");
+    stats.textContent = isAdmin()
+      ? `🔐 管理员视图 · 共 ${messages.length} 条留言，来自 ${names.length} 位朋友`
+      : `共 ${messages.length} 条留言`;
+  }
+
+  // 提交留言
+  guestForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    let name = document.getElementById("guestName").value.trim();
+    let text = document.getElementById("guestMsg").value.trim();
+    if (!name || !text) return;
+
+    let { error } = await supabase.from("messages").insert({
+      nickname: name,
+      message: text,
+      device_id: deviceId
+    });
+
+    if (error) {
+      alert("留言提交失败：" + error.message);
+      return;
+    }
+
+    guestForm.reset();
+    loadMessages();
   });
 
-  // 用 map + filter 统计留言
-  let names = messages.map((m) => m.name);               // 提取名字
-  let unique = names.filter((n, i) => names.indexOf(n) === i); // 去重
-  let stats = document.getElementById("msgStats");
-  stats.textContent = `共 ${messages.length} 条留言，来自 ${unique.length} 位朋友`;
-};
+  // 管理员回复
+  msgBoard.addEventListener("click", async (e) => {
+    if (e.target.classList.contains("replyBtn")) {
+      let reply = prompt("输入回复内容：");
+      if (!reply) return;
+      let id = e.target.dataset.id;
+      let { error } = await supabase.from("messages").update({
+        reply: reply,
+        reply_time: new Date().toISOString()
+      }).eq("id", id);
 
-renderMessages();
+      if (error) {
+        alert("回复失败：" + error.message);
+        return;
+      }
+      loadMessages();
+    }
+  });
 
-guestForm.addEventListener("submit", (e) => {
-  e.preventDefault();
-
-  let name = document.getElementById("guestName").value.trim();
-  let text = document.getElementById("guestMsg").value.trim();
-  if (!name || !text) return;
-
-  messages.push({ name, text, time: Date.now() });
-  localStorage.setItem("messages", JSON.stringify(messages));
-
-  renderMessages();
-  guestForm.reset();
-});
-
-// 事件委托：父容器监听 → 判断谁被点了
-msgBoard.addEventListener("click", (e) => {
-  if (e.target.classList.contains("delBtn")) {
-    let i = Number(e.target.dataset.index);
-    messages.splice(i, 1);  // 从数组删除
-    localStorage.setItem("messages", JSON.stringify(messages));
-    renderMessages();
-  }
-});
+  // 初始加载
+  loadMessages();
+})();
 
 // ===== 主题管理：localStorage > OS 偏好 > 默认深色 =====
 let themeBtn = document.getElementById("themeBtn");

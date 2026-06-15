@@ -292,6 +292,10 @@ input:focus, textarea:focus {
   color: var(--accent);
   border-color: var(--accent);
 }
+.replyBtn:hover {
+  background: var(--accent) !important;
+  color: #fff !important;
+}
 
 blockquote {
   border-left: 4px solid var(--accent);
