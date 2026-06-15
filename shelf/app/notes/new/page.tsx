@@ -1,12 +1,16 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createNoteSimple } from "@/lib/storage";
 import { NoteEditor } from "@/components/notes/NoteEditor";
 
-export default function NewNotePage() {
+function NewNoteContent() {
   const router = useRouter();
+  const params = useSearchParams();
+
+  const defaultTitle = params ? (params.get("title") || "") : "";
+  const defaultText  = params ? (params.get("text")  || "") : "";
 
   return (
     <div>
@@ -14,13 +18,21 @@ export default function NewNotePage() {
         &larr; 返回
       </button>
       <NoteEditor
-        initialTitle=""
-        initialContent=""
+        initialTitle={defaultTitle}
+        initialContent={defaultText}
         onSave={async (title, content) => {
           createNoteSimple(title, content);
           router.push("/notes");
         }}
       />
     </div>
+  );
+}
+
+export default function NewNotePage() {
+  return (
+    <Suspense fallback={<div className="text-center py-20 text-zinc-500">加载中...</div>}>
+      <NewNoteContent />
+    </Suspense>
   );
 }

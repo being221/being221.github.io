@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "Save to Shelf",
+  "version": "1.0",
+  "description": "选中网页文字，右键保存到 Shelf 知识库",
+  "permissions": ["contextMenus", "storage"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "Save to Shelf",
+    "default_popup": "popup.html"
+  }
+}
