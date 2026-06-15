@@ -310,6 +310,53 @@ input:focus, textarea:focus {
   color: #fff !important;
 }
 
+/* 随笔 */
+.note-wrapper {
+  background-color: var(--card-bg);
+  border-radius: var(--radius);
+  border: 1px solid rgba(128,128,128,0.15);
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.note-wrapper:focus-within {
+  border-color: var(--accent);
+}
+.note-wrapper textarea {
+  display: block;
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 16px 20px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 15px;
+  line-height: 1.8;
+  resize: vertical;
+  min-height: 120px;
+}
+.note-wrapper textarea::placeholder {
+  color: var(--text);
+  opacity: 0.35;
+}
+.note-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 20px;
+  border-top: 1px solid rgba(128,128,128,0.08);
+  font-size: 12px;
+  color: var(--text);
+  opacity: 0.5;
+}
+.note-saved {
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.note-saved.show {
+  opacity: 1;
+}
+
 blockquote {
   border-left: 4px solid var(--accent);
   margin: 0;

@@ -13,14 +13,30 @@ setInterval(updateTime, 1000);
 
 // ===== localStorage：随笔自动保存 =====
 let note = document.getElementById("note");
+let noteCount = document.getElementById("note-count");
+let noteStatus = document.getElementById("note-status");
 
+// 恢复内容
 let savedNote = localStorage.getItem("savedNote");
 if (savedNote) {
-  note.textContent = savedNote;
+  note.value = savedNote;
 }
+noteCount.textContent = (note.value.length || 0) + " 字";
 
+// 输入时自动保存 + 字数统计
+let saveTimer;
 note.addEventListener("input", () => {
-  localStorage.setItem("savedNote", note.textContent);
+  let val = note.value;
+  localStorage.setItem("savedNote", val);
+  noteCount.textContent = val.length + " 字";
+  // 显示保存中 + 0.5 秒后变成已保存
+  noteStatus.textContent = "保存中...";
+  noteStatus.classList.add("show");
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    noteStatus.textContent = "已自动保存";
+    noteStatus.classList.remove("show");
+  }, 500);
 });
 
 // ===== 随机名言 =====

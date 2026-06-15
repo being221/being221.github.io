@@ -127,10 +127,13 @@
 
     <section aria-labelledby="note-heading">
       <h2 id="note-heading">想法随笔</h2>
-  <blockquote id="note" contenteditable="true" aria-label="可编辑的随笔区域，内容自动保存" role="textbox" aria-multiline="true">
-    写点随笔…今天读了什么、想到了什么、学到了什么。你的文字会自动保存，刷新不会丢。
-  </blockquote>
-
+      <div class="note-wrapper">
+        <textarea id="note" placeholder="写点随笔…今天读了什么、想到了什么、学到了什么。自动保存，不会丢。" rows="6" aria-label="随笔内容，自动保存"></textarea>
+        <div class="note-footer">
+          <span id="note-count">0 字</span>
+          <span id="note-status" class="note-saved">已自动保存</span>
+        </div>
+      </div>
     </section>
 
     <section aria-labelledby="guest-heading">
