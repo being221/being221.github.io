@@ -160,34 +160,52 @@ export default {
       }
     }
 
-    // 开始起卦（点击模式）
+    // 开始起卦（六爻逐爻掷币动画）
     const startDivination = () => {
       if (isShaking.value) return
 
       isShaking.value = true
-      isFlipping.value = true
-      buttonText.value = '起卦中...'
+      buttonText.value = '掷币起卦...'
+      yaoResultPreview.value = ''
 
-      // 模拟摇动3秒
-      let shakeCount = 0
-      const shakeInterval = setInterval(() => {
-        currentCoins.value = currentCoins.value.map(() =>
-          Math.random() > 0.5 ? coinHead : coinTail
-        )
-        shakeCount++
-        if (shakeCount > 30) {
-          clearInterval(shakeInterval)
+      // 生成完整的6爻结果
+      const fullResult = divination.coinDivination()
+      const allTerms = fullResult.terms || []
+      const code = fullResult.code || ''
+
+      // 逐爻展示
+      let round = 0
+      yaoRoundText.value = '第 1/6 掷'
+      yaoDisplay.value = [{ face: 0 }, { face: 0 }, { face: 0 }]
+
+      const interval = setInterval(() => {
+        flipKey.value++
+        const ch = code[round]
+        yaoDisplay.value = [
+          { face: ch === '1' ? 1 : 0 },
+          { face: ch === '1' ? 1 : 0 },
+          { face: ch === '1' ? 1 : 0 }
+        ]
+        let preview = ''
+        for (let r = 0; r <= round; r++) {
+          preview += (code[r] === '1' ? '━' : '--') + ' '
         }
-      }, 100)
+        yaoResultPreview.value = preview + '（' + allTerms[round] + '）'
+        round++
 
-      setTimeout(() => {
-        isShaking.value = false
-        isFlipping.value = false
-        buttonText.value = '开始起卦'
-
-        const hexagram = generateHexagram()
-        showResult(userQuestion.value.trim() || '今日运势', hexagram)
-      }, 3000)
+        if (round >= 6) {
+          clearInterval(interval)
+          yaoRoundText.value = ''
+          setTimeout(() => {
+            isShaking.value = false
+            yaoDisplay.value = []
+            buttonText.value = '开始起卦'
+            showResult(userQuestion.value.trim() || '今日运势', fullResult)
+          }, 800)
+        } else {
+          yaoRoundText.value = '第 ' + (round + 1) + '/6 掷'
+        }
+      }, 600)
     }
 
     // 启动摇动监听
