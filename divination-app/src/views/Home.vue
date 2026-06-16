@@ -16,12 +16,36 @@
           @click="openQuestionModal"
         >
           <div class="card-content">
-            <div class="coin-group">
-              <div class="coin" v-for="i in 3" :key="i">
-                <img :src="currentCoins[i-1]" :class="{ flipping: isFlipping }" />
+            <!-- 六爻掷币进度 -->
+            <div class="yao-rounds" v-if="isShaking && yaoDisplay.length">
+              <div class="yao-round-label">{{ yaoRoundText }}</div>
+              <div class="coin-3d-group">
+                <div
+                  class="coin-3d"
+                  v-for="(coin, ci) in yaoDisplay"
+                  :key="ci"
+                  :class="'coin-flip-' + (flipKey % 2)"
+                >
+                  <div class="coin-face coin-front">
+                    <span class="coin-char yang-char">{{ '◆' }}</span>
+                  </div>
+                  <div class="coin-face coin-back">
+                    <span class="coin-char yin-char">{{ '◇' }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 默认静态硬币 -->
+            <div class="coin-3d-group" v-else>
+              <div class="coin-3d-static" v-for="i in 3" :key="i">
+                <div class="coin-static-face">
+                  <span class="coin-char yang-char">{{ '◆' }}</span>
+                </div>
               </div>
             </div>
             <h3>{{ buttonText }}</h3>
+            <p class="yao-result-preview" v-if="yaoResultPreview.length">{{ yaoResultPreview }}</p>
             <p v-if="!isListeningShake" class="card-hint">
               点击起卦 | 摇动手机感应
             </p>
@@ -84,6 +108,10 @@ export default {
     const buttonText = ref('开始起卦')
     const isListeningShake = ref(false)
     const showQuestionModal = ref(false)
+    const yaoDisplay = ref([])
+    const yaoRoundText = ref('')
+    const yaoResultPreview = ref('')
+    const flipKey = ref(0)
     const userQuestion = ref('')
     const isPendingShake = ref(false)
     const shakeTimeoutId = ref(null)
@@ -270,11 +298,13 @@ export default {
 
     return {
       isShaking,
-      isFlipping,
-      currentCoins,
       todayCount,
       buttonText,
       isListeningShake,
+      yaoDisplay,
+      yaoRoundText,
+      yaoResultPreview,
+      flipKey,
       showQuestionModal,
       userQuestion,
       openQuestionModal,
@@ -398,5 +428,110 @@ export default {
   font-size: 0.8rem;
   color: #999;
   line-height: 1.6;
+}
+
+/* ===== 3D 铜钱样式 ===== */
+.coin-3d-group {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  padding: 12px 0;
+}
+.coin-3d, .coin-3d-static {
+  width: 64px;
+  height: 64px;
+}
+.coin-3d {
+  perspective: 600px;
+  animation: coinSpin3D 0.6s ease-in-out;
+}
+.coin-face, .coin-static-face {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.coin-front {
+  background: linear-gradient(135deg, #ffd700, #b8860b);
+  box-shadow: 0 3px 12px rgba(255,215,0,0.4), inset 0 2px 6px rgba(255,255,255,0.3);
+  z-index: 2;
+}
+.coin-back {
+  background: linear-gradient(135deg, #c0c0c0, #808080);
+  box-shadow: 0 3px 12px rgba(192,192,192,0.4), inset 0 2px 6px rgba(255,255,255,0.2);
+  transform: rotateY(180deg);
+}
+.coin-flip-0 .coin-front { transform: rotateY(0); }
+.coin-flip-1 .coin-front { transform: rotateY(180deg); }
+.coin-flip-0 .coin-back  { transform: rotateY(180deg); }
+.coin-flip-1 .coin-back  { transform: rotateY(0); }
+
+.coin-static-face {
+  background: linear-gradient(135deg, #ffd700, #b8860b);
+  box-shadow: 0 3px 12px rgba(255,215,0,0.3);
+  position: static;
+  animation: coinIdle 3s ease-in-out infinite;
+}
+.coin-3d-static:nth-child(2) .coin-static-face { animation-delay: 0.3s; }
+.coin-3d-static:nth-child(3) .coin-static-face { animation-delay: 0.6s; }
+
+@keyframes coinSpin3D {
+  0%   { transform: rotateY(0deg) rotateX(0deg); }
+  25%  { transform: rotateY(540deg) rotateX(360deg); }
+  50%  { transform: rotateY(1080deg); }
+  75%  { transform: rotateY(1260deg); }
+  100% { transform: rotateY(1440deg); }
+}
+@keyframes coinIdle {
+  0%,100% { transform: scale(1); }
+  50%     { transform: scale(1.05); box-shadow: 0 4px 16px rgba(255,215,0,0.5); }
+}
+
+.coin-char {
+  font-size: 32px;
+  line-height: 1;
+}
+.yang-char {
+  color: #5a3e00;
+  text-shadow: 0 1px 2px rgba(255,255,255,0.5);
+}
+.yin-char {
+  color: #444;
+  text-shadow: 0 1px 2px rgba(255,255,255,0.3);
+}
+
+/* 爻轮次显示 */
+.yao-rounds {
+  text-align: center;
+}
+.yao-round-label {
+  font-size: 0.8rem;
+  color: #667eea;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.yao-result-preview {
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 6px;
+  font-family: monospace;
+  letter-spacing: 4px;
+  animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 480px) {
+  .coin-3d, .coin-3d-static, .coin-face, .coin-static-face {
+    width: 48px; height: 48px;
+  }
+  .coin-char { font-size: 24px; }
 }
 </style>
