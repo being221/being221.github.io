@@ -21,8 +21,10 @@
               :class="[line === '1' ? 'line-yang' : 'line-yin', 'line-anim-' + (5 - i)]"
             >
               <span class="line-bar" v-if="line === '1'"></span>
-              <span class="line-bar-left" v-else></span>
-              <span class="line-bar-right" v-else></span>
+              <template v-else>
+                <span class="line-bar-left"></span>
+                <span class="line-bar-right"></span>
+              </template>
               <span class="line-term" v-if="terms && terms.length">{{ terms[5-i] }}</span>
             </div>
           </div>
@@ -41,8 +43,10 @@
               :class="line === '1' ? 'line-yang' : 'line-yin'"
             >
               <span class="line-bar" v-if="line === '1'"></span>
-              <span class="line-bar-left" v-else></span>
-              <span class="line-bar-right" v-else></span>
+              <template v-else>
+                <span class="line-bar-left"></span>
+                <span class="line-bar-right"></span>
+              </template>
             </div>
           </div>
           <h3 class="changing-name">{{ changingHexagram.fullName }}</h3>
@@ -734,4 +738,4 @@ export default {
   .line-bar { width: 120px; height: 8px; }
   .line-bar-left, .line-bar-right { width: 54px; height: 8px; }
 }
-</style></style>
+</style>

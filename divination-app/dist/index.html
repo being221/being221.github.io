@@ -1,59 +1,21 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="theme-color" content="#667eea" />
-  <link rel="icon" type="image/svg+xml" href="/divination-app/icons/icon.svg" />
-  <link rel="apple-touch-icon" href="/divination-app/icons/icon.svg" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-title" content="起卦" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#667eea">
+  <link rel="icon" type="image/svg+xml" href="/divination-app/icons/icon.svg">
+  <link rel="apple-touch-icon" href="/divination-app/icons/icon.svg">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="起卦">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>我的起卦</title>
-  
-<link rel="manifest" href="/divination-app/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/divination-app/registerSW.js"></script>
-<style id="help-widget">
-.hp-btn{position:fixed;top:20px;right:20px;z-index:9999;width:32px;height:32px;border-radius:50%;border:1px solid rgba(255,255,255,0.2);background:rgba(0,0,0,0.6);color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
-.hp-overlay{display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:20px}
-.hp-overlay.open{display:flex}
-.hp-panel{background:#1e1e2e;border-radius:12px;max-width:480px;width:100%;max-height:80vh;overflow-y:auto;box-shadow:0 12px 40px rgba(0,0,0,0.5);color:#e0e0e0;position:relative;animation:modalIn 0.25s ease}
-@keyframes modalIn{from{opacity:0;transform:translateY(24px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
-.hp-close{position:absolute;top:12px;right:16px;width:28px;height:28px;border-radius:50%;border:none;background:rgba(255,255,255,0.1);color:#aaa;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.hp-close:hover{background:rgba(255,255,255,0.2);color:#fff}
-.hp-body{padding:28px}
-.hp-body h3{font-size:20px;margin-bottom:14px;color:#fff}
-.hp-body h4{font-size:13px;color:#60a5fa;margin:14px 0 6px}
-.hp-body p,.hp-body li{font-size:13px;color:#b0b0b0;line-height:1.7}
-.hp-body ul{padding-left:16px;margin:4px 0 8px}
-</style>
-<link rel="manifest" href="/divination-app/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/divination-app/registerSW.js"></script><link rel="manifest" href="/divination-app/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/divination-app/registerSW.js"></script><link rel="manifest" href="/divination-app/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/divination-app/registerSW.js"></script><link rel="manifest" href="/divination-app/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/divination-app/registerSW.js"></script><link rel="manifest" href="/divination-app/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/divination-app/registerSW.js"></script></head>
+  <link rel="manifest" href="/divination-app/manifest.webmanifest">
+  <script type="module" crossorigin src="/divination-app/assets/index-cd861782.js"></script>
+  <link rel="stylesheet" href="/divination-app/assets/index-1a223363.css">
+<link rel="manifest" href="/divination-app/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/divination-app/registerSW.js"></script></head>
 <body>
-  <div id="root"></div>
-  <script crossorigin id="vite-legacy-polyfill" src="/divination-app/assets/polyfills-legacy-CLYttjsm.js"></script>
-  <script crossorigin id="vite-legacy-entry" data-src="/divination-app/assets/index-legacy-CH9aXOWO.js">System.import(document.getElementById('vite-legacy-entry').getAttribute('data-src'))</script>
-
-<button class="hp-btn" id="hp-btn" aria-label="帮助">?</button>
-<div class="hp-overlay" id="hp-overlay">
-<div class="hp-panel">
-<button class="hp-close" id="hp-close">&times;</button>
-<div class="hp-body"><h3>📦 占卜应用 · 使用说明</h3>
-<h4>🪙 起卦方式</h4>
-<ul><li><strong>铜钱起卦</strong> — 点击硬币翻转，每次集中意念后翻转，共六次（一爻一次）</li><li><strong>摇一摇</strong> — 拿起手机摇动即可随机起卦</li></ul>
-<h4>📋 卦象解读</h4><p>完成六次摇卦后，系统自动生成卦象，展示本卦、互卦、变卦，并给出对应的卦爻辞解读。</p>
-<h4>📜 历史记录</h4><p>每次起卦的结果自动保存到历史记录中，你可以随时回顾之前的卦象和解读。</p>
-<h4>💡 提示</h4><p>占卜结果仅供参考娱乐，不要过度依赖。心诚则灵，专注提问效果更好。</p>
-</div>
-</div></div>
-<script>
-(function(){
- setTimeout(function(){
-  var b=document.getElementById('hp-btn'),o=document.getElementById('hp-overlay'),c=document.getElementById('hp-close');
-  if(!b||!o)return;
-  b.onclick=function(){o.classList.add('open')};
-  c.onclick=function(){o.classList.remove('open')};
-  o.onclick=function(e){if(e.target===o)o.classList.remove('open')};
- },500);
-})();
-</script>
+  <div id="app"></div>
+  
 </body>
 </html>
