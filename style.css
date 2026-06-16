@@ -193,6 +193,7 @@ textarea:focus-visible {
 .proj-card:nth-child(6) { animation-delay: 0.6s; }
 .proj-card:nth-child(7) { animation-delay: 0.7s; }
 .proj-card:nth-child(8) { animation-delay: 0.8s; }
+.proj-card:nth-child(9) { animation-delay: 0.9s; }
 .proj-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 8px 20px rgba(0,0,0,0.3);

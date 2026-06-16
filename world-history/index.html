@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>全球古典历史 · 并排时间线</title>
+<meta name="description" content="前500年—公元500年，中国、印度、中东、地中海四大文明并排对比。">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Microsoft YaHei","PingFang SC",sans-serif;background:#1a1208;color:#d4c5a0;min-height:100vh}
+a{color:inherit;text-decoration:none}
+
+/* 导航 */
+.navbar{position:sticky;top:0;z-index:100;background:rgba(26,18,8,0.95);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,0.06);padding:0 16px}
+.nav-inner{max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:52px}
+.nav-brand{font-size:17px;font-weight:700;color:#c9a96e}
+.nav-actions{display:flex;align-items:center;gap:14px}
+.nav-actions a{font-size:13px;opacity:0.6;transition:opacity 0.2s}
+.nav-actions a:hover{opacity:1}
+
+/* 标题 */
+.page-header{text-align:center;padding:32px 16px 12px}
+.page-header h1{font-size:28px;color:#c9a96e;letter-spacing:4px}
+.page-header .subtitle{font-size:13px;color:#8b7355;margin-top:6px}
+
+/* 图例 */
+.legend{max-width:1400px;margin:0 auto;padding:8px 16px 16px;display:flex;gap:20px;justify-content:center;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:13px;color:#8b7355}
+.legend-dot{width:10px;height:10px;border-radius:50%}
+.legend-dot.china{background:#c44}
+.legend-dot.india{background:#d4a017}
+.legend-dot.mideast{background:#4488aa}
+.legend-dot.med{background:#8844aa}
+
+/* 时间轴网格 */
+.timeline-grid{max-width:1400px;margin:0 auto;padding:0 16px 60px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:1000px){.timeline-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.timeline-grid{grid-template-columns:1fr}}
+
+/* 列 */
+.col{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:10px;overflow:hidden}
+.col-header{padding:14px 16px;font-weight:700;font-size:16px;text-align:center;border-bottom:1px solid rgba(255,255,255,0.06)}
+.col-china .col-header{color:#f07070;border-bottom-color:rgba(192,64,64,0.3)}
+.col-india .col-header{color:#e8b840;border-bottom-color:rgba(200,160,40,0.3)}
+.col-mideast .col-header{color:#60a0c0;border-bottom-color:rgba(64,128,170,0.3)}
+.col-med .col-header{color:#b070d0;border-bottom-color:rgba(136,68,170,0.3)}
+
+/* 事件卡片 */
+.event-card{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.03);cursor:pointer;transition:background 0.15s;position:relative}
+.event-card:last-child{border-bottom:none}
+.event-card:hover{background:rgba(255,255,255,0.04)}
+.event-year{font-size:11px;opacity:0.5;margin-bottom:2px}
+.event-title{font-size:14px;line-height:1.4}
+.event-summary{font-size:12px;opacity:0.5;margin-top:2px;line-height:1.4}
+.highlight{border-left:3px solid #c9a96e;background:rgba(201,169,110,0.08)}
+
+/* 弹窗详情 */
+.modal-overlay{display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex}
+.modal-panel{background:#2a1f14;border-radius:10px;max-width:600px;width:100%;max-height:82vh;overflow-y:auto;box-shadow:0 12px 40px rgba(0,0,0,0.5);position:relative;animation:modalIn 0.25s ease;border:1px solid rgba(201,169,110,0.2)}
+@keyframes modalIn{from{opacity:0;transform:translateY(24px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+.modal-close{position:absolute;top:12px;right:16px;width:30px;height:30px;border-radius:50%;border:none;background:rgba(255,255,255,0.08);color:#aaa;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.modal-close:hover{background:rgba(255,255,255,0.15);color:#fff}
+.modal-header{padding:22px 24px 0;border-left:3px solid #c9a96e;margin:20px 24px 0}
+.modal-year{font-size:12px;color:#8b7355}
+.modal-title{font-size:20px;color:#c9a96e;margin:4px 0}
+.modal-body{padding:16px 24px 22px;font-size:14px;color:#b0a080;line-height:1.8}
+.modal-body p{margin-bottom:8px}
+.modal-nav{display:flex;justify-content:space-between;align-items:center;padding:0 24px 20px}
+.modal-nav button{padding:7px 16px;font-size:12px;border:1px solid rgba(255,255,255,0.15);border-radius:4px;background:transparent;color:#b0a080;cursor:pointer;font-family:inherit;transition:all 0.15s}
+.modal-nav button:hover{background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.3)}
+.modal-nav button:disabled{opacity:0.3;cursor:default}
+
+/* 帮助弹窗 */
+.help-overlay{display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:20px}
+.help-overlay.open{display:flex}
+.help-panel{background:#2a1f14;border-radius:10px;max-width:480px;width:100%;max-height:80vh;overflow-y:auto;box-shadow:0 12px 40px rgba(0,0,0,0.5);position:relative;animation:modalIn 0.25s ease;border:1px solid rgba(201,169,110,0.2)}
+.help-close{position:absolute;top:12px;right:16px;width:30px;height:30px;border-radius:50%;border:none;background:rgba(255,255,255,0.08);color:#aaa;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.help-close:hover{background:rgba(255,255,255,0.15);color:#fff}
+.help-body{padding:24px}
+.help-body h3{font-size:18px;color:#c9a96e;margin-bottom:14px}
+.help-body h4{font-size:13px;color:#d4a017;margin:14px 0 6px}
+.help-body p,.help-body li{font-size:13px;color:#b0a080;line-height:1.7}
+.help-body ul{padding-left:16px;margin:4px 0 8px}
+
+/* 空态 */
+.empty-state{text-align:center;padding:40px 16px;color:#5c4a3a;font-size:13px}
+
+/* Toast */
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);z-index:500;padding:8px 20px;border-radius:16px;background:#2a1f14;color:#c9a96e;font-size:13px;border:1px solid rgba(201,169,110,0.2);animation:fadeIn 0.3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="https://being221.github.io" class="nav-brand">🌍 全球古典历史</a>
+    <div class="nav-actions">
+      <a href="#" id="helpBtn">❓ 帮助</a>
+      <a href="https://being221.github.io">← 主页</a>
+    </div>
+  </div>
+</nav>
+
+<header class="page-header">
+  <h1>古典文明 · 并排对比</h1>
+  <p class="subtitle">前 500 年 — 公元 500 年 · 一千年间四大文明进程</p>
+</header>
+
+<div class="legend">
+  <span class="legend-item"><span class="legend-dot china"></span> 中国</span>
+  <span class="legend-item"><span class="legend-dot india"></span> 印度</span>
+  <span class="legend-item"><span class="legend-dot mideast"></span> 中东</span>
+  <span class="legend-item"><span class="legend-dot med"></span> 地中海</span>
+</div>
+
+<main class="timeline-grid" id="timelineGrid"></main>
+
+<div class="modal-overlay" id="modal">
+  <div class="modal-panel">
+    <button class="modal-close" id="modalClose">&times;</button>
+    <div class="modal-header">
+      <div class="modal-year" id="modalYear"></div>
+      <h2 class="modal-title" id="modalTitle"></h2>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-nav" id="modalNav"></div>
+  </div>
+</div>
+
+<div class="help-overlay" id="helpOverlay">
+  <div class="help-panel">
+    <button class="help-close" id="helpClose">&times;</button>
+    <div class="help-body">
+      <h3>🌍 使用说明</h3>
+      <h4>📌 四列并排对比</h4><p>中国、印度、中东、地中海四个文明竖列并排展示。每个文明约 30 个里程碑事件，从上到下按时间排列。</p>
+      <h4>🖱️ 点击查看详情</h4><p>点任意事件卡片弹出详情弹窗，展示完整解释。弹窗底部有前后翻页按钮。</p>
+      <h4>❌ 关闭</h4><p>点右上角 ✕ · 点弹窗外灰色区域 · 按 ESC 键</p>
+      <h4>📱 移动端</h4><p>小屏幕自动缩减列数（4→2→1 列）</p>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast" style="display:none"></div>
+
+<script src="events.js"></script>
+<script>
+(function() {
+  var COLORS = { china: "#c44", india: "#d4a017", mideast: "#4488aa", med: "#8844aa" };
+  var NAMES = { china: "🇨🇳 中国", india: "🇮🇳 印度", mideast: "🌏 中东", med: "🏛 地中海" };
+  var KEYS = ["china", "india", "mideast", "med"];
+
+  // 构建全局事件列表（带文明标记）
+  var allEvents = [];
+  KEYS.forEach(function(key) {
+    (window.WORLD_EVENTS[key] || []).forEach(function(ev, i) {
+      allEvents.push({ key: key, title: ev.title, year: ev.year, detail: ev.detail, idx: i });
+    });
+  });
+
+  // ===== 渲染 =====
+  function render() {
+    var grid = document.getElementById("timelineGrid");
+    grid.innerHTML = "";
+    KEYS.forEach(function(key) {
+      var events = window.WORLD_EVENTS[key] || [];
+      var html = '<div class="col col-' + key + '"><div class="col-header">' + NAMES[key] + ' <span style="font-size:11px;opacity:0.5">' + events.length + '条</span></div>';
+      events.forEach(function(ev, i) {
+        var y = ev.year < 0 ? "前" + Math.abs(ev.year) : "公元" + ev.year;
+        html += '<div class="event-card" data-key="' + key + '" data-idx="' + i + '">' +
+          '<div class="event-year">' + y + '</div>' +
+          '<div class="event-title">' + ev.title + '</div>' +
+        '</div>';
+      });
+      html += '</div>';
+      grid.innerHTML += html;
+    });
+  }
+
+  // ===== 弹窗 =====
+  var modal = document.getElementById("modal");
+  var currentKey = null, currentIdx = null;
+
+  function openModal(key, idx) {
+    var events = window.WORLD_EVENTS[key];
+    if (!events || !events[idx]) return;
+    var ev = events[idx];
+    currentKey = key; currentIdx = idx;
+
+    var y = ev.year < 0 ? "前" + Math.abs(ev.year) : "公元" + ev.year;
+    document.getElementById("modalYear").textContent = y + " · " + NAMES[key];
+    document.getElementById("modalTitle").textContent = ev.title;
+    document.getElementById("modalBody").innerHTML = "<p>" + esc(ev.detail) + "</p>";
+
+    // 导航
+    var prevBtn = '<button ' + (idx <= 0 ? "disabled" : "") + ' data-nav="prev">← 上一个</button>';
+    var posText = '<span style="font-size:12px;opacity:0.5">' + (idx + 1) + ' / ' + events.length + '</span>';
+    var nextBtn = '<button ' + (idx >= events.length - 1 ? "disabled" : "") + ' data-nav="next">下一个 →</button>';
+    document.getElementById("modalNav").innerHTML = prevBtn + posText + nextBtn;
+
+    modal.classList.add("open");
+    document.body.style.overflow = "hidden";
+
+    // 高亮
+    var allCards = document.querySelectorAll(".event-card");
+    allCards.forEach(function(c) { c.classList.remove("highlight"); });
+    var card = document.querySelector('.event-card[data-key="' + key + '"][data-idx="' + idx + '"]');
+    if (card) { card.classList.add("highlight"); card.scrollIntoView({ behavior: "smooth", block: "center" }); }
+  }
+
+  function closeModal() {
+    modal.classList.remove("open");
+    document.body.style.overflow = "";
+    document.querySelectorAll(".event-card").forEach(function(c) { c.classList.remove("highlight"); });
+  }
+
+  document.getElementById("modalClose").addEventListener("click", closeModal);
+  modal.addEventListener("click", function(e) { if (e.target === modal) closeModal(); });
+  document.addEventListener("keydown", function(e) {
+    if (e.key === "Escape") {
+      if (document.getElementById("helpOverlay").classList.contains("open")) {
+        document.getElementById("helpOverlay").classList.remove("open");
+        return;
+      }
+      if (modal.classList.contains("open")) closeModal();
+    }
+  });
+
+  // 卡片点击
+  document.getElementById("timelineGrid").addEventListener("click", function(e) {
+    var card = e.target.closest(".event-card");
+    if (!card) return;
+    openModal(card.dataset.key, parseInt(card.dataset.idx));
+  });
+
+  // 弹窗翻页
+  document.getElementById("modalNav").addEventListener("click", function(e) {
+    var btn = e.target.closest("[data-nav]");
+    if (!btn) return;
+    if (btn.dataset.nav === "prev" && currentIdx > 0) openModal(currentKey, currentIdx - 1);
+    if (btn.dataset.nav === "next" && currentIdx < (window.WORLD_EVENTS[currentKey] || []).length - 1) openModal(currentKey, currentIdx + 1);
+  });
+
+  // ===== 帮助弹窗 =====
+  var helpOverlay = document.getElementById("helpOverlay");
+  document.getElementById("helpBtn").addEventListener("click", function(e) {
+    e.preventDefault();
+    helpOverlay.classList.add("open");
+  });
+  document.getElementById("helpClose").addEventListener("click", function() { helpOverlay.classList.remove("open"); });
+  helpOverlay.addEventListener("click", function(e) { if (e.target === helpOverlay) helpOverlay.classList.remove("open"); });
+
+  // ===== 工具 =====
+  function esc(s) { var d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
+
+  render();
+})();
+</script>
+</body>
+</html>
