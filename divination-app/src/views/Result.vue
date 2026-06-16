@@ -95,11 +95,13 @@
           </div>
         </div>
 
+        <!-- 保存状态 -->
+        <div class="save-status" v-if="autoSaved">
+          <span>✅ 已自动保存到历史记录</span>
+        </div>
+
         <!-- 操作按钮 -->
         <div class="actions">
-          <button class="action-btn" @click="saveRecord">
-            💾 保存记录
-          </button>
           <button class="action-btn" @click="shareResult">
             📤 分享结果
           </button>
@@ -133,10 +135,33 @@ export default {
     const router = useRouter()
     const hexagram = ref({})
     const loaded = ref(false)
+    const autoSaved = ref(false)
     const userNotes = ref('')
     const currentRecord = ref(null)
 
-    // 从 store 读取卦象数据（在 setup 阶段执行，确保首次渲染时有数据）
+    // 自动保存到 localStorage
+    const autoSave = () => {
+      if (!currentRecord.value) return
+      currentRecord.value.id = Date.now().toString()
+      currentRecord.value.date = new Date().toLocaleString()
+      currentRecord.value.notes = userNotes.value
+
+      const history = JSON.parse(localStorage.getItem('divination_history') || '[]')
+      // 如果已经保存过（相同的 hexagram code + question），跳过
+      const exists = history.some(r =>
+        r.hexagram && r.hexagram.code === currentRecord.value.hexagram.code &&
+        r.question === currentRecord.value.question &&
+        Math.abs(new Date(r.date) - new Date(currentRecord.value.date)) < 10000
+      )
+      if (exists) { autoSaved.value = true; return }
+
+      history.unshift(currentRecord.value)
+      if (history.length > 100) history.splice(100)
+      localStorage.setItem('divination_history', JSON.stringify(history))
+      autoSaved.value = true
+    }
+
+    // 从 store 读取卦象数据
     const getHexagramFromStore = (clearStore) => {
       if (divinationStore.currentHexagram && divinationStore.currentHexagram.code) {
         const data = divinationStore.currentHexagram
@@ -151,12 +176,14 @@ export default {
           divinationStore.currentHexagram = null
           divinationStore.currentQuestion = ''
         }
+        // 自动保存
+        setTimeout(() => autoSave(), 300)
         return true
       }
       return false
     }
 
-    // setup 阶段立即尝试读取（通过 router 导航过来时 store 中已有数据）
+    // setup 阶段立即尝试读取
     getHexagramFromStore()
     loaded.value = !!hexagram.value.code
 
@@ -165,33 +192,16 @@ export default {
       router.back()
     }
 
-    // 保存记录
-    const saveRecord = () => {
-      if (!currentRecord.value) return
-
-      currentRecord.value.notes = userNotes.value
-      const history = JSON.parse(localStorage.getItem('divination_history') || '[]')
-
-      currentRecord.value.id = Date.now().toString()
-      currentRecord.value.date = new Date().toLocaleString()
-
-      history.unshift(currentRecord.value)
-
-      // 只保留最近100条记录
-      if (history.length > 100) {
-        history.splice(100)
-      }
-
-      localStorage.setItem('divination_history', JSON.stringify(history))
-
-      // 显示保存成功提示
-      showNotification('记录已保存')
-    }
-
-    // 保存笔记
+    // 保存笔记（同步到已保存的历史记录）
     const saveNotes = () => {
-      if (currentRecord.value) {
-        currentRecord.value.notes = userNotes.value
+      if (!currentRecord.value) return
+      currentRecord.value.notes = userNotes.value
+      // 更新 localStorage 中对应记录
+      const history = JSON.parse(localStorage.getItem('divination_history') || '[]')
+      const idx = history.findIndex(r => r.id === currentRecord.value.id)
+      if (idx !== -1) {
+        history[idx].notes = userNotes.value
+        localStorage.setItem('divination_history', JSON.stringify(history))
       }
     }
 
@@ -242,9 +252,9 @@ export default {
     return {
       hexagram,
       loaded,
+      autoSaved,
       userNotes,
       goBack,
-      saveRecord,
       saveNotes,
       shareResult,
       divinateAgain
@@ -259,6 +269,17 @@ export default {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   padding: 1rem;
   color: #333;
+}
+
+.save-status {
+  text-align: center;
+  padding: 0.5rem;
+  background: rgba(72, 199, 142, 0.2);
+  border: 1px solid rgba(72, 199, 142, 0.3);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  color: #48c78e;
+  font-size: 0.875rem;
 }
 
 .loading-state {

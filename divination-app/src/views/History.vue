@@ -81,6 +81,9 @@
               <button class="action-btn" @click.stop="shareRecord(record)">
                 📤 分享
               </button>
+              <button class="action-btn delete-btn" @click.stop="deleteRecord(record)">
+                🗑️
+              </button>
             </div>
           </div>
         </div>
@@ -287,6 +290,15 @@ export default {
     const getHexagramName = (record) => hexagramField(record, 'fullName')
     const getHexagramOverall = (record) => hexagramField(record, 'overall')
 
+    const deleteRecord = (record) => {
+      if (!confirm('确定删除这条记录吗？')) return
+      const idx = history.value.findIndex(r => r.id === record.id)
+      if (idx !== -1) {
+        history.value.splice(idx, 1)
+        localStorage.setItem('divination_history', JSON.stringify(history.value))
+      }
+    }
+
     const shareRecord = (record) => {
       const shareText = `起卦记录：${record.date}\n\n卦象：${getHexagramName(record)}\n问题：${record.question}\n\n${getHexagramOverall(record)}`
 
@@ -326,7 +338,8 @@ export default {
       editNote,
       saveNote,
       closeNoteModal,
-      shareRecord
+      shareRecord,
+      deleteRecord
     }
   }
 }
@@ -523,6 +536,14 @@ export default {
 
 .action-btn:hover {
   background: rgba(255, 255, 255, 1);
+}
+
+.delete-btn {
+  color: #e74c3c;
+}
+
+.delete-btn:hover {
+  background: rgba(231, 76, 60, 0.15);
 }
 
 .empty-state {
