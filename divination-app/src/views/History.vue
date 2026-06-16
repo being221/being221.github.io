@@ -27,6 +27,12 @@
     <!-- 筛选标签 -->
     <div class="filter-section">
       <button
+        :class="['tag-btn', { active: selectedTag === '__fav__' }]"
+        @click="selectTag('__fav__')"
+      >
+        ⭐ 收藏 ({{ favCount }})
+      </button>
+      <button
         v-for="tag in tags"
         :key="tag"
         :class="['tag-btn', { active: selectedTag === tag }]"
@@ -77,6 +83,9 @@
             <div class="record-actions">
               <button class="action-btn" @click.stop="editNote(record)">
                 📝 笔记
+              </button>
+              <button class="action-btn" :class="{'fav-active': getFavs().includes(record.id)}" @click.stop="toggleFav(record.id)">
+                {{ getFavs().includes(record.id) ? '❤️' : '🤍' }}
               </button>
               <button class="action-btn" @click.stop="shareRecord(record)">
                 📤 分享
@@ -153,10 +162,16 @@ export default {
     })
 
     const groupedHistory = computed(() => {
-      // 按标签筛选
-      const filtered = selectedTag.value === '全部'
-        ? history.value
-        : history.value.filter(r => r.tags && r.tags.includes(selectedTag.value))
+      // 按标签/收藏筛选
+      let filtered
+      if (selectedTag.value === '__fav__') {
+        const favs = getFavIds()
+        filtered = history.value.filter(r => favs.includes(r.id))
+      } else if (selectedTag.value === '全部') {
+        filtered = history.value
+      } else {
+        filtered = history.value.filter(r => r.tags && r.tags.includes(selectedTag.value))
+      }
 
       const groups = {}
       filtered.forEach(record => {
@@ -192,12 +207,30 @@ export default {
       return allTags
     })
 
+    // 收藏功能
+    const getFavIds = () => {
+      const stored = localStorage.getItem('divination_favorites')
+      return stored ? JSON.parse(stored) : []
+    }
+    const getFavs = () => getFavIds()
+    const favCount = ref(0)
+    const toggleFav = (id) => {
+      let favs = getFavIds()
+      const i = favs.indexOf(id)
+      if (i >= 0) favs.splice(i, 1)
+      else favs.push(id)
+      localStorage.setItem('divination_favorites', JSON.stringify(favs))
+      favCount.value = favs.length
+      loadHistory()
+    }
+
     // 方法
     const loadHistory = () => {
       const stored = localStorage.getItem('divination_history')
       if (stored) {
         history.value = JSON.parse(stored)
       }
+      favCount.value = getFavIds().length
     }
 
     const goBack = () => {
@@ -339,7 +372,11 @@ export default {
       saveNote,
       closeNoteModal,
       shareRecord,
-      deleteRecord
+      deleteRecord,
+      getFavs,
+      getFavIds,
+      toggleFav,
+      favCount
     }
   }
 }
@@ -544,6 +581,10 @@ export default {
 
 .delete-btn:hover {
   background: rgba(231, 76, 60, 0.15);
+}
+
+.fav-active {
+  color: #e74c3c !important;
 }
 
 .empty-state {
