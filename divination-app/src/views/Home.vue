@@ -69,23 +69,109 @@
         <p>温馨提示：本应用仅供娱乐，请相信科学、拒绝迷信。作者尚在学习前端开发，卦象结果由随机算法生成，切勿当真。</p>
       </div>
 
-      <!-- 内联结果展示 -->
+      <!-- ===== 卦象结果（同页面渲染）===== -->
       <div class="result-inline" v-if="showResultInline && resultData">
-        <div class="result-card">
-          <h2>{{ resultData.hexagram.fullName }}</h2>
-          <p class="result-desc">{{ resultData.hexagram.desc }}</p>
-          <p class="result-overall">{{ resultData.hexagram.overall }}</p>
-          <div v-if="resultData.hasChanges" class="change-info">
-            <p>→ 变卦：{{ resultData.changingHexagram?.fullName }}</p>
-            <p>{{ resultData.changingHexagram?.desc }}</p>
+        <div class="result-hexagram-display">
+          <!-- 本卦 -->
+          <div class="hexagram-card">
+            <div class="hexagram-lines-major" v-if="resultData.hexagram.code">
+              <div
+                v-for="(line, i) in resultData.hexagram.code.split('').reverse()"
+                :key="'b'+i"
+                class="hex-line"
+                :class="[line === '1' ? 'line-yang' : 'line-yin', 'line-anim-' + (5-i)]"
+              >
+                <span class="line-bar" v-if="line === '1'"></span>
+                <template v-else>
+                  <span class="line-bar-left"></span>
+                  <span class="line-bar-right"></span>
+                </template>
+                <span class="line-term" v-if="resultData.terms && resultData.terms.length">{{ resultData.terms[5-i] }}</span>
+              </div>
+            </div>
+            <h1 class="hexagram-name">{{ resultData.hexagram.fullName }}</h1>
+            <p class="hexagram-desc">{{ resultData.hexagram.desc }}</p>
           </div>
-          <div class="result-meta">
-            <p v-for="(t, i) in resultData.terms" :key="i">第{{i+1}}爻：{{ t }}</p>
+
+          <!-- 变卦 -->
+          <div class="hexagram-card changing" v-if="resultData.hasChanges && resultData.changingHexagram">
+            <div class="change-arrow">→</div>
+            <div class="hexagram-lines-minor">
+              <div
+                v-for="(line, i) in resultData.changingCode.split('').reverse()"
+                :key="'c'+i"
+                class="hex-line-mini"
+                :class="line === '1' ? 'line-yang' : 'line-yin'"
+              >
+                <span class="line-bar" v-if="line === '1'"></span>
+                <template v-else>
+                  <span class="line-bar-left"></span>
+                  <span class="line-bar-right"></span>
+                </template>
+              </div>
+            </div>
+            <h3 class="changing-name">{{ resultData.changingHexagram.fullName }}</h3>
+            <p class="hexagram-desc">{{ resultData.changingHexagram.desc }}</p>
           </div>
-          <button class="back-btn" @click="showResultInline = false">← 返回起卦</button>
         </div>
-      </div>
-    </main>
+
+        <!-- 整体运势 -->
+        <div class="section">
+          <h2>整体运势</h2>
+          <div class="fortune-card">
+            <p>{{ resultData.hexagram.overall }}</p>
+          </div>
+        </div>
+
+        <!-- 爻位详解 -->
+        <div class="section" v-if="resultData.hexagram.lines && resultData.hexagram.lines.length">
+          <h2>爻位详解</h2>
+          <div class="lines-detail">
+            <div class="line-detail-card" v-for="(line, i) in resultData.hexagram.lines" :key="i">
+              <div class="line-detail-header">
+                <span class="line-pos">{{['初','二','三','四','五','上'][i]}}{{ resultData.hexagram.code.split('').reverse()[i] === '1' ? '九' : '六' }}</span>
+                <span class="line-term-badge" v-if="resultData.terms && resultData.terms.length">{{ resultData.terms[5-i] }}</span>
+              </div>
+              <p class="line-detail-text" v-if="line.text">{{ line.text }}</p>
+              <p class="line-detail-interp" v-if="line.interpretation">{{ line.interpretation }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 四方面运势 -->
+        <div class="section" v-if="resultData.hexagram.fortune">
+          <h2>详细运势</h2>
+          <div class="fortune-grid">
+            <div class="fortune-item">
+              <span class="fortune-icon">💼</span>
+              <div><h4>事业</h4><p>{{ resultData.hexagram.fortune.career }}</p></div>
+            </div>
+            <div class="fortune-item">
+              <span class="fortune-icon">💕</span>
+              <div><h4>感情</h4><p>{{ resultData.hexagram.fortune.love }}</p></div>
+            </div>
+            <div class="fortune-item">
+              <span class="fortune-icon">💰</span>
+              <div><h4>财富</h4><p>{{ resultData.hexagram.fortune.wealth }}</p></div>
+            </div>
+            <div class="fortune-item">
+              <span class="fortune-icon">🏥</span>
+              <div><h4>健康</h4><p>{{ resultData.hexagram.fortune.health }}</p></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 建议 -->
+        <div class="section" v-if="resultData.hexagram.advice">
+          <h2>建议</h2>
+          <div class="advice-card"><p>{{ resultData.hexagram.advice }}</p></div>
+        </div>
+
+        <div class="result-actions">
+          <button class="action-btn primary-btn" @click="showResultInline = false">🔄 再起一卦</button>
+          <button class="action-btn" @click="showHistory">📊 历史记录</button>
+        </div>
+      </div>    </main>
 
     <!-- 问题输入弹窗 -->
     <div v-if="showQuestionModal" class="modal" @click="closeQuestionModal">
@@ -580,8 +666,68 @@ export default {
   .coin-char { font-size: 24px; }
 }
 
+/* ===== 卦象结果内联展示 ===== */
 .result-inline {
-  margin-top: 1.5rem;
+  animation: fadeIn 0.3s ease;
+  padding: 0 0 1rem;
+}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.result-hexagram-display { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-bottom: 1rem; }
+
+.hexagram-lines-major { display: flex; flex-direction: column-reverse; align-items: center; gap: 8px; padding: 20px 0; }
+.hexagram-lines-minor { display: flex; flex-direction: column-reverse; align-items: center; gap: 6px; padding: 12px 0; }
+.hex-line { display: flex; align-items: center; gap: 8px; opacity: 0; animation: lineReveal 0.5s ease forwards; }
+.hex-line.line-anim-0 { animation-delay: 0.0s; } .hex-line.line-anim-1 { animation-delay: 0.4s; }
+.hex-line.line-anim-2 { animation-delay: 0.8s; } .hex-line.line-anim-3 { animation-delay: 1.2s; }
+.hex-line.line-anim-4 { animation-delay: 1.6s; } .hex-line.line-anim-5 { animation-delay: 2.0s; }
+@keyframes lineReveal { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
+.hex-line-mini { display: flex; align-items: center; gap: 6px; opacity: 0; animation: lineReveal 0.5s ease forwards; }
+.hex-line-mini:nth-child(1) { animation-delay: 2.2s; } .hex-line-mini:nth-child(2) { animation-delay: 2.3s; }
+.hex-line-mini:nth-child(3) { animation-delay: 2.4s; } .hex-line-mini:nth-child(4) { animation-delay: 2.5s; }
+.hex-line-mini:nth-child(5) { animation-delay: 2.6s; } .hex-line-mini:nth-child(6) { animation-delay: 2.7s; }
+.line-bar { display: block; width: 160px; height: 10px; background: linear-gradient(135deg, #667eea, #5a67d8); border-radius: 5px; box-shadow: 0 2px 10px rgba(102,126,234,0.4); }
+.line-bar-left, .line-bar-right { display: block; width: 72px; height: 10px; background: linear-gradient(135deg, #667eea, #5a67d8); border-radius: 5px; box-shadow: 0 2px 10px rgba(102,126,234,0.4); }
+.line-term { font-size: 0.7rem; color: #e74c3c; font-weight: bold; min-width: 40px; text-align: center; }
+
+.hexagram-card { background: rgba(255,255,255,0.95); border-radius: 15px; padding: 1.5rem; box-shadow: 0 5px 20px rgba(0,0,0,0.1); flex: 1; min-width: 260px; max-width: 380px; text-align: center; }
+.hexagram-card.changing { opacity: 0.85; }
+.hexagram-name { color: #667eea; font-size: 1.5rem; margin: 0.5rem 0 0; }
+.hexagram-desc { color: #666; font-size: 0.9rem; }
+.changing-name { color: #48c78e; font-size: 1.1rem; margin: 0.5rem 0; }
+.change-arrow { font-size: 2rem; color: #48c78e; margin: 0.5rem 0; animation: pulse 1.5s ease-in-out infinite; }
+@keyframes pulse { 0%,100% { opacity: 0.5; transform: scale(1); } 50% { opacity: 1; transform: scale(1.2); } }
+
+.section { margin: 1rem 0; }
+.section h2 { font-size: 1.1rem; color: #667eea; margin: 0 0 0.5rem; padding-bottom: 0.25rem; border-bottom: 2px solid rgba(102,126,234,0.2); }
+.fortune-card { background: rgba(102,126,234,0.06); border-radius: 8px; padding: 0.75rem; }
+.fortune-card p { color: #444; line-height: 1.7; font-size: 0.9rem; margin: 0; }
+.fortune-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+@media (max-width: 480px) { .fortune-grid { grid-template-columns: 1fr; } }
+.fortune-item { display: flex; gap: 0.5rem; background: rgba(255,255,255,0.06); padding: 0.75rem; border-radius: 8px; border: 1px solid rgba(102,126,234,0.15); }
+.fortune-icon { font-size: 1.5rem; } .fortune-item h4 { margin: 0 0 2px; font-size: 0.85rem; color: #667eea; }
+.fortune-item p { margin: 0; font-size: 0.8rem; color: #666; line-height: 1.4; }
+
+.advice-card { background: rgba(72,199,142,0.06); border: 1px solid rgba(72,199,142,0.2); border-radius: 8px; padding: 0.75rem; }
+.advice-card p { color: #444; line-height: 1.7; font-size: 0.9rem; margin: 0; }
+
+.lines-detail { display: flex; flex-direction: column; gap: 0.5rem; }
+.line-detail-card { background: rgba(255,255,255,0.06); border-radius: 8px; padding: 10px 14px; border-left: 3px solid rgba(102,126,234,0.5); }
+.line-detail-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.line-pos { font-size: 0.8rem; color: #667eea; font-weight: bold; }
+.line-term-badge { font-size: 0.7rem; padding: 1px 6px; border-radius: 4px; background: rgba(231,76,60,0.2); color: #e74c3c; }
+.line-detail-text { font-size: 0.85rem; color: #555; line-height: 1.5; margin: 0.25rem 0; }
+.line-detail-interp { font-size: 0.8rem; color: #888; margin: 0.125rem 0; line-height: 1.4; }
+
+.result-actions { display: flex; gap: 0.75rem; justify-content: center; margin-top: 1.5rem; }
+.action-btn.primary-btn { background: #667eea; color: white; border: none; border-radius: 10px; padding: 0.5rem 1.5rem; cursor: pointer; font-size: 0.9rem; }
+.action-btn.primary-btn:hover { background: #5a67d8; }
+.action-btn { padding: 0.5rem 1rem; background: rgba(255,255,255,0.8); border: 1px solid #ddd; border-radius: 10px; cursor: pointer; font-size: 0.85rem; }
+
+@media (max-width: 480px) {
+  .hexagram-card { max-width: 100%; }
+  .line-bar { width: 120px; height: 8px; }
+  .line-bar-left, .line-bar-right { width: 54px; height: 8px; }
 }
 .result-card {
   background: rgba(255,255,255,0.95);
