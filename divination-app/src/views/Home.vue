@@ -222,8 +222,8 @@ export default {
         isShaking.value = false
         isFlipping.value = false
 
-        const result = divination.shakeDivination()
-        showResult(userQuestion.value.trim() || '今日运势', result.hexagram)
+        const result = divination.coinDivination()
+        showResult(userQuestion.value.trim() || '今日运势', result)
       }, 3000)
     }
 
@@ -235,6 +235,7 @@ export default {
     // 显示结果
     const showResult = (question, hexagram) => {
       divinationStore.currentHexagram = hexagram
+      divinationStore.currentResult = result
       divinationStore.currentQuestion = question
       router.push('/result')
     }

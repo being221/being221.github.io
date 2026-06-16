@@ -11,7 +11,7 @@ export class Divination {
   randomDivination() {
     const keys = Object.keys(this.hexagrams)
     const randomKey = keys[Math.floor(Math.random() * keys.length)]
-    return { ...this.hexagrams[randomKey] }
+    return { hexagram: this.hexagrams[randomKey], code: randomKey, terms: [], changingHexagram: null, hasChanges: false, changingCode: '', coinResults: [] }
   }
 
   // 通过数字起卦
@@ -28,21 +28,41 @@ export class Divination {
     return this.numberDivination(number)
   }
 
-  // 六爻起卦（模拟三枚硬币摇6次）
+  // 六爻起卦（三枚铜钱掷6次，每次3枚→共18变。老阳○老阴×为变爻，产生变卦）
   coinDivination() {
-    let code = ''
     const coinResults = []
+    const lineValues = []
+    const terms = []
+    let code = ''
+    let changingCode = ''
+
     for (let i = 0; i < 6; i++) {
-      const result = this.shakeCoin()
-      coinResults.push(result)
-      code += result
+      const coins = [this.flipCoin(), this.flipCoin(), this.flipCoin()]
+      const heads = coins.filter(c => c === 1).length
+      coinResults.push({ coins, heads })
+      let type
+      if (heads === 3)      { type = '老阳○'; code += '1'; changingCode += '0'; }
+      else if (heads === 2) { type = '少阳';      code += '1'; changingCode += '1'; }
+      else if (heads === 1) { type = '少阴';      code += '0'; changingCode += '0'; }
+      else                  { type = '老阴×';  code += '0'; changingCode += '1'; }
+      terms.push(type)
     }
+
+    const hexagram = this.hexagrams[code] || this.randomDivination()
+    const changingHexagram = this.hexagrams[changingCode] || null
+    const hasChanges = code !== changingCode
+
     return {
-      hexagram: this.hexagrams[code] || this.randomDivination(),
-      code,
-      coinResults,
+      hexagram, changingHexagram,
+      code, changingCode, hasChanges,
+      coinResults, terms,
       timestamp: new Date()
     }
+  }
+
+  // 掷一枚铜钱：1=正面(阳) 0=反面(阴)
+  flipCoin() {
+    return Math.random() > 0.5 ? 1 : 0
   }
 
   // 检测摇动
@@ -75,6 +95,11 @@ export class Divination {
   // 模拟摇动起卦（与 coinDivination 逻辑一致）
   shakeDivination() {
     return this.coinDivination()
+  }
+
+  // 兼容旧接口
+  simpleDivination() {
+    return this.randomDivination()
   }
 
   // 摇硬币：0=反面（阴），1=正面（阳）

@@ -11,13 +11,42 @@
     <!-- 卦象展示 -->
     <template v-if="loaded">
       <div class="hexagram-display">
+        <!-- 本卦 -->
         <div class="hexagram-card">
-          <div class="hexagram-symbol">
-            {{ hexagram.image }}
+          <div class="hexagram-lines-major" v-if="hexagram.code">
+            <div
+              v-for="(line, i) in hexagram.code.split('').reverse()"
+              :key="i"
+              class="hex-line"
+              :class="[line === '1' ? 'line-yang' : 'line-yin', 'line-anim-' + (5 - i)]"
+            >
+              <span class="line-bar" v-if="line === '1'"></span>
+              <span class="line-bar-left" v-else></span>
+              <span class="line-bar-right" v-else></span>
+              <span class="line-term" v-if="terms && terms.length">{{ terms[5-i] }}</span>
+            </div>
           </div>
           <h1 class="hexagram-name">{{ hexagram.fullName }}</h1>
-          <p class="hexagram-code">{{ hexagram.code }}</p>
           <p class="hexagram-desc">{{ hexagram.desc }}</p>
+        </div>
+
+        <!-- 变卦 -->
+        <div class="hexagram-card changing" v-if="changingHexagram && hasChanges">
+          <div class="change-arrow">→</div>
+          <div class="hexagram-lines-minor">
+            <div
+              v-for="(line, i) in changingCode.split('').reverse()"
+              :key="i"
+              class="hex-line-mini"
+              :class="line === '1' ? 'line-yang' : 'line-yin'"
+            >
+              <span class="line-bar" v-if="line === '1'"></span>
+              <span class="line-bar-left" v-else></span>
+              <span class="line-bar-right" v-else></span>
+            </div>
+          </div>
+          <h3 class="changing-name">{{ changingHexagram.fullName }}</h3>
+          <p class="hexagram-desc">{{ changingHexagram.desc }}</p>
         </div>
       </div>
 
@@ -28,6 +57,21 @@
           <h2>整体运势</h2>
           <div class="fortune-card">
             <p>{{ hexagram.overall }}</p>
+          </div>
+        </div>
+
+        <!-- 爻位详解 -->
+        <div class="section" v-if="hexagram.lines && hexagram.lines.length">
+          <h2>爻位详解</h2>
+          <div class="lines-detail">
+            <div class="line-detail-card" v-for="(line, i) in hexagram.lines" :key="i">
+              <div class="line-detail-header">
+                <span class="line-pos">{{['初','二','三','四','五','上'][i]}}{{ hexagram.code.split('').reverse()[i] === '1' ? '九' : '六' }}</span>
+                <span class="line-term-badge" v-if="terms && terms.length">{{ terms[5-i] }}</span>
+              </div>
+              <p class="line-detail-text" v-if="line.text">{{ line.text }}</p>
+              <p class="line-detail-interp" v-if="line.interpretation">{{ line.interpretation }}</p>
+            </div>
           </div>
         </div>
 
@@ -253,6 +297,10 @@ export default {
       hexagram,
       loaded,
       autoSaved,
+      terms,
+      changingHexagram,
+      hasChanges,
+      changingCode,
       userNotes,
       goBack,
       saveNotes,
@@ -543,4 +591,147 @@ export default {
     min-width: auto;
   }
 }
-</style>
+
+/*===== 爻线可视化 =====*/
+.hexagram-lines-major {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  gap: 8px;
+  padding: 20px 0;
+}
+.hexagram-lines-minor {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 0;
+}
+.hex-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  animation: lineReveal 0.5s ease forwards;
+}
+/* 逐条动画延迟：从初爻(0)到上爻(5) */
+.hex-line.line-anim-0 { animation-delay: 0.0s; }
+.hex-line.line-anim-1 { animation-delay: 0.4s; }
+.hex-line.line-anim-2 { animation-delay: 0.8s; }
+.hex-line.line-anim-3 { animation-delay: 1.2s; }
+.hex-line.line-anim-4 { animation-delay: 1.6s; }
+.hex-line.line-anim-5 { animation-delay: 2.0s; }
+@keyframes lineReveal {
+  from { opacity: 0; transform: translateX(-30px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.hex-line-mini {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  opacity: 0;
+  animation: lineReveal 0.5s ease forwards;
+}
+.hex-line-mini:nth-child(1) { animation-delay: 2.2s; }
+.hex-line-mini:nth-child(2) { animation-delay: 2.3s; }
+.hex-line-mini:nth-child(3) { animation-delay: 2.4s; }
+.hex-line-mini:nth-child(4) { animation-delay: 2.5s; }
+.hex-line-mini:nth-child(5) { animation-delay: 2.6s; }
+.hex-line-mini:nth-child(6) { animation-delay: 2.7s; }
+
+.line-bar {
+  display: block;
+  width: 160px;
+  height: 10px;
+  background: linear-gradient(135deg, #667eea, #5a67d8);
+  border-radius: 5px;
+  box-shadow: 0 2px 10px rgba(102,126,234,0.4);
+}
+.line-bar-left, .line-bar-right {
+  display: block;
+  width: 72px;
+  height: 10px;
+  background: linear-gradient(135deg, #667eea, #5a67d8);
+  border-radius: 5px;
+  box-shadow: 0 2px 10px rgba(102,126,234,0.4);
+}
+.line-term {
+  font-size: 0.7rem;
+  color: #e74c3c;
+  font-weight: bold;
+  min-width: 40px;
+  text-align: center;
+}
+
+/* 变卦 */
+.hexagram-card.changing {
+  position: relative;
+  opacity: 0.85;
+  margin-top: 0;
+  padding-top: 0;
+}
+.change-arrow {
+  text-align: center;
+  font-size: 2rem;
+  color: #48c78e;
+  margin: 0.5rem 0;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%,100% { opacity: 0.5; transform: scale(1); }
+  50%     { opacity: 1; transform: scale(1.2); }
+}
+.changing-name {
+  color: #48c78e;
+  font-size: 1.1rem;
+  text-align: center;
+  margin: 0.5rem 0;
+}
+
+/* 爻位详解 */
+.lines-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.line-detail-card {
+  background: rgba(255,255,255,0.06);
+  border-radius: 8px;
+  padding: 10px 14px;
+  border-left: 3px solid rgba(102,126,234,0.5);
+}
+.line-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.line-pos {
+  font-size: 0.8rem;
+  color: #667eea;
+  font-weight: bold;
+}
+.line-term-badge {
+  font-size: 0.7rem;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: rgba(231,76,60,0.2);
+  color: #e74c3c;
+}
+.line-detail-text {
+  font-size: 0.85rem;
+  color: #555;
+  line-height: 1.5;
+}
+.line-detail-interp {
+  font-size: 0.8rem;
+  color: #888;
+  margin-top: 2px;
+  line-height: 1.4;
+}
+
+@media (max-width: 480px) {
+  .line-bar { width: 120px; height: 8px; }
+  .line-bar-left, .line-bar-right { width: 54px; height: 8px; }
+}
+</style></style>
