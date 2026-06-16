@@ -234,10 +234,10 @@ export default {
     const loadSettings = () => {
       const stored = localStorage.getItem('divination_settings')
       if (stored) {
-        const settings = JSON.parse(stored)
-        return settings
+        return JSON.parse(stored)
       }
-      return null
+      // 默认：摇一摇起卦
+      return { divination: { defaultMethod: 'shake' } }
     }
 
     // 打开问题输入弹窗
