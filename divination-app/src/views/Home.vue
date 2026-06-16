@@ -690,34 +690,34 @@ export default {
 .line-bar-left, .line-bar-right { display: block; width: 72px; height: 10px; background: linear-gradient(135deg, #667eea, #5a67d8); border-radius: 5px; box-shadow: 0 2px 10px rgba(102,126,234,0.4); }
 .line-term { font-size: 0.7rem; color: #e74c3c; font-weight: bold; min-width: 40px; text-align: center; }
 
-.hexagram-card { background: rgba(255,255,255,0.95); border-radius: 15px; padding: 1.5rem; box-shadow: 0 5px 20px rgba(0,0,0,0.1); flex: 1; min-width: 260px; max-width: 380px; text-align: center; }
+.hexagram-card { background: #fff; border-radius: 15px; padding: 1.5rem; box-shadow: 0 5px 20px rgba(0,0,0,0.1); flex: 1; min-width: 260px; max-width: 380px; text-align: center; }
 .hexagram-card.changing { opacity: 0.85; }
 .hexagram-name { color: #667eea; font-size: 1.5rem; margin: 0.5rem 0 0; }
-.hexagram-desc { color: #666; font-size: 0.9rem; }
+.hexagram-desc { color: #444; font-size: 0.9rem; }
 .changing-name { color: #48c78e; font-size: 1.1rem; margin: 0.5rem 0; }
 .change-arrow { font-size: 2rem; color: #48c78e; margin: 0.5rem 0; animation: pulse 1.5s ease-in-out infinite; }
 @keyframes pulse { 0%,100% { opacity: 0.5; transform: scale(1); } 50% { opacity: 1; transform: scale(1.2); } }
 
 .section { margin: 1rem 0; }
 .section h2 { font-size: 1.1rem; color: #667eea; margin: 0 0 0.5rem; padding-bottom: 0.25rem; border-bottom: 2px solid rgba(102,126,234,0.2); }
-.fortune-card { background: rgba(102,126,234,0.06); border-radius: 8px; padding: 0.75rem; }
-.fortune-card p { color: #444; line-height: 1.7; font-size: 0.9rem; margin: 0; }
+.fortune-card { background: rgba(102,126,234,0.08); border-radius: 8px; padding: 0.75rem; }
+.fortune-card p { color: #2c2c2c; line-height: 1.7; font-size: 0.9rem; margin: 0; }
 .fortune-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
 @media (max-width: 480px) { .fortune-grid { grid-template-columns: 1fr; } }
-.fortune-item { display: flex; gap: 0.5rem; background: rgba(255,255,255,0.06); padding: 0.75rem; border-radius: 8px; border: 1px solid rgba(102,126,234,0.15); }
+.fortune-item { display: flex; gap: 0.5rem; background: rgba(255,255,255,0.9); padding: 0.75rem; border-radius: 8px; border: 1px solid rgba(102,126,234,0.15); }
 .fortune-icon { font-size: 1.5rem; } .fortune-item h4 { margin: 0 0 2px; font-size: 0.85rem; color: #667eea; }
-.fortune-item p { margin: 0; font-size: 0.8rem; color: #666; line-height: 1.4; }
+.fortune-item p { margin: 0; font-size: 0.8rem; color: #444; line-height: 1.4; }
 
-.advice-card { background: rgba(72,199,142,0.06); border: 1px solid rgba(72,199,142,0.2); border-radius: 8px; padding: 0.75rem; }
-.advice-card p { color: #444; line-height: 1.7; font-size: 0.9rem; margin: 0; }
+.advice-card { background: rgba(72,199,142,0.1); border: 1px solid rgba(72,199,142,0.2); border-radius: 8px; padding: 0.75rem; }
+.advice-card p { color: #2c2c2c; line-height: 1.7; font-size: 0.9rem; margin: 0; }
 
 .lines-detail { display: flex; flex-direction: column; gap: 0.5rem; }
-.line-detail-card { background: rgba(255,255,255,0.06); border-radius: 8px; padding: 10px 14px; border-left: 3px solid rgba(102,126,234,0.5); }
+.line-detail-card { background: #fff; border-radius: 8px; padding: 10px 14px; border-left: 3px solid rgba(102,126,234,0.5); }
 .line-detail-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
 .line-pos { font-size: 0.8rem; color: #667eea; font-weight: bold; }
 .line-term-badge { font-size: 0.7rem; padding: 1px 6px; border-radius: 4px; background: rgba(231,76,60,0.2); color: #e74c3c; }
-.line-detail-text { font-size: 0.85rem; color: #555; line-height: 1.5; margin: 0.25rem 0; }
-.line-detail-interp { font-size: 0.8rem; color: #888; margin: 0.125rem 0; line-height: 1.4; }
+.line-detail-text { font-size: 0.85rem; color: #333; line-height: 1.5; margin: 0.25rem 0; }
+.line-detail-interp { font-size: 0.8rem; color: #555; margin: 0.125rem 0; line-height: 1.4; }
 
 .result-actions { display: flex; gap: 0.75rem; justify-content: center; margin-top: 1.5rem; }
 .action-btn.primary-btn { background: #667eea; color: white; border: none; border-radius: 10px; padding: 0.5rem 1.5rem; cursor: pointer; font-size: 0.9rem; }
