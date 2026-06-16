@@ -1,0 +1,20 @@
+{
+  "name": "此泽being_zephyr - 个人主页",
+  "short_name": "此泽",
+  "description": "喜欢历史和哲学的前端学习者",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#1a1a2e",
+  "background_color": "#1a1a2e",
+  "lang": "zh-CN",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

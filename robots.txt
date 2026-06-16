@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /Fooocus/
+Disallow: /__pycache__/
+Disallow: /node_modules/
+
+Sitemap: https://being221.github.io/sitemap.xml

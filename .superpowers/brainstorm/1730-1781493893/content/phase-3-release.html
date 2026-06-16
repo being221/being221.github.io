@@ -1,0 +1,104 @@
+<h2>Phase 3 · 多用户 + 开源发布</h2>
+<p class="subtitle">第 3 阶段（2-3 周）：从个人工具变成开源产品</p>
+
+<div class="cards" style="margin-bottom:24px">
+  <div class="card">
+    <div class="card-body">
+      <h3>🔐 用户系统 <small style="opacity:0.5">· 新技能</small></h3>
+      <p>Auth.js v5 · OAuth (GitHub/Google) · 会话管理</p>
+      <p style="font-size:12px;opacity:0.6">GitHub/Google 一键登录，每人独立数据库</p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <h3>📦 开源发布 <small style="opacity:0.5">· 新技能</small></h3>
+      <p>README 撰写 · LICENSE · CHANGELOG · Contributing Guide</p>
+      <p style="font-size:12px;opacity:0.6">npm package.json · Docker 一键部署 · Vercel Deploy Button</p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <h3>🌍 Vercel 部署 <small style="opacity:0.5">· 新技能</small></h3>
+      <p>Vercel Postgres · Environment Variables · CI/CD</p>
+      <p style="font-size:12px;opacity:0.6">一键部署到 Vercel，5 分钟上线</p>
+    </div>
+  </div>
+</div>
+
+<div class="split" style="margin-top:24px">
+  <div class="mockup">
+    <div class="mockup-header">Project Structure (最终形态)</div>
+    <div class="mockup-body" style="padding:16px;text-align:left;font-size:12px;line-height:1.8;font-family:monospace">
+      shelf/<br>
+      ├── app/          &larr; App Router<br>
+      │   ├── layout.tsx<br>
+      │   ├── page.tsx<br>
+      │   ├── api/<br>
+      │   │   ├── links/<br>
+      │   │   ├── notes/<br>
+      │   │   ├── search/<br>
+      │   │   └── ai/<br>
+      │   └── (auth)/<br>
+      ├── components/   &larr; UI<br>
+      ├── lib/          &larr; 核心<br>
+      │   ├── db/       &larr; Schema<br>
+      │   ├── ai/       &larr; SDK<br>
+      │   └── utils/<br>
+      ├── drizzle/<br>
+      ├── package.json<br>
+      ├── LICENSE<br>
+      ├── README.md<br>
+      └── Dockerfile
+    </div>
+  </div>
+  <div class="mockup">
+    <div class="mockup-header">开源发布 Checklist</div>
+    <div class="mockup-body" style="padding:16px;text-align:left;font-size:13px">
+      <div class="section">
+        <label class="label">代码</label>
+        <p style="margin:0">✅ TypeScript 100% · ✅ ESLint · ✅ 测试覆盖</p>
+      </div>
+      <div class="section">
+        <label class="label">文档</label>
+        <p style="margin:0">✅ README (含截图/GIF) · ✅ 快速开始 5 分钟<br>
+        ✅ 环境变量说明 · ✅ Contributing Guide</p>
+      </div>
+      <div class="section">
+        <label class="label">部署</label>
+        <p style="margin:0">✅ Vercel Deploy Button · ✅ Docker Compose<br>
+        ✅ .env.example</p>
+      </div>
+      <div class="section">
+        <label class="label">社区</label>
+        <p style="margin:0">✅ MIT License · ✅ Issue 模板 · ✅ 项目 Wiki</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr style="margin:32px 0;border-color:var(--card-border)">
+
+<h3>3 个阶段学到的全部技术 (BCD)</h3>
+
+<div class="cards">
+  <div class="card" style="border-left:3px solid #38bdf8">
+    <div class="card-body">
+      <h3>B · 全栈</h3>
+      <p>Next.js · Server Actions · TypeScript · Auth.js · SQLite → PostgreSQL · Drizzle · Vercel 部署</p>
+    </div>
+  </div>
+  <div class="card" style="border-left:3px solid #4ade80">
+    <div class="card-body">
+      <h3>C · AI</h3>
+      <p>Vercel AI SDK · Embedding · 向量搜索 · Streaming · Prompt Engineering</p>
+    </div>
+  </div>
+  <div class="card" style="border-left:3px solid #fbbf24">
+    <div class="card-body">
+      <h3>D · 开源</h3>
+      <p>README · LICENSE · Docker · CI/CD · npm 发布 · 社区运营</p>
+    </div>
+  </div>
+</div>
+
+<p style="text-align:center;margin-top:32px;font-size:14px;opacity:0.7">总工期：6-9 周。每阶段结束都有完整可用的产品。</p>

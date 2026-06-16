@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>4800 vs 5400 结构施工图对比</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background: #1a1a2e; color: #eee; font-family: 'Microsoft YaHei', sans-serif; }
+.header { background: #16213e; padding: 12px 20px; text-align: center; border-bottom: 2px solid #e94560; }
+.header h1 { font-size: 18px; }
+.header span { font-size: 12px; color: #aaa; }
+.container { display: flex; height: calc(100vh - 80px); }
+.pane { flex: 1; overflow: auto; padding: 5px; }
+.pane-left { border-right: 2px solid #e94560; }
+.pane h3 { text-align: center; padding: 8px; margin: 5px; border-radius: 4px; }
+.pane-left h3 { background: #533a3a; }
+.pane-right h3 { background: #3a533a; }
+.pane img { width: 100%; border: 1px solid #444; }
+.pane iframe { width: 100%; height: 90%; border: 1px solid #444; background: #fff; }
+.split-label { display: inline-block; padding: 3px 10px; border-radius: 3px; font-size: 11px; }
+.label-old { background: #c0392b; }
+.label-new { background: #27ae60; }
+.note { font-size: 11px; color: #aaa; padding: 5px; text-align: center; }
+.btn-group { text-align: center; margin: 5px; }
+.btn { padding: 5px 15px; margin: 2px; border: 1px solid #555; background: #333; color: #eee; cursor: pointer; border-radius: 3px; font-size: 12px; }
+.btn:hover { background: #555; }
+.btn.active { background: #e94560; border-color: #e94560; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>结构施工图对比 <span class="label-old">4800原版</span> vs <span class="label-new">5400版本</span></h1>
+  <span>四川省内江市海心小区7栋 · 框架结构 · AB/CD轴边跨 4.8m→5.4m</span>
+</div>
+
+<div class="container">
+  <div class="pane pane-left">
+    <h3><span class="split-label label-old">4800</span> 原版结构施工图（张明宇）</h3>
+    <img src="结施图_4800_full.png" alt="4800结施图" style="width:100%">
+    <div class="note">AutoCAD DWG原图 · PDF导出 · 可Ctrl+滚轮缩放</div>
+  </div>
+  <div class="pane pane-right">
+    <h3><span class="split-label label-new">5400</span> 新版结构施工图（基于计算书数据）</h3>
+    <iframe src="5400-structural-drawing.html" id="view5400"></iframe>
+    <div class="note">基于5400计算书所有数据重新生成 · 黄色=变化项</div>
+  </div>
+</div>
+
+<script>
+// Adjust iframe height
+document.getElementById('view5400').style.height = window.innerHeight - 120 + 'px';
+</script>
+</body>
+</html>

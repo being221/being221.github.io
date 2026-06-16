@@ -1,4 +1,27 @@
 {
+  "permissions": {
+    "allow": [
+      "Bash(PYTHONUTF8=1 PYTHONIOENCODING=utf-8 venv/Scripts/python.exe -m pip install transformers gradio opencv-contrib-python-headless rembg groundingdino-py segment_anything pytorch_lightning pygit2)",
+      "Bash(PYTHONUTF8=1 venv/Scripts/python.exe -m pip install pygit2)",
+      "Bash(PYTHONUTF8=1 PYTHONIOENCODING=utf-8 venv/Scripts/python.exe entry_with_update.py --port 7865)",
+      "Bash(kill 611)",
+      "Bash(PYTHONUTF8=1 PYTHONIOENCODING=utf-8 timeout 30 venv/Scripts/python.exe launch.py)",
+      "Bash(PYTHONUTF8=1 PYTHONIOENCODING=utf-8 venv/Scripts/python.exe launch.py)",
+      "Bash(PYTHONUTF8=1 PYTHONIOENCODING=utf-8 HF_ENDPOINT=https://hf-mirror.com venv/Scripts/python.exe launch.py)",
+      "Bash(PYTHONUTF8=1 venv/Scripts/pip install modelscope -q)",
+      "Bash(pkill -f \"modelscope\\\\|snapshot_download\\\\|launch.py\\\\|entry_with_update\")",
+      "Bash(pkill -f \"Fooocus.*python\")",
+      "Bash(PYTHONUTF8=1 venv/Scripts/python.exe -c ' *)",
+      "Bash(PYTHONUTF8=1 venv/Scripts/python.exe launch.py)",
+      "Bash(cd \"d:/邓杰鹏个人主页/Fooocus/models/checkpoints\" && rm -f *.partial* *.corrupted* && echo \"✅ 碎片已清理\" && ls)",
+      "Bash(echo \"export default function Page\\(\\) { return <div>ok</div>; }\")",
+      "Bash(echo \"export default function Layout\\({ children }: { children: React.ReactNode }\\) { return <html lang=\\\\\"zh-CN\\\\\"><body>{children}</body></html>; }\")",
+      "WebFetch(domain:asset-dashboard-gules-seven.vercel.app)"
+    ],
+    "additionalDirectories": [
+      "D:\\邓杰鹏个人主页"
+    ]
+  },
   "hooks": {
     "PreToolUse": [
       {

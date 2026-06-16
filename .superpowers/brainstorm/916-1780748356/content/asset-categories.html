@@ -1,0 +1,54 @@
+<h2>你想追踪哪些资产类别？</h2>
+<p class="subtitle">这决定录入表单和饼图怎么设计。选你实际会用的就行。</p>
+
+<div class="options" data-multiselect>
+  <div class="option" data-choice="cash" onclick="toggleSelect(this)">
+    <div class="letter">💰</div>
+    <div class="content">
+      <h3>现金 / 银行存款</h3>
+      <p>微信零钱、支付宝余额、银行卡活期/定期</p>
+    </div>
+  </div>
+  <div class="option" data-choice="fund" onclick="toggleSelect(this)">
+    <div class="letter">📊</div>
+    <div class="content">
+      <h3>基金 / 理财产品</h3>
+      <p>货币基金、债券基金、指数基金、银行理财</p>
+    </div>
+  </div>
+  <div class="option" data-choice="stock" onclick="toggleSelect(this)">
+    <div class="letter">📈</div>
+    <div class="content">
+      <h3>股票</h3>
+      <p>A股、港股、美股持仓</p>
+    </div>
+  </div>
+  <div class="option" data-choice="gold" onclick="toggleSelect(this)">
+    <div class="letter">🥇</div>
+    <div class="content">
+      <h3>黄金 / 贵金属</h3>
+      <p>积存金、黄金ETF、实物金</p>
+    </div>
+  </div>
+  <div class="option" data-choice="crypto" onclick="toggleSelect(this)">
+    <div class="letter">₿</div>
+    <div class="content">
+      <h3>加密货币</h3>
+      <p>BTC、ETH 等</p>
+    </div>
+  </div>
+  <div class="option" data-choice="property" onclick="toggleSelect(this)">
+    <div class="letter">🏠</div>
+    <div class="content">
+      <h3>房产 / 大件资产</h3>
+      <p>房子估值、车等大额资产</p>
+    </div>
+  </div>
+  <div class="option" data-choice="debt" onclick="toggleSelect(this)">
+    <div class="letter">💳</div>
+    <div class="content">
+      <h3>负债（花呗/信用卡/贷款）</h3>
+      <p>作为负资产录入，净值 = 资产 - 负债</p>
+    </div>
+  </div>
+</div>

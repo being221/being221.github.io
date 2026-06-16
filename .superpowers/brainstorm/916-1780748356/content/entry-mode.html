@@ -1,0 +1,63 @@
+<h2>数据怎么录？</h2>
+<p class="subtitle">两种录入模式，影响数据结构和日常使用方式</p>
+
+<div class="options">
+  <div class="option" data-choice="balance" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>余额快照式</h3>
+      <p>每次打开更新一下各账户的余额数字，系统自动记录时间戳，对比上次变化。</p>
+      <div class="mockup" style="margin-top:12px;">
+        <div class="mockup-body" style="background:#0f172a;color:#e2e8f0;padding:12px;border-radius:8px;font-size:13px;">
+          <div style="text-align:left;padding:8px;">
+            <div style="margin-bottom:8px;font-weight:bold;">💡 更新我的资产</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;background:rgba(30,41,59,0.7);padding:8px;border-radius:4px;">
+              <span>💰 现金</span>
+              <span><input style="width:80px;text-align:right;background:transparent;border:1px solid #475569;color:#e2e8f0;padding:4px;border-radius:4px;" value="52,800" disabled></span>
+            </div>
+            <div style="margin-top:8px;font-size:11px;color:#94a3b8;">上次更新: 6月3日 · 这次比上次多了 ¥3,200</div>
+            <button class="mock-button" style="margin-top:8px;">💾 保存快照 → 自动生成一条月度记录</button>
+          </div>
+        </div>
+      </div>
+      <div class="pros-cons" style="margin-top:8px;">
+        <div class="pros"><h4>优点</h4><ul><li>打开就录，30秒搞定</li><li>数据量小，结构简单</li></ul></div>
+        <div class="cons"><h4>缺点</h4><ul><li>看不到钱花哪了</li><li>饼图只能显示"你就一类资产"</li></ul></div>
+      </div>
+    </div>
+  </div>
+  <div class="option" data-choice="transaction" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>逐笔记账式（推荐）</h3>
+      <p>每笔收入/支出/转账单独记录。日期、金额、类别、备注。像记账App一样。</p>
+      <div class="mockup" style="margin-top:12px;">
+        <div class="mockup-body" style="background:#0f172a;color:#e2e8f0;padding:12px;border-radius:8px;font-size:13px;">
+          <div style="text-align:left;padding:8px;">
+            <div style="margin-bottom:8px;font-weight:bold;">✏️ 记一笔</div>
+            <div style="display:flex;gap:4px;margin-bottom:6px;">
+              <button style="background:#22c55e20;color:#4ade80;border:1px solid #22c55e40;padding:4px 16px;border-radius:4px;font-size:12px;">收入</button>
+              <button style="background:transparent;color:#94a3b8;border:1px solid #475569;padding:4px 16px;border-radius:4px;font-size:12px;">支出</button>
+            </div>
+            <div style="margin-bottom:4px;"><input style="width:100%;background:rgba(30,41,59,0.7);border:1px solid #475569;color:#e2e8f0;padding:6px;border-radius:4px;font-size:14px;" value="6月1日 工资到账 +8,000" disabled></div>
+            <div style="display:flex;gap:4px;align-items:center;">
+              <span style="font-size:11px;color:#94a3b8;">🏷 工资收入</span>
+              <span style="font-size:11px;color:#94a3b8;">📅 6月1日</span>
+              <span style="font-size:11px;color:#94a3b8;">✏️ 备注...</span>
+            </div>
+          </div>
+          <div style="margin-top:8px;text-align:left;font-size:11px;color:#94a3b8;">
+            📋 最近：<br>
+            <span style="color:#4ade80;">+¥8,000 工资收入</span> · 6月1日<br>
+            <span style="color:#f87171;">-¥35 餐饮</span> · 6月3日<br>
+            <span style="color:#f87171;">-¥1,000 基金定投</span> · 6月5日
+          </div>
+        </div>
+      </div>
+      <div class="pros-cons" style="margin-top:8px;">
+        <div class="pros"><h4>优点</h4><ul><li>知道钱去哪了，饼图有意义</li><li>数据积累后分析价值大</li><li>像真正在管理财务</li></ul></div>
+        <div class="cons"><h4>缺点</h4><ul><li>每笔都要记，需要养成习惯</li><li>MVP 开发量稍大</li></ul></div>
+      </div>
+    </div>
+  </div>
+</div>

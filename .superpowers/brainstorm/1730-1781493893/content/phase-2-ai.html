@@ -1,0 +1,91 @@
+<h2>Phase 2 · AI 加持</h2>
+<p class="subtitle">第 2 阶段（2-3 周）：让收藏和笔记变聪明</p>
+
+<div class="split">
+  <div class="mockup">
+    <div class="mockup-header">语义搜索</div>
+    <div class="mockup-body" style="padding:16px">
+      <div class="placeholder" style="height:36px;margin-bottom:16px;text-align:left;padding:8px 12px">🔍 上次看到的那篇关于 Server Components 性能的文章…</div>
+      <div style="text-align:left">
+        <div class="placeholder" style="height:60px;margin-bottom:8px;padding:8px;font-size:12px;text-align:left">
+          <strong>92% 匹配</strong> · Server Components vs Client Components 实测
+          <br><small>对比了 Next.js 15 App Router 下两种策略的渲染性能，Server Components 在首屏加载上快 47%...</small>
+        </div>
+        <div class="placeholder" style="height:60px;margin-bottom:8px;padding:8px;font-size:12px;text-align:left">
+          <strong>78% 匹配</strong> · React 19 新特性概览
+          <br><small>React 19 brings Server Components as a stable feature, along with new hooks like use()...</small>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="mockup">
+    <div class="mockup-header">AI 写作助手</div>
+    <div class="mockup-body" style="padding:16px">
+      <div style="text-align:left;font-size:12px;">
+        <div class="placeholder" style="height:120px;margin-bottom:12px;padding:10px;text-align:left;line-height:1.5">
+          # 向量数据库选型<br><br>
+          对比了 pgvector、Pinecone、Qdrant 三个方案。pgvector 和 Postgres 深度集成，但性能在大数据量时不
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+          <button class="mock-button" style="font-size:11px;padding:4px 10px">✨ 扩写</button>
+          <button class="mock-button" style="font-size:11px;padding:4px 10px">📝 总结</button>
+          <button class="mock-button" style="font-size:11px;padding:4px 10px">🌐 翻译</button>
+          <button class="mock-button" style="font-size:11px;padding:4px 10px">🔗 关联</button>
+        </div>
+        <div class="placeholder" style="height:60px;padding:8px;text-align:left;font-size:11px;opacity:0.7">
+          🤖 AI 建议：<br>
+          你的收藏里有 3 篇关于 pgvector 的文章，要帮你整理成对比表吗？<br>
+          另外这篇笔记和「数据库选型.md」高度相关，建议关联。
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr style="margin:32px 0;border-color:var(--card-border)">
+
+<div class="cards">
+  <div class="card">
+    <div class="card-body">
+      <h3>🔍 语义搜索 <small style="opacity:0.5">· 新技能</small></h3>
+      <p>Vercel AI SDK · Embedding API · pgvector · 向量相似度搜索</p>
+      <p style="font-size:12px;opacity:0.6">自然语言搜笔记和收藏，不靠关键词匹配</p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <h3>🤖 AI 助手 <small style="opacity:0.5">· 新技能</small></h3>
+      <p>Claude API / OpenAI API · Streaming · Prompt Engineering</p>
+      <p style="font-size:12px;opacity:0.6">扩写/总结/翻译/关联推荐——AI 做你的写作搭档</p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <h3>🔄 流式输出 <small style="opacity:0.5">· 新技能</small></h3>
+      <p>Server-Sent Events · React Suspense · ReadableStream</p>
+      <p style="font-size:12px;opacity:0.6">AI 回答一个字一个字出来，像 ChatGPT 那样</p>
+    </div>
+  </div>
+</div>
+
+<hr style="margin:32px 0;border-color:var(--card-border)">
+
+<div class="pros-cons">
+  <div class="pros">
+    <h4>关键技术升级</h4>
+    <ul>
+      <li>SQLite → PostgreSQL + pgvector（向量数据库）</li>
+      <li>接入 Vercel AI SDK（统一 Claude/GPT 接口）</li>
+      <li>Embedding 自动生成——收藏链接时自动向量化</li>
+      <li>流式 SSE 输出，前端用 React Suspense 接</li>
+    </ul>
+  </div>
+  <div class="cons">
+    <h4>风险和取舍</h4>
+    <ul>
+      <li>AI API 需要 Key——设计成用户自己填</li>
+      <li>Embedding 有成本——只对「已加标签」的内容做</li>
+      <li>PostgreSQL 比 SQLite 部署复杂——先用 SQLite + 内存向量库过渡</li>
+    </ul>
+  </div>
+</div>

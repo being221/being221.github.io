@@ -1,0 +1,96 @@
+<h2>phase-v1.html — MVP：单用户收藏+笔记</h2>
+<p class="subtitle">第 1 阶段（2-3 周）：跑通核心闭环</p>
+
+<div class="mockup">
+  <div class="mockup-header">Phase 1 · 收藏页面</div>
+  <div class="mockup-body">
+    <div class="mock-nav" style="justify-content:space-between;">
+      <span>📦 Shelf</span>
+      <span style="display:flex;gap:12px;">
+        <span style="opacity:0.6">收藏</span>
+        <span style="opacity:0.6">笔记</span>
+        <span style="opacity:0.6">搜索</span>
+        <input class="mock-input" style="width:100px;padding:2px 8px;font-size:12px" placeholder="API Key">
+      </span>
+    </div>
+    <div style="display:flex;gap:16px;padding:16px;">
+      <div style="flex:1;">
+        <div class="placeholder" style="height:36px;margin-bottom:12px">+ 添加新链接…</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div class="placeholder" style="height:80px;font-size:12px;padding:8px">
+            <strong>Next.js 15 正式发布</strong>
+            <br><small>nextjs.org</small>
+            <br><span style="color:#38bdf8">#前端</span> <span style="color:#a78bfa">#Next.js</span>
+          </div>
+          <div class="placeholder" style="height:80px;font-size:12px;padding:8px">
+            <strong>向量数据库对比</strong>
+            <br><small>supabase.com/blog</small>
+            <br><span style="color:#38bdf8">#AI</span> <span style="color:#a78bfa">#数据库</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="split" style="margin-top:24px;">
+  <div class="mockup">
+    <div class="mockup-header">Phase 1 · 笔记编辑</div>
+    <div class="mockup-body" style="padding:16px">
+      <div style="display:flex;gap:12px;">
+        <div style="width:180px">
+          <div class="placeholder" style="height:24px;margin-bottom:8px">📝 笔记列表</div>
+          <div class="placeholder" style="height:20px;font-size:11px;padding:2px 8px">React Server Components</div>
+          <div class="placeholder" style="height:20px;margin-top:4px;font-size:11px;padding:2px 8px;background:var(--accent);color:white">向量数据库选型</div>
+          <div class="placeholder" style="height:20px;margin-top:4px;font-size:11px;padding:2px 8px">读书笔记 · 存在与时间</div>
+        </div>
+        <div style="flex:1">
+          <div class="placeholder" style="height:180px;font-size:12px;padding:12px;text-align:left;line-height:1.6">
+            # 向量数据库选型<br><br>
+            对比了 pgvector、Pinecone、Qdrant 三个方案...<br><br>
+            ## 结论<br>
+            pgvector 最适合小项目，和 Postgres 深度集成。
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="mockup">
+    <div class="mockup-header">Phase 1 · 技术选型</div>
+    <div class="mockup-body" style="padding:16px">
+      <table style="width:100%;font-size:13px">
+        <tr><td style="padding:4px 0;opacity:0.6">框架</td><td>Next.js 15 + TypeScript</td></tr>
+        <tr><td style="padding:4px 0;opacity:0.6">样式</td><td>Tailwind CSS + shadcn/ui</td></tr>
+        <tr><td style="padding:4px 0;opacity:0.6">数据库</td><td>SQLite（本地文件）</td></tr>
+        <tr><td style="padding:4px 0;opacity:0.6">ORM</td><td>Drizzle ORM</td></tr>
+        <tr><td style="padding:4px 0;opacity:0.6">编辑器</td><td>MDX 或 TipTap</td></tr>
+        <tr><td style="padding:4px 0;opacity:0.6">元数据抓取</td><td>open-graph-scraper</td></tr>
+        <tr><td style="padding:4px 0;opacity:0.6">部署</td><td>Vercel（可选）</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<hr style="margin:32px 0;border-color:var(--card-border)">
+
+<h3>Phase 1 学到的技术</h3>
+<div class="cards">
+  <div class="card">
+    <div class="card-body">
+      <h3>Next.js App Router</h3>
+      <p>Server Components / Server Actions / 动态路由 / 流式渲染</p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <h3>Drizzle + SQLite</h3>
+      <p>Schema 定义 → Migration → CRUD，完整的数据库操作链路</p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <h3>TypeScript 实战</h3>
+      <p>类型安全的全栈开发——从 API 到数据库到前端组件</p>
+    </div>
+  </div>
+</div>

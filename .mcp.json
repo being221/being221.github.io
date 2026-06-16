@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "cad-mcp": {
+      "command": "python",
+      "args": ["-m", "cad_cowork_mcp"]
+    }
+  }
+}

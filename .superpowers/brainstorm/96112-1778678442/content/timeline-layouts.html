@@ -1,0 +1,113 @@
+<h2>纵向时间线 — 三种布局风格</h2>
+<p class="subtitle">都用春秋战国数据示例，选你喜欢的风格和配色</p>
+
+<div class="cards">
+  <div class="card" data-choice="center-line" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">A. 中轴线交替</div>
+        <div class="mockup-body" style="background:#1a1a2e;padding:16px;color:#eee;font-size:13px;">
+          <div style="position:relative;margin:0 auto;width:2px;background:#e94560;">
+            <div style="position:relative;left:-140px;width:130px;padding:6px 8px;background:#16213e;border-left:3px solid #e94560;border-radius:4px;margin-bottom:12px;text-align:right;">
+              <strong style="color:#e94560;">前771</strong><br>犬戎攻破镐京<br>西周灭亡
+            </div>
+            <div style="position:relative;left:12px;width:130px;padding:6px 8px;background:#16213e;border-left:3px solid #f0a500;border-radius:4px;margin-bottom:12px;">
+              <strong style="color:#f0a500;">前770</strong><br>平王东迁雒邑<br>东周开始
+            </div>
+            <div style="position:relative;left:-140px;width:130px;padding:6px 8px;background:#16213e;border-left:3px solid #e94560;border-radius:4px;margin-bottom:12px;text-align:right;">
+              <strong style="color:#e94560;">前685</strong><br>齐桓公即位<br>管仲相齐
+            </div>
+            <div style="position:relative;left:12px;width:130px;padding:6px 8px;background:#16213e;border-left:3px solid #00b4d8;border-radius:4px;margin-bottom:12px;">
+              <strong style="color:#00b4d8;">前656</strong><br>葵丘会盟<br>齐桓公称霸
+            </div>
+            <div style="position:relative;left:-140px;width:130px;padding:6px 8px;background:#16213e;border-left:3px solid #e94560;border-radius:4px;text-align:right;">
+              <strong style="color:#e94560;">前632</strong><br>城濮之战<br>晋文公称霸
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A. 中轴线交替</h3>
+      <p>竖线居中，事件卡片左右交替排列。视觉均衡，空间利用率高。经典时间线风格。</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="left-line" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">B. 左脊线单侧</div>
+        <div class="mockup-body" style="background:#1a1a2e;padding:16px;color:#eee;font-size:13px;">
+          <div style="position:relative;padding-left:24px;border-left:2px solid #e94560;">
+            <div style="margin-bottom:12px;position:relative;">
+              <div style="position:absolute;left:-30px;top:4px;width:10px;height:10px;background:#e94560;border-radius:50%;"></div>
+              <strong style="color:#e94560;">前771年</strong>
+              <p style="margin:2px 0;color:#ccc;">犬戎攻破镐京，西周灭亡</p>
+            </div>
+            <div style="margin-bottom:12px;position:relative;">
+              <div style="position:absolute;left:-30px;top:4px;width:10px;height:10px;background:#f0a500;border-radius:50%;"></div>
+              <strong style="color:#f0a500;">前770年</strong>
+              <p style="margin:2px 0;color:#ccc;">平王东迁雒邑，东周开始</p>
+            </div>
+            <div style="margin-bottom:12px;position:relative;">
+              <div style="position:absolute;left:-30px;top:4px;width:10px;height:10px;background:#e94560;border-radius:50%;"></div>
+              <strong style="color:#e94560;">前685年</strong>
+              <p style="margin:2px 0;color:#ccc;">齐桓公即位，管仲相齐</p>
+            </div>
+            <div style="margin-bottom:12px;position:relative;">
+              <div style="position:absolute;left:-30px;top:4px;width:10px;height:10px;background:#00b4d8;border-radius:50%;"></div>
+              <strong style="color:#00b4d8;">前656年</strong>
+              <p style="margin:2px 0;color:#ccc;">葵丘会盟，齐桓公称霸</p>
+            </div>
+            <div style="position:relative;">
+              <div style="position:absolute;left:-30px;top:4px;width:10px;height:10px;background:#e94560;border-radius:50%;"></div>
+              <strong style="color:#e94560;">前632年</strong>
+              <p style="margin:2px 0;color:#ccc;">城濮之战，晋文公称霸</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B. 左脊线单侧</h3>
+      <p>竖线在左侧，事件全部右侧排列。阅读方向统一，手机友好，实现最简单。</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="cards" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">C. 卡片瀑布流</div>
+        <div class="mockup-body" style="background:#1a1a2e;padding:16px;color:#eee;font-size:13px;">
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;gap:10px;align-items:flex-start;">
+              <div style="min-width:50px;text-align:right;color:#e94560;font-weight:bold;">前771</div>
+              <div style="flex:1;background:#16213e;padding:8px 12px;border-radius:4px;border-top:3px solid #e94560;">
+                <strong>犬戎破镐京</strong>
+                <p style="margin:2px 0;font-size:11px;color:#aaa;">西周灭亡，进入东周</p>
+              </div>
+            </div>
+            <div style="display:flex;gap:10px;align-items:flex-start;">
+              <div style="min-width:50px;text-align:right;color:#f0a500;font-weight:bold;">前770</div>
+              <div style="flex:1;background:#16213e;padding:8px 12px;border-radius:4px;border-top:3px solid #f0a500;">
+                <strong>平王东迁</strong>
+                <p style="margin:2px 0;font-size:11px;color:#aaa;">雒邑为新都，春秋开始</p>
+              </div>
+            </div>
+            <div style="display:flex;gap:10px;align-items:flex-start;">
+              <div style="min-width:50px;text-align:right;color:#e94560;font-weight:bold;">前685</div>
+              <div style="flex:1;background:#16213e;padding:8px 12px;border-radius:4px;border-top:3px solid #e94560;">
+                <strong>齐桓公即位</strong>
+                <p style="margin:2px 0;font-size:11px;color:#aaa;">管仲相齐，改革图强</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C. 卡片瀑布流</h3>
+      <p>无连线，纯卡片从上到下排列。最简洁灵活，容易加筛选/搜索，但少了"线"的时间感。</p>
+    </div>
+  </div>
+</div>

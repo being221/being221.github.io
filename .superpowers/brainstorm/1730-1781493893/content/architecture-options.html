@@ -1,0 +1,65 @@
+<h2>知识管理工具：3 种架构方案</h2>
+<p class="subtitle">目标：全栈 + AI + 开源。同样功能，不同实现路径</p>
+
+<div class="options" data-multiselect>
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>全栈 SaaS 版</h3>
+      <p><strong>Next.js + TypeScript + Auth.js + Drizzle ORM + PostgreSQL + Vercel AI SDK + pgvector</strong></p>
+      <p>完整的多用户 Web 应用，部署在 Vercel。注册登录后才能用，数据存云数据库。向量搜索用 pgvector。最像正经产品。</p>
+    </div>
+  </div>
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>本地优先版</h3>
+      <p><strong>Next.js + SQLite + 本地 Embedding + 可选 Vercel 部署</strong></p>
+      <p>数据存本地浏览器 IndexedDB 或 SQLite，无登录。AI API Key 用户自己填。可以部署但部署后也是每人独立实例。隐私友好，离线可用。</p>
+    </div>
+  </div>
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>渐进式版</h3>
+      <p><strong>先从 A 的最小版本开始 → 逐步加功能 → 最终开源发布</strong></p>
+      <p>先用 SQLite + 单用户跑通核心功能，快速出可用版本。然后加用户系统 → 换 PostgreSQL → 加向量搜索 → 开源。风险最低，每一步都有可展示的东西。</p>
+    </div>
+  </div>
+</div>
+
+<hr style="margin:32px 0;border-color:var(--card-border)">
+
+<h3>核心功能（三个方案都包含）</h3>
+
+<div class="cards">
+  <div class="card">
+    <div class="card-body">
+      <h3>📑 收藏管理</h3>
+      <p>粘贴链接自动抓标题/摘要/封面图，手动添加标签和笔记</p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <h3>📝 笔记编辑</h3>
+      <p>Markdown 编辑器，支持实时预览、标签、与收藏关联</p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <h3>🔍 AI 语义搜索</h3>
+      <p>不靠关键词，用自然语言搜索——"上次看到的那篇关于XX的文章"</p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <h3>🤖 AI 助手</h3>
+      <p>写笔记时帮你扩写/总结/翻译；看收藏时帮你出摘要和关联</p>
+    </div>
+  </div>
+</div>
+
+<hr style="margin:32px 0;border-color:var(--card-border)">
+
+<h3>推荐：方案 C</h3>
+<p class="subtitle">理由很简单——你第一次做全栈+AI+开源，4个新东西同时上风险太高。C 拆成小步，每步都有成就感，而且每一步的代码都能直接写到简历上。</p>

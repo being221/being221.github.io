@@ -1,0 +1,12 @@
+{
+  "name": "ts-learning",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "check": "tsc --noEmit",
+    "watch": "tsc --noEmit --watch"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  }
+}

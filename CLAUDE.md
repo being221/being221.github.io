@@ -35,7 +35,15 @@
 
 ---
 
-## 5. Pocock Skills 速查
+## 5. 技能自动触发规则
+
+- **前端 UI 工作**（页面设计、布局、样式、组件美化、配色、CSS 修改等）：先用 `Skill` 工具调用 `frontend-design`，再按该技能的流程执行
+- **非平凡实现任务**（新功能、重构、架构变更等，不含单行修复/typo）：先用 `Skill` 工具调用 `superpowers:brainstorming`，消除模糊点后再动手
+- **任务收尾**（声称完成、交付前）：先用 `Skill` 工具调用 `superpowers:verification-before-completion`，验证通过后再报告完成
+
+---
+
+## 6. Pocock Skills 速查
 
 当用户提到"命令"、"skill"、"技能"、"pocock"、"记不住"、"速查"、"有什么工具"时，主动列出以下技能清单：
 
@@ -51,7 +59,6 @@
 | 审视全局 | `/zoom-out` | 让 AI 跳出细节从系统架构视角看问题 |
 | 架构优化 | `/improve-codebase-architecture` | 发现代码架构深化机会 |
 | 快速原型 | `/prototype` | 快速出原型验证想法 |
-| 压缩输出 | `/caveman` | 超简洁模式，省约 75% token |
 | 收工交接 | `/handoff` | 生成完整的交接文档 |
 | 写新技能 | `/write-a-skill` | 创建符合规范的新 skill（元技能） |
 | 初始化配置 | `/setup-matt-pocock-skills` | 一次性配置 issue 追踪、标签、文档路径 |

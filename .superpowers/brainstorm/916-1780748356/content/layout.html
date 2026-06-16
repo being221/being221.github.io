@@ -1,0 +1,68 @@
+<h2>资产仪表盘 MVP — 布局方案</h2>
+<p class="subtitle">三种信息架构，选你喜欢的感觉（可以点击卡片选择）</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>仪表盘式（推荐）</h3>
+      <p>顶部一排概览大数字（净值/资产/负债/月变化），中间左侧饼图 + 右侧折线图，底部是交易列表。一眼扫完所有关键信息，像看汽车仪表盘。</p>
+      <div class="mockup" style="margin-top:12px;">
+        <div class="mockup-header">布局预览</div>
+        <div class="mockup-body">
+          <div style="display:flex;gap:8px;margin-bottom:8px;">
+            <div class="placeholder" style="flex:1;text-align:center;padding:16px 8px;">💰 净资产<br><b>¥52,800</b></div>
+            <div class="placeholder" style="flex:1;text-align:center;padding:16px 8px;">📈 总资产<br><b>¥68,000</b></div>
+            <div class="placeholder" style="flex:1;text-align:center;padding:16px 8px;">📉 总负债<br><b>¥15,200</b></div>
+            <div class="placeholder" style="flex:1;text-align:center;padding:16px 8px;">📊 月变化<br><b style="color:#22c55e;">+¥3,200</b></div>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <div class="placeholder" style="flex:1;min-height:160px;text-align:center;">🥧 资产配置饼图</div>
+            <div class="placeholder" style="flex:2;min-height:160px;text-align:center;">📈 月度资产变化折线图</div>
+          </div>
+          <div class="placeholder" style="margin-top:8px;min-height:100px;text-align:center;">📋 最近交易记录列表</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>卡片网格式</h3>
+      <p>所有信息分成独立卡片排列成网格：净值卡片最大放左上，饼图卡片、折线图卡片、交易列表卡片各自独立，像手机桌面小组件。</p>
+      <div class="mockup" style="margin-top:12px;">
+        <div class="mockup-header">布局预览</div>
+        <div class="mockup-body">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <div class="placeholder" style="grid-row:span 2;text-align:center;padding:24px 8px;display:flex;flex-direction:column;justify-content:center;">💰<br><b style="font-size:1.5em;">¥52,800</b><br>净资产<br><span style="color:#22c55e;font-size:0.8em;">月 +¥3,200</span></div>
+            <div class="placeholder" style="text-align:center;padding:12px 8px;">📈 总资产 ¥68,000</div>
+            <div class="placeholder" style="text-align:center;padding:12px 8px;">📉 总负债 ¥15,200</div>
+            <div class="placeholder" style="min-height:100px;text-align:center;">🥧 资产配置</div>
+            <div class="placeholder" style="min-height:100px;text-align:center;">📈 月度趋势</div>
+          </div>
+          <div class="placeholder" style="margin-top:8px;min-height:60px;text-align:center;">📋 最近交易</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>列表式（移动优先）</h3>
+      <p>顶部一个大资产概览横幅，下面是一条条记录——饼图和折线图折叠在"分析"区，需要时再展开。在手机上最好用，一次滚动看完全部。</p>
+      <div class="mockup" style="margin-top:12px;">
+        <div class="mockup-header">布局预览</div>
+        <div class="mockup-body" style="max-width:400px;margin:0 auto;">
+          <div class="placeholder" style="text-align:center;padding:20px 8px;margin-bottom:8px;background:linear-gradient(135deg,#1e3a5f,#2d5a87);color:white;border-radius:8px;">💰 净资产 ¥52,800<br><small style="opacity:0.8;">资产 ¥68,000 · 负债 ¥15,200 · 本月 +¥3,200</small></div>
+          <div class="placeholder" style="text-align:left;padding:10px;margin-bottom:4px;">📋 2024-06-06 工资收入 +¥8,000</div>
+          <div class="placeholder" style="text-align:left;padding:10px;margin-bottom:4px;">📋 2024-06-05 基金定投 -¥1,000</div>
+          <div class="placeholder" style="text-align:left;padding:10px;margin-bottom:4px;">📋 2024-06-04 房租 -¥2,500</div>
+          <div class="placeholder" style="text-align:left;padding:10px;margin-bottom:4px;">📋 2024-06-03 外卖 -¥35</div>
+          <div class="mock-button" style="width:100%;margin-top:8px;">📊 展开图表分析</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
