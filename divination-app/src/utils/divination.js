@@ -2,7 +2,7 @@ import hexagramsData from '../data/hexagrams.json'
 
 export class Divination {
   constructor() {
-    this.shakeThreshold = 15
+    this.shakeThreshold = 10
     this.lastShakeTime = 0
     this.hexagrams = hexagramsData
   }
