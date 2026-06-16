@@ -315,28 +315,28 @@ export default {
 
     // 启动摇动监听
     const startShakeListening = () => {
-      if (isShaking.value || isListeningShake.value) return
+      if (isListeningShake.value) return
 
       isListeningShake.value = true
-      buttonText.value = '摇动起卦...'
+      buttonText.value = '点击或摇动手机起卦'
 
       const handleShake = (event) => {
         divination.detectShake(event, () => {
-          // 摇动检测成功：停止监听，弹出问题输入框
+          // 摇一摇直接起卦，不走弹窗，用默认问题
+          if (isShaking.value) return
           stopShakeListening()
-          isPendingShake.value = true
-          showQuestionModal.value = true
+          userQuestion.value = '今日运势'
+          startDivination()
+          // 起卦完成后重新开启摇动监听
+          setTimeout(() => { if (!isShaking.value) startShakeListening() }, 5000)
         })
       }
 
       window.addEventListener('devicemotion', handleShake)
       window.currentShakeHandler = handleShake
 
-      // 10秒后如果没有摇动，自动取消
-      shakeTimeoutId.value = setTimeout(() => {
-        stopShakeListening()
-        isPendingShake.value = false
-      }, 10000)
+      // 不设置超时——始终监听摇动
+      if (shakeTimeoutId.value) clearTimeout(shakeTimeoutId.value)
     }
 
     // 停止摇动监听
@@ -414,11 +414,7 @@ export default {
 
     onMounted(() => {
       calculateTodayCount()
-      // 读取设置，如果默认方式为摇一摇则自动启动监听
-      const settings = loadSettings()
-      if (settings && settings.divination && settings.divination.defaultMethod === 'shake') {
-        startShakeListening()
-      }
+      startShakeListening()
     })
 
     onBeforeUnmount(() => {
