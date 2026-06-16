@@ -262,8 +262,8 @@ export default {
 
     // 显示结果
     const showResult = (question, hexagram) => {
-      divinationStore.currentHexagram = hexagram
-      divinationStore.currentResult = result
+      divinationStore.currentResult = hexagram
+      divinationStore.currentHexagram = hexagram.hexagram || hexagram
       divinationStore.currentQuestion = question
       router.push('/result')
     }
