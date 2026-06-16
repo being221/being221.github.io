@@ -211,24 +211,32 @@ export default {
 
     // 从 store 读取卦象数据
     const getHexagramFromStore = (clearStore) => {
-      if (divinationStore.currentHexagram && divinationStore.currentHexagram.code) {
-        const data = divinationStore.currentHexagram
-        hexagram.value = data
-        currentRecord.value = {
-          hexagram: data,
-          notes: '',
-          timestamp: new Date(),
-          question: divinationStore.currentQuestion || ''
-        }
-        if (clearStore !== false) {
-          divinationStore.currentHexagram = null
-          divinationStore.currentQuestion = ''
-        }
-        // 自动保存
-        setTimeout(() => autoSave(), 300)
-        return true
+      const h = divinationStore.currentHexagram
+      const r = divinationStore.currentResult
+      if (!h || !h.code) return false
+      // 主卦
+      hexagram.value = h
+      // 变卦数据
+      if (r) {
+        terms.value = r.terms || []
+        changingHexagram.value = r.changingHexagram || null
+        hasChanges.value = r.hasChanges || false
+        changingCode.value = r.changingCode || ''
       }
-      return false
+      // 记录对象
+      currentRecord.value = {
+        hexagram: h,
+        notes: '',
+        timestamp: new Date(),
+        question: divinationStore.currentQuestion || ''
+      }
+      if (clearStore !== false) {
+        divinationStore.currentHexagram = null
+        divinationStore.currentQuestion = ''
+        divinationStore.currentResult = null
+      }
+      setTimeout(() => autoSave(), 300)
+      return true
     }
 
     // setup 阶段立即尝试读取
