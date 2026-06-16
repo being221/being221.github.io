@@ -211,32 +211,25 @@ export default {
 
     // 从 store 读取卦象数据
     const getHexagramFromStore = (clearStore) => {
-      const h = divinationStore.currentHexagram
-      const r = divinationStore.currentResult
-      if (!h || !h.code) return false
-      // 主卦
-      hexagram.value = h
-      // 变卦数据
-      if (r) {
-        terms.value = r.terms || []
-        changingHexagram.value = r.changingHexagram || null
-        hasChanges.value = r.hasChanges || false
-        changingCode.value = r.changingCode || ''
-      }
-      // 记录对象
-      currentRecord.value = {
-        hexagram: h,
-        notes: '',
-        timestamp: new Date(),
-        question: divinationStore.currentQuestion || ''
-      }
-      if (clearStore !== false) {
-        divinationStore.currentHexagram = null
-        divinationStore.currentQuestion = ''
-        divinationStore.currentResult = null
-      }
-      setTimeout(() => autoSave(), 300)
-      return true
+      try {
+        const raw = sessionStorage.getItem('divination_payload')
+        if (!raw) return false
+        const payload = JSON.parse(raw)
+        if (!payload.hexagram || !payload.hexagram.code) return false
+        hexagram.value = payload.hexagram
+        terms.value = payload.terms || []
+        changingHexagram.value = payload.changingHexagram || null
+        hasChanges.value = payload.hasChanges || false
+        changingCode.value = payload.changingCode || ''
+        currentRecord.value = {
+          hexagram: payload.hexagram, notes: '',
+          timestamp: new Date(),
+          question: payload.question || ''
+        }
+        sessionStorage.removeItem('divination_payload')
+        setTimeout(() => autoSave(), 300)
+        return true
+      } catch(e) { return false }
     }
 
     // setup 阶段立即尝试读取

@@ -280,9 +280,15 @@ export default {
 
     // 显示结果
     const showResult = (question, hexagram) => {
-      divinationStore.currentResult = hexagram
-      divinationStore.currentHexagram = hexagram.hexagram || hexagram
-      divinationStore.currentQuestion = question
+      const payload = {
+        hexagram: hexagram.hexagram || hexagram,
+        terms: hexagram.terms || [],
+        changingHexagram: hexagram.changingHexagram || null,
+        hasChanges: hexagram.hasChanges || false,
+        changingCode: hexagram.changingCode || '',
+        question: question
+      }
+      sessionStorage.setItem('divination_payload', JSON.stringify(payload))
       router.push('/result')
     }
 
