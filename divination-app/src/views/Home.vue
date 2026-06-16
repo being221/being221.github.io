@@ -68,6 +68,23 @@
       <div class="disclaimer">
         <p>温馨提示：本应用仅供娱乐，请相信科学、拒绝迷信。作者尚在学习前端开发，卦象结果由随机算法生成，切勿当真。</p>
       </div>
+
+      <!-- 内联结果展示 -->
+      <div class="result-inline" v-if="showResultInline && resultData">
+        <div class="result-card">
+          <h2>{{ resultData.hexagram.fullName }}</h2>
+          <p class="result-desc">{{ resultData.hexagram.desc }}</p>
+          <p class="result-overall">{{ resultData.hexagram.overall }}</p>
+          <div v-if="resultData.hasChanges" class="change-info">
+            <p>→ 变卦：{{ resultData.changingHexagram?.fullName }}</p>
+            <p>{{ resultData.changingHexagram?.desc }}</p>
+          </div>
+          <div class="result-meta">
+            <p v-for="(t, i) in resultData.terms" :key="i">第{{i+1}}爻：{{ t }}</p>
+          </div>
+          <button class="back-btn" @click="showResultInline = false">← 返回起卦</button>
+        </div>
+      </div>
     </main>
 
     <!-- 问题输入弹窗 -->
@@ -115,6 +132,8 @@ export default {
     const userQuestion = ref('')
     const isPendingShake = ref(false)
     const shakeTimeoutId = ref(null)
+    const showResultInline = ref(false)
+    const resultData = ref(null)
 
     // 计算今日起卦次数
     const calculateTodayCount = () => {
@@ -278,9 +297,9 @@ export default {
       return divination.randomDivination()
     }
 
-    // 显示结果
+    // 显示结果 — 改成直接在当前页展示，不跳转路由
     const showResult = (question, hexagram) => {
-      const payload = {
+      resultData.value = {
         hexagram: hexagram.hexagram || hexagram,
         terms: hexagram.terms || [],
         changingHexagram: hexagram.changingHexagram || null,
@@ -288,8 +307,8 @@ export default {
         changingCode: hexagram.changingCode || '',
         question: question
       }
-      sessionStorage.setItem('divination_payload', JSON.stringify(payload))
-      router.push('/result')
+      showResultInline.value = true
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     }
 
     // 显示历史记录
@@ -337,7 +356,9 @@ export default {
       startShakeListening,
       showHistory,
       showTemplates,
-      showSettings
+      showSettings,
+      showResultInline,
+      resultData
     }
   }
 }
@@ -557,5 +578,73 @@ export default {
     width: 48px; height: 48px;
   }
   .coin-char { font-size: 24px; }
+}
+
+.result-inline {
+  margin-top: 1.5rem;
+}
+.result-card {
+  background: rgba(255,255,255,0.95);
+  border-radius: 15px;
+  padding: 1.5rem;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+  animation: fadeIn 0.3s ease;
+}
+.result-card h2 {
+  color: #667eea;
+  font-size: 1.5rem;
+  margin: 0 0 0.5rem;
+  text-align: center;
+}
+.result-desc {
+  color: #666;
+  font-size: 0.9rem;
+  text-align: center;
+}
+.result-overall {
+  color: #333;
+  line-height: 1.7;
+  margin: 1rem 0;
+}
+.change-info {
+  background: rgba(72,199,142,0.1);
+  border: 1px solid rgba(72,199,142,0.3);
+  border-radius: 8px;
+  padding: 0.75rem;
+  margin: 0.75rem 0;
+}
+.change-info p {
+  margin: 0.25rem 0;
+  color: #48c78e;
+  font-size: 0.9rem;
+}
+.result-meta {
+  margin: 0.75rem 0;
+  font-size: 0.8rem;
+  color: #888;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.result-meta p {
+  margin: 2px;
+  padding: 2px 8px;
+  background: rgba(102,126,234,0.08);
+  border-radius: 4px;
+}
+.back-btn {
+  display: block;
+  margin: 1rem auto 0;
+  padding: 0.5rem 2rem;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 </style>
