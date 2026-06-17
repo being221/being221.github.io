@@ -194,6 +194,15 @@ textarea:focus-visible {
 .proj-card:nth-child(7) { animation-delay: 0.7s; }
 .proj-card:nth-child(8) { animation-delay: 0.8s; }
 .proj-card:nth-child(9) { animation-delay: 0.9s; }
+.proj-card:nth-child(10) { animation-delay: 1.0s; }
+.proj-abandoned {
+  opacity: 0.55;
+  border: 1px dashed rgba(128,128,128,0.4);
+}
+.proj-abandoned:hover {
+  opacity: 0.8;
+  transform: translateY(-2px);
+}
 .proj-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 8px 20px rgba(0,0,0,0.3);
