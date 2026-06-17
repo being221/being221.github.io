@@ -230,11 +230,10 @@ var fishes=[],spawnTimer=0;
 function randIn(n){var v=Math.random()*n;return v<8?8+n*0.4:v}
 function spawn(){
   var as=avail();var sp=as[Math.floor(Math.random()*as.length)];
-  // 尺寸围绕玩家，极度偏重威胁
-  var edibleChance=player.size<20?0.25:player.size<50?0.15:player.size<90?0.1:0.06;
+  // 15% 能吃，85% 吃不了（始终跟随玩家体型）
   var bs;
-  if(Math.random()<edibleChance) bs=player.size*(0.5+Math.random()*0.4);
-  else bs=player.size*(1.3+Math.random()*1.6);
+  if(Math.random()<0.15) bs=player.size*(0.5+Math.random()*0.45);
+  else bs=player.size*(1.2+Math.random()*2.2);
   var sz=Math.max(sp.min,Math.min(sp.max,bs));
   var side=Math.floor(Math.random()*4),x,y,m=60;
   if(side===0){x=-m-randIn(sz*3);y=Math.random()*H}
@@ -247,8 +246,8 @@ function spawn(){
   fishes.push({x:x,y:y,vx:Math.cos(ang)*spd,vy:Math.sin(ang)*spd,size:sz,species:sp,cid:Math.floor(Math.random()*sp.c.length),tt:80+Math.random()*200});
 }
 function maintain(){
-  var target=player.size<25?3:player.size<50?5:player.size<90?7:9;
-  spawnTimer--;if(fishes.length<target&&spawnTimer<=0){spawn();spawnTimer=Math.max(40,80-fishes.length*5)}
+  var target=player.size<25?6:player.size<50?9:player.size<90?12:15;
+  spawnTimer--;if(fishes.length<target&&spawnTimer<=0){spawn();spawnTimer=Math.max(15,45-fishes.length*2)}
 }
 
 // ===== 粒子 =====
@@ -305,12 +304,14 @@ function update(){
       else ang=Math.atan2(f.vy,f.vx)+(Math.random()-0.5)*1.5;
       var spd=Math.sqrt(f.vx*f.vx+f.vy*f.vy);f.vx=Math.cos(ang)*spd;f.vy=Math.sin(ang)*spd;
     }
-    var mb=Math.max(f.size*2,40);
-    if(f.x<mb){f.x=mb;f.vx=Math.abs(f.vx)}
-    if(f.x>W-mb){f.x=W-mb;f.vx=-Math.abs(f.vx)}
-    if(f.y<mb){f.y=mb;f.vy=Math.abs(f.vy)}
-    if(f.y>H-mb){f.y=H-mb;f.vy=-Math.abs(f.vy)}
-    if(f.x<-600||f.x>W+600||f.y<-600||f.y>H+600){fishes.splice(i,1)}
+    // NPC 鱼穿越画面（从一边出去，另一边进来）
+    var mrg=f.size*3+30;
+    if(f.x<-mrg) f.x=W+mrg;
+    if(f.x>W+mrg) f.x=-mrg;
+    if(f.y<-mrg) f.y=H+mrg;
+    if(f.y>H+mrg) f.y=-mrg;
+    // 超远回收
+    if(f.x<-f.size*10||f.x>W+f.size*10||f.y<-f.size*10||f.y>H+f.size*10){fishes.splice(i,1)}
   }
 
   // 碰撞
