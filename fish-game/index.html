@@ -40,6 +40,7 @@ var bubbles=[]; // 背景气泡
 for(var i=0;i<60;i++)bubbles.push({x:Math.random()*2000,y:Math.random()*2000,r:1+Math.random()*4,s:0.2+Math.random()*0.4,o:0.03+Math.random()*0.08});
 
 // ===== 玩家 =====
+var startTime=Date.now();
 var player={
   x:0,y:0,size:20,score:0,lives:3,invincible:0,vx:0,vy:0,
   grow:function(amt){var old=Math.floor(this.size);this.size+=amt;if(this.size>250)this.size=250;var nu=Math.floor(this.size);if(Math.floor(this.size/30)>Math.floor(old/30)&&nu>old){showLevelUp()}}
@@ -236,7 +237,7 @@ function playEatSound(fishSize){
     var t=AC.currentTime,freq=400+fishSize*8
     var o=AC.createOscillator(),g=AC.createGain()
     o.type="sine";o.frequency.setValueAtTime(freq,t);o.frequency.exponentialRampToValueAtTime(freq*1.5,t+0.06)
-    g.gain.setValueAtTime(0.25,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.15)
+    g.gain.setValueAtTime(0.8,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.3)
     o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+0.15)
   }catch(e){}
 }
