@@ -246,8 +246,9 @@ function spawn(){
   fishes.push({x:x,y:y,vx:Math.cos(ang)*spd,vy:Math.sin(ang)*spd,size:sz,species:sp,cid:Math.floor(Math.random()*sp.c.length),tt:80+Math.random()*200});
 }
 function maintain(){
-  var target=player.size<25?6:player.size<50?9:player.size<90?12:15;
-  spawnTimer--;if(fishes.length<target&&spawnTimer<=0){spawn();spawnTimer=Math.max(15,45-fishes.length*2)}
+  // 换成固定的出生间隔，不维持数量
+  spawnTimer--;
+  if(fishes.length<40 && spawnTimer<=0){spawn(); spawnTimer=80+Math.floor(Math.random()*40);}
 }
 
 // ===== 粒子 =====
@@ -291,7 +292,7 @@ function update(){
   if(player.y<player.size){player.y=player.size; player.vy=Math.max(player.vy,0)}
   if(player.y>H-player.size){player.y=H-player.size; player.vy=Math.min(player.vy,0)}
   if(player.invincible>0)player.invincible--;
-  maintain();
+  spawnTimer--;if(fishes.length<40&&spawnTimer<=0){spawn();spawnTimer=80+Math.floor(Math.random()*40)}
 
   // NPC 移动 + AI
   for(var i=fishes.length-1;i>=0;i--){
@@ -305,13 +306,13 @@ function update(){
       var spd=Math.sqrt(f.vx*f.vx+f.vy*f.vy);f.vx=Math.cos(ang)*spd;f.vy=Math.sin(ang)*spd;
     }
     // NPC 鱼穿越画面（从一边出去，另一边进来）
-    var mrg=f.size*3+30;
+    var mrg=f.size*5+80;
     if(f.x<-mrg) f.x=W+mrg;
     if(f.x>W+mrg) f.x=-mrg;
     if(f.y<-mrg) f.y=H+mrg;
     if(f.y>H+mrg) f.y=-mrg;
-    // 超远回收
-    if(f.x<-f.size*10||f.x>W+f.size*10||f.y<-f.size*10||f.y>H+f.size*10){fishes.splice(i,1)}
+    // 超大幅超出才回收（极端情况兜底）
+    if(Math.abs(f.x-W/2)>W*2||Math.abs(f.y-H/2)>H*2){fishes.splice(i,1)}
   }
 
   // 碰撞
