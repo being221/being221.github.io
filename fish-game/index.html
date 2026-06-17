@@ -50,6 +50,8 @@ var SPECIES=[
   {t:3,min:40,max:85,c:["#546e7a","#455a64","#37474f"],d:function(x,y,s,c,a,d){ctx.save();ctx.translate(x,y);ctx.rotate(d);ctx.beginPath();ctx.moveTo(s*1.2,0);ctx.quadraticCurveTo(s*0.6,-s*2,-0.1,-s*2.5);ctx.quadraticCurveTo(-s*0.3,-s*2.2,-s*0.4,-s*1.2);ctx.lineTo(-s*0.4,s*1.2);ctx.quadraticCurveTo(-s*0.3,s*2.2,-0.1,s*2.5);ctx.quadraticCurveTo(s*0.6,s*2,s*1.2,0);ctx.closePath();ctx.fillStyle=a;ctx.fill();ctx.restore();E(x,y,s*0.7,d)}},
 ];
 
+function drawPlayerFish(x,y,s,d){ctx.save();ctx.translate(x,y);ctx.shadowColor="rgba(255,150,100,0.5)";ctx.shadowBlur=s*0.5;ctx.rotate(d);B(0,0,s*1.2,s*0.65,"#ff8e8e",0);T(0,0,[-s*1.1,0],[-s*1.8,-s*0.6],[-s*1.8,s*0.6],"#ff6b6b",0);ctx.beginPath();ctx.moveTo(-s*0.6,-s*0.3);ctx.quadraticCurveTo(0,-s*0.05,s*0.8,-s*0.2);ctx.strokeStyle="rgba(0,0,0,0.12)";ctx.lineWidth=1.5;ctx.stroke();E(0,0,s,0);ctx.restore()}
+
 function avail(){var t=player.sz<25?0:player.sz<50?1:player.sz<90?2:3;return SPECIES.filter(function(s){return s.t<=t})}
 
 // ===== 游戏状态 =====
@@ -137,11 +139,10 @@ function render(){
   ctx.globalAlpha=0.025;
   for(var i=0;i<4;i++){var lx=W*0.15+i*W*0.22;var g2=ctx.createLinearGradient(lx,0,lx+22,H);g2.addColorStop(0,"#fff");g2.addColorStop(1,"transparent");ctx.fillStyle=g2;ctx.fillRect(lx,0,16,H)}
   ctx.globalAlpha=1;
-  for(var i=0;i<bubbleData.length;i++){var b=bubbleData[i];b.y-=b.s;if(b.y<-10){b.y=H+10;b.x=Math.random()*W}b.x+=Math.sin(T*0.01+b.y*0.006)*0.15;ctx.beginPath();ctx.arc((b.x%W+W)%W,b.y,b.r,0,Math.PI*2);ctx.strokeStyle="rgba(255,255,255,"+b.o+")";ctx.lineWidth=0.6;ctx.stroke()}
+  for(var i=0;i<bubbleData.length;i++){var b=bubbleData[i];b.y-=b.s;if(b.y<-20){b.y=H+10;b.x=Math.random()*W}b.x+=Math.sin(T*0.01+b.y*0.006)*0.15;var bx=b.x;while(bx<0)bx+=W;while(bx>W)bx-=W;ctx.beginPath();ctx.arc(bx,b.y,b.r,0,Math.PI*2);ctx.strokeStyle="rgba(255,255,255,"+b.o+")";ctx.lineWidth=0.6;ctx.stroke()}
   var sorted=fishes.slice().sort(function(a,b){return a.sz-b.sz});
   for(var i=0;i<sorted.length;i++){var f=sorted[i],dir=Math.atan2(f.vy,f.vx);f.sp.d(f.x,f.y,f.sz,f.sp.c[f.cid],f.sp.c[(f.cid+1)%f.sp.c.length],dir)}
-  if(player.inv<=0||Math.floor(player.inv/5)%2===0){var pd=player.vx||player.vy?Math.atan2(player.vy,player.vx):0;ctx.save();ctx.translate(player.x,player.y);ctx.shadowColor="rgba(255,150,100,0.5)";ctx.shadowBlur=player.sz*0.5;ctx.translate(-player.x,-player.y);
-    B(player.x,player.y,player.sz*1.2,player.sz*0.65,"#ff8e8e",pd);T(player.x,player.y,[-player.sz*1.1,0],[-player.sz*1.8,-player.sz*0.6],[-player.sz*1.8,player.sz*0.6],"#ff6b6b",pd);ctx.save();ctx.translate(player.x,player.y);ctx.rotate(pd);ctx.beginPath();ctx.moveTo(-player.sz*0.6,-player.sz*0.3);ctx.quadraticCurveTo(0,-player.sz*0.05,player.sz*0.8,-player.sz*0.2);ctx.strokeStyle="rgba(0,0,0,0.12)";ctx.lineWidth=1.5;ctx.stroke();ctx.restore();E(player.x,player.y,player.sz,pd);ctx.restore()}
+  if(player.inv<=0||Math.floor(player.inv/5)%2===0){var pd=player.vx||player.vy?Math.atan2(player.vy,player.vx):0;drawPlayerFish(player.x,player.y,player.sz,pd)}
   for(var i=0;i<parts.length;i++){var p=parts[i];ctx.beginPath();ctx.arc(p.x,p.y,p.r*p.l/p.m,0,Math.PI*2);ctx.fillStyle="rgba(255,255,255,"+(p.l/p.m*0.6)+")";ctx.fill()}
   for(var i=0;i<sorted.length;i++){var f2=sorted[i];if(f2.sz>player.sz){ctx.beginPath();ctx.arc(f2.x,f2.y,f2.sz*1.15,0,Math.PI*2);ctx.setLineDash([4,8]);ctx.strokeStyle="rgba(255,50,50,0.25)";ctx.lineWidth=2;ctx.stroke();ctx.setLineDash([])}}
 }
@@ -152,7 +153,7 @@ function init(){
   player.x=W/2;player.y=H/2;player.sz=20;player.score=0;player.lives=3;player.inv=90;fishes=[];parts=[];spawnCD=10;
   for(var i=0;i<2;i++){var as=avail(),sp=as[Math.floor(Math.random()*as.length)],s=sp.min+Math.random()*5,ang=Math.PI*2/2*i;fishes.push({x:W/2+Math.cos(ang)*120,y:H/2+Math.sin(ang)*120,vx:Math.cos(ang+1)*0.3,vy:Math.sin(ang+1)*0.3,sz:s,sp:sp,cid:0,tt:150})}
 }
-function loop(){if(running)update();render();requestAnimationFrame(loop)}
+function loop(){try{if(running)update();render()}catch(e){console.warn('game error:',e)}requestAnimationFrame(loop)}
 init();loop();
 })();
 </script>
