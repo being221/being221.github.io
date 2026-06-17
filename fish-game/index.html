@@ -38,7 +38,7 @@ resize();window.addEventListener("resize",resize);
 // ===== 全局状态 =====
 var t=0; // 游戏帧计数，用于动画
 var bubbles=[]; // 背景气泡
-for(var i=0;i<60;i++)bubbles.push({x:Math.random()*2000,y:Math.random()*2000,r:1+Math.random()*4,s:0.2+Math.random()*0.4,o:0.03+Math.random()*0.08});
+for(var i=0;i<40;i++)bubbles.push({x:Math.random()*W,y:Math.random()*H,r:1+Math.random()*4,s:0.2+Math.random()*0.4,o:0.03+Math.random()*0.08});
 
 // ===== 玩家 =====
 var startTime=Date.now();
@@ -232,18 +232,20 @@ function spawn(){
   fishes.push({x:x,y:y,vx:Math.cos(ang)*spd,vy:Math.sin(ang)*spd,size:sz,species:sp,cid:Math.floor(Math.random()*sp.c.length),tt:80+Math.random()*200});
 }
 // 吃鱼音效 — 真实 WAV 文件播放
-var eatAudio = new Audio("eat.wav"); eatAudio.volume = 0.4;
+var eatAudios=[],eatIdx=0;
+for(var i=0;i<6;i++){eatAudios[i]=new Audio("eat.wav");eatAudios[i].volume=0.35}
 function playEatSound(fishSize){
   try{
-    eatAudio.currentTime = 0;
-    eatAudio.play().catch(function(){});
+    eatIdx=(eatIdx+1)%6;
+    eatAudios[eatIdx].currentTime=0;
+    eatAudios[eatIdx].play().catch(function(){});
   }catch(e){}
 }
 
 function maintain(){
   // 换成固定的出生间隔，不维持数量
   spawnTimer--;
-  if(fishes.length<40 && spawnTimer<=0){spawn(); spawnTimer=80+Math.floor(Math.random()*40);}
+  if(fishes.length<20 && spawnTimer<=0){spawn(); spawnTimer=80+Math.floor(Math.random()*40);}
 }
 
 // ===== 粒子 =====
@@ -320,7 +322,7 @@ function update(){
   }
 
   // 粒子衰减
-  for(var i=parts.length-1;i>=0;i--){var p=parts[i];p.x+=p.vx;p.y+=p.vy;p.life--;if(p.life<=0)parts.splice(i,1)}
+  for(var i=parts.length-1;i>=0;i--){var p=parts[i];p.x+=p.vx;p.y+=p.vy;p.life--;if(p.life<=0)parts.splice(i,1);else if(parts.length>300){parts.splice(i,1)}}
   // UI
   document.getElementById("score").textContent=player.score;
   document.getElementById("size").textContent=Math.floor(player.size);
@@ -357,7 +359,7 @@ function init(){
   fishes=[];parts=[];spawnTimer=8;
   for(var i=0;i<2;i++){var as=avail(),sp=as[0];var sz=sp.min+Math.random()*(sp.max-sp.min)*0.5;var ang=Math.PI*2/2*i;var d=100+Math.random()*100;fishes.push({x:W/2+Math.cos(ang)*d,y:H/2+Math.sin(ang)*d,vx:Math.cos(ang+1)*0.4,vy:Math.sin(ang+1)*0.4,size:sz,species:sp,cid:0,tt:120})}
 }
-function loop(){if(running)update();render();requestAnimationFrame(loop)}
+function loop(){try{if(running)update();render()}catch(e){running=false}if(T%600===0&&fishes.length>15){fishes.splice(0,2)}requestAnimationFrame(loop)}
 loop();
 })();
 </script>
