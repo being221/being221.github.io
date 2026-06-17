@@ -277,15 +277,20 @@ function update(){
   if(keys["ArrowUp"]||keys["w"]||keys["W"])uy-=1;if(keys["ArrowDown"]||keys["s"]||keys["S"])uy+=1;
   if(ta){var dtlx=tx-ltx,dtly=ty-lty;var td=Math.sqrt(dtlx*dtlx+dtly*dtly);if(td>1){ux=dtlx/td;uy=dtly/td}}
   if(md){var dmx=mx-player.x,dmy=my-player.y;var dm=Math.sqrt(dmx*dmx+dmy*dmy);if(dm>10){ux=dmx/dm;uy=dmy/dm}}
+  // 加速度：贴墙时不能往墙外方向加速
   var acc=0.04,maxSpd=1.2+player.size*0.001;
-  if(ux||uy){player.vx+=ux*acc;player.vy+=uy*acc}else{player.vx*=0.93;player.vy*=0.93}
+  if(ux||uy){
+    if(player.x<=player.size&&ux<0)ux=0; if(player.x>=W-player.size&&ux>0)ux=0;
+    if(player.y<=player.size&&uy<0)uy=0; if(player.y>=H-player.size&&uy>0)uy=0;
+    player.vx+=ux*acc; player.vy+=uy*acc;
+  }else{player.vx*=0.93; player.vy*=0.93}
   var sp=Math.sqrt(player.vx*player.vx+player.vy*player.vy);if(sp>maxSpd){player.vx=player.vx/sp*maxSpd;player.vy=player.vy/sp*maxSpd}
-  player.x+=player.vx;player.y+=player.vy;
-  // 碰到边界就停住
-  if(player.x<player.size){player.x=player.size;player.vx=0}
-  if(player.x>W-player.size){player.x=W-player.size;player.vx=0}
-  if(player.y<player.size){player.y=player.size;player.vy=0}
-  if(player.y>H-player.size){player.y=H-player.size;player.vy=0}
+  player.x+=player.vx; player.y+=player.vy;
+  // 硬边界修正：绝不让鱼超出画面
+  if(player.x<player.size){player.x=player.size; player.vx=Math.max(player.vx,0)}
+  if(player.x>W-player.size){player.x=W-player.size; player.vx=Math.min(player.vx,0)}
+  if(player.y<player.size){player.y=player.size; player.vy=Math.max(player.vy,0)}
+  if(player.y>H-player.size){player.y=H-player.size; player.vy=Math.min(player.vy,0)}
   if(player.invincible>0)player.invincible--;
   maintain();
 
