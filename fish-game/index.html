@@ -330,14 +330,12 @@ function update(){
 }
 
 function render(){ctx.setTransform(1,0,0,1,0,0);
-  // 硬核画布重置——每 5 秒一次，彻底清空所有累积的 Canvas 状态
-  if(T%300===0){var w=c.width;c.width=w+1;c.width=w;ctx=w===c.width?c.getContext("2d"):ctx}
   drawBg();
   // NPC
   var sorted=fishes.slice().sort(function(a,b){return a.size-b.size});
-  for(var i=0;i<sorted.length;i++){var f=sorted[i];var dir=Math.atan2(f.vy,f.vx);ctx.save();f.species.draw(f.x,f.y,f.size,f.species.c[f.cid],f.species.c[(f.cid+1)%f.species.c.length],dir);ctx.restore()}
+  for(var i=0;i<sorted.length;i++){var f=sorted[i];var dir=Math.atan2(f.vy,f.vx);ctx.save();try{f.species.draw(f.x,f.y,f.size,f.species.c[f.cid],f.species.c[(f.cid+1)%f.species.c.length],dir)}finally{ctx.restore()}}
   // 玩家
-  if(player.invincible<=0||Math.floor(player.invincible/4)%2===0){var pd=player.vx||player.vy?Math.atan2(player.vy,player.vx):0;ctx.save();ctx.translate(player.x,player.y);ctx.shadowColor="rgba(255,150,100,0.6)";ctx.shadowBlur=player.size*0.6;ctx.rotate(pd);drawBass(0,0,player.size,"#ff6b6b","#ff8e8e",0);ctx.restore()}
+  if(player.invincible<=0||Math.floor(player.invincible/4)%2===0){var pd=player.vx||player.vy?Math.atan2(player.vy,player.vx):0;ctx.save();try{ctx.translate(player.x,player.y);ctx.shadowColor="rgba(255,150,100,0.6)";ctx.shadowBlur=player.size*0.6;ctx.rotate(pd);drawBass(0,0,player.size,"#ff6b6b","#ff8e8e",0)}finally{ctx.restore()}}
   // 粒子
   for(var i=0;i<parts.length;i++){var p=parts[i];ctx.beginPath();ctx.arc(p.x,p.y,p.r*p.life/p.max,0,Math.PI*2);ctx.fillStyle="rgba(255,255,255,"+(p.life/p.max*0.7)+")";ctx.fill()}
   // 大鱼警示虚线
