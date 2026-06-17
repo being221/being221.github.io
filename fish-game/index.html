@@ -236,18 +236,18 @@ function spawnFish(){
   var targetX=W/2+(Math.random()-0.5)*W*0.6;
   var targetY=H/2+(Math.random()-0.5)*H*0.6;
   var ang=Math.atan2(targetY-y,targetX-x);
-  var spd=Math.max(0.6,2.5-size*0.015);
+  var spd=Math.max(0.4,1.6-size*0.01);
   fishes.push({x:x,y:y,vx:Math.cos(ang)*spd,vy:Math.sin(ang)*spd,size:size,species:sp,colorIdx:Math.floor(Math.random()*sp.colors.length),turnTimer:120+Math.random()*240});
 }
 function mathrand(n){var s=Math.random()*n;return s<10?10+n+s*0.5:s}
 
 // 渐进生成：根据玩家体型决定鱼群数量
 function maintainFish(){
-  var target=player.size<25?5:player.size<50?8:player.size<90?12:16;
+  var target=player.size<25?4:player.size<50?6:player.size<90?9:12;
   spawnTimer--;
   if(fishes.length<target && spawnTimer<=0){
     spawnFish();
-    spawnTimer=Math.max(15,40-fishes.length*2);
+    spawnTimer=Math.max(25,55-fishes.length*3);
   }
 }
 
@@ -332,7 +332,7 @@ function update(){
     var dx=mouseX-player.x,dy=mouseY-player.y;
     var dist=Math.sqrt(dx*dx+dy*dy);if(dist>10){tx=dx/dist;ty=dy/dist}
   }
-  var accel=0.25,maxSpeed=5+player.size*0.01;
+  var accel=0.15,maxSpeed=3.5+player.size*0.006;
   if(tx||ty){player.vx+=tx*accel;player.vy+=ty*accel;}
   else{player.vx*=0.93;player.vy*=0.93}
   var spd=Math.sqrt(player.vx*player.vx+player.vy*player.vy);
@@ -432,8 +432,8 @@ function gameOver(){
 function init(){
   player.x=W/2;player.y=H/2;player.size=20;player.score=0;player.lives=3;player.invincible=60;
   fishes=[];particles=[];spawnTimer=5;
-  // 开局只放 4 条小鱼在边缘附近
-  for(var i=0;i<4;i++){var sp=getAvailableSpecies()[0];var size=sp.minSize+Math.random()*(sp.maxSize-sp.minSize*0.6);var ang=Math.random()*Math.PI*2;var spd=Math.max(0.6,2.5-size*0.015);var margin=80;var side=Math.floor(Math.random()*4);var sx,sy;if(side===0){sx=-margin-mathrand(size*2);sy=Math.random()*H}else if(side===1){sx=W+margin+mathrand(size*2);sy=Math.random()*H}else if(side===2){sx=Math.random()*W;sy=-margin-mathrand(size*2)}else{sx=Math.random()*W;sy=H+margin+mathrand(size*2)};fishes.push({x:sx,y:sy,vx:Math.cos(ang)*spd,vy:Math.sin(ang)*spd,size:size,species:sp,colorIdx:Math.floor(Math.random()*sp.colors.length),turnTimer:120+Math.random()*240})}
+  // 开局只放 3 条小鱼在边缘附近
+  for(var i=0;i<3;i++){var sp=getAvailableSpecies()[0];var size=sp.minSize+Math.random()*(sp.maxSize-sp.minSize*0.6);var ang=Math.random()*Math.PI*2;var spd=Math.max(0.4,1.6-size*0.01);var margin=80;var side=Math.floor(Math.random()*4);var sx,sy;if(side===0){sx=-margin-mathrand(size*2);sy=Math.random()*H}else if(side===1){sx=W+margin+mathrand(size*2);sy=Math.random()*H}else if(side===2){sx=Math.random()*W;sy=-margin-mathrand(size*2)}else{sx=Math.random()*W;sy=H+margin+mathrand(size*2)};fishes.push({x:sx,y:sy,vx:Math.cos(ang)*spd,vy:Math.sin(ang)*spd,size:size,species:sp,colorIdx:Math.floor(Math.random()*sp.colors.length),turnTimer:120+Math.random()*240})}
 }
 
 function loop(){if(running)update();render();requestAnimationFrame(loop)}
