@@ -26,6 +26,7 @@ const GameState = {
   daolianActive: false,
   daolianChainQid: null, // 问道链当前题目 id
   daolianStake: 1,
+  currentFragment: null,
 };
 
 // Phaser 引用
@@ -297,9 +298,254 @@ function triggerQuestion(fragData) {
   showQuestionOverlay(q);
 }
 
-// ===== 答题弹窗桩（Task 4 实现完整交互） =====
-function showQuestionOverlay(q) {
-  console.log('[Task 3] 碰撞触发答题:', q.school, 'T' + q.tier, q.question);
-  console.log('[Task 3] 选项:', q.options);
-  // Task 4 将实现完整弹窗交互，此处仅验证碰撞检测通路
+// ===== 答题系统（DOM 桥接） =====
+
+let currentQuestionData = null;
+
+function showQuestionOverlay(question) {
+  currentQuestionData = question;
+
+  document.getElementById('question-text').textContent =
+    `【${QUESTION_BANK.schools[question.school].name}】${question.question}`;
+
+  const optsDiv = document.getElementById('question-options');
+  optsDiv.innerHTML = '';
+  const labels = ['A', 'B', 'C', 'D'];
+  question.options.forEach((opt, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'q-option';
+    btn.textContent = `${labels[idx]}. ${opt}`;
+    btn.onclick = () => answerQuestion(idx);
+    optsDiv.appendChild(btn);
+  });
+
+  document.getElementById('question-result').style.display = 'none';
+  document.getElementById('question-result').textContent = '';
+  document.getElementById('daolian-buttons').style.display = 'none';
+  document.getElementById('daolian-info').style.display = 'none';
+
+  document.getElementById('question-overlay').classList.add('active');
+
+  // 键盘 1-4 答题
+  window._qKeyHandler = (e) => {
+    if (e.key >= '1' && e.key <= '4') {
+      answerQuestion(parseInt(e.key) - 1);
+    }
+  };
+  document.addEventListener('keydown', window._qKeyHandler);
+}
+
+function hideQuestionOverlay() {
+  document.getElementById('question-overlay').classList.remove('active');
+  document.removeEventListener('keydown', window._qKeyHandler);
+  currentQuestionData = null;
+}
+
+function answerQuestion(chosenIdx) {
+  if (!currentQuestionData) return;
+
+  const q = currentQuestionData;
+  const correct = chosenIdx === q.correct;
+  const opts = document.querySelectorAll('.q-option');
+
+  // 禁用按钮
+  opts.forEach(o => o.style.pointerEvents = 'none');
+
+  // 高亮正确/错误
+  opts[q.correct].classList.add('correct-flash');
+  if (!correct) {
+    opts[chosenIdx].classList.add('wrong-flash');
+  }
+
+  // 显示解释
+  const resultDiv = document.getElementById('question-result');
+  resultDiv.style.display = 'block';
+  if (correct) {
+    resultDiv.innerHTML = `✅ 正确！${q.explanation}`;
+  } else {
+    resultDiv.innerHTML = `❌ 错误。${q.explanation}`;
+  }
+
+  // 结算
+  setTimeout(() => {
+    if (correct) {
+      handleCorrectAnswer(q);
+    } else {
+      handleWrongAnswer(q);
+    }
+  }, 600);
+}
+
+function handleCorrectAnswer(q) {
+  GameState.player.combo += 1;
+  GameState.player.totalFragments += 1;
+
+  // 添加到学派进度
+  if (!GameState.player.schoolProgress[q.school].includes(q.id)) {
+    GameState.player.schoolProgress[q.school].push(q.id);
+  }
+
+  // 移除碎片
+  removeFragment(GameState.currentFragment);
+
+  updateUI();
+
+  // 检查问道链：有更深层题目则弹出
+  const deeper = QUESTION_BANK.getDeeperQuestion(q.id);
+  if (deeper) {
+    showDaolianPrompt(deeper, 2);
+  } else {
+    // 没有更深题目，直接结算
+    applyGrowth(1);
+    resumeGame();
+  }
+}
+
+function handleWrongAnswer(q) {
+  GameState.player.combo = 0;
+  updateUI();
+  // 问道链断裂
+  if (GameState.daolianActive) {
+    GameState.daolianActive = false;
+    GameState.daolianStake = 1;
+  }
+  applyGrowth(0);
+  resumeGame();
+}
+
+// ===== 问道链 =====
+
+function showDaolianPrompt(nextQuestion, nextMultiplier) {
+  GameState.daolianActive = true;
+  GameState.daolianStake = nextMultiplier;
+
+  document.getElementById('next-multiplier').textContent = nextMultiplier;
+  document.getElementById('daolian-info').style.display = 'block';
+  document.getElementById('daolian-info').textContent =
+    `当前累积倍率: x${nextMultiplier / 2} → 继续答对: x${nextMultiplier} | 答错: 归零`;
+
+  document.getElementById('daolian-buttons').style.display = 'flex';
+  document.getElementById('btn-continue').onclick = () => continueDaolian(nextQuestion);
+  document.getElementById('btn-stop').onclick = () => stopDaolian();
+}
+
+function continueDaolian(nextQuestion) {
+  document.getElementById('daolian-buttons').style.display = 'none';
+  document.getElementById('daolian-info').style.display = 'none';
+
+  // 显示下一题
+  document.getElementById('question-result').style.display = 'none';
+  document.getElementById('question-text').textContent =
+    `【问道链 x${GameState.daolianStake}】${nextQuestion.question}`;
+
+  const optsDiv = document.getElementById('question-options');
+  optsDiv.innerHTML = '';
+  const labels = ['A', 'B', 'C', 'D'];
+  nextQuestion.options.forEach((opt, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'q-option';
+    btn.textContent = `${labels[idx]}. ${opt}`;
+    btn.onclick = () => handleDaolianAnswer(idx, nextQuestion);
+    optsDiv.appendChild(btn);
+  });
+
+  // 更新键盘监听
+  document.removeEventListener('keydown', window._qKeyHandler);
+  window._qKeyHandler = (e) => {
+    if (e.key >= '1' && e.key <= '4') {
+      handleDaolianAnswer(parseInt(e.key) - 1, nextQuestion);
+    }
+  };
+  document.addEventListener('keydown', window._qKeyHandler);
+
+  currentQuestionData = nextQuestion;
+}
+
+function handleDaolianAnswer(chosenIdx, question) {
+  const correct = chosenIdx === question.correct;
+  const opts = document.querySelectorAll('.q-option');
+  opts.forEach(o => o.style.pointerEvents = 'none');
+  opts[question.correct].classList.add('correct-flash');
+  if (!correct) opts[chosenIdx].classList.add('wrong-flash');
+
+  const resultDiv = document.getElementById('question-result');
+  resultDiv.style.display = 'block';
+
+  setTimeout(() => {
+    if (correct) {
+      resultDiv.innerHTML = `✅ 正确！${question.explanation}`;
+      GameState.player.combo += 1;
+      GameState.player.totalFragments += 1;
+      if (!GameState.player.schoolProgress[question.school].includes(question.id)) {
+        GameState.player.schoolProgress[question.school].push(question.id);
+      }
+      updateUI();
+
+      // 检查更深层
+      const deeper = QUESTION_BANK.getDeeperQuestion(question.id);
+      if (deeper) {
+        showDaolianPrompt(deeper, GameState.daolianStake * 2);
+      } else {
+        // 问道链到底了，强制结算
+        applyGrowth(GameState.daolianStake);
+        hideQuestionOverlay();
+        resumeGame();
+      }
+    } else {
+      // 问道链断裂！
+      resultDiv.innerHTML = `💔 归零！${question.explanation}`;
+      GameState.player.combo = 0;
+      GameState.daolianActive = false;
+      updateUI();
+      setTimeout(() => {
+        hideQuestionOverlay();
+        resumeGame();
+      }, 800);
+    }
+  }, 600);
+}
+
+function stopDaolian() {
+  const stake = GameState.daolianStake / 2; // 当前已累积的倍率
+  document.getElementById('question-result').textContent =
+    `🛑 收手！获得 x${stake} 成长奖励 ✨`;
+  applyGrowth(stake);
+  GameState.daolianActive = false;
+  GameState.daolianStake = 1;
+  setTimeout(() => {
+    hideQuestionOverlay();
+    resumeGame();
+  }, 600);
+}
+
+// ===== 结算 =====
+
+function applyGrowth(multiplier) {
+  if (multiplier > 0) {
+    GameState.player.size += 1.5 * multiplier;
+    GameState.player.size = Math.min(100, GameState.player.size);
+  }
+  drawPlayer();
+}
+
+function removeFragment(fragData) {
+  fragData.graphic.destroy();
+  const idx = fragmentData.indexOf(fragData);
+  if (idx !== -1) fragmentData.splice(idx, 1);
+}
+
+function resumeGame() {
+  GameState.paused = false;
+  GameState.currentFragment = null;
+
+  // 补充碎片
+  maintainFragmentCount();
+}
+
+function maintainFragmentCount() {
+  const available = QUESTION_BANK.getAvailableFragments(GameState.player);
+  while (fragmentData.length < 15 && available.length > 0) {
+    const q = available[Math.floor(Math.random() * available.length)];
+    spawnFragment(game.scene.scenes[0], q); // 获取当前场景
+  }
 }
