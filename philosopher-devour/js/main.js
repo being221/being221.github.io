@@ -502,6 +502,7 @@ function handleDaolianAnswer(chosenIdx, question) {
         showDaolianPrompt(deeper, GameState.daolianStake * 2);
       } else {
         // 问道链到底了，强制结算
+        checkSchoolMastery(question.school);
         applyGrowth(GameState.daolianStake);
         hideQuestionOverlay();
         resumeGame();
@@ -687,7 +688,8 @@ function checkSchoolMastery(schoolKey) {
     }
   }
 
-  if (checkAllMastered()) {
+  if (checkAllMastered() && !GameState._victoryShown) {
+    GameState._victoryShown = true;
     setTimeout(() => {
       // 屏幕中央通关文字
       const victoryText = game.scene.scenes[0].add.text(400, 300, '🏆 百家贯通！\n诸子之旅完成！', {
