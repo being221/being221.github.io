@@ -330,6 +330,8 @@ function update(){
 }
 
 function render(){
+  // 每帧强制重置变换矩阵，防止 save/restore 栈溢出导致画面旋转
+  ctx.setTransform(1,0,0,1,0,0);
   drawBg();
   // NPC
   var sorted=fishes.slice().sort(function(a,b){return a.size-b.size});
