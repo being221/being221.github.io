@@ -393,6 +393,9 @@ function handleCorrectAnswer(q) {
 
   updateUI();
 
+  // 检测学派是否完成
+  checkSchoolMastery(q.school);
+
   // 检查问道链：有更深层题目则弹出
   const deeper = QUESTION_BANK.getDeeperQuestion(q.id);
   if (deeper) {
@@ -560,4 +563,101 @@ function maintainFragmentCount() {
     const q = available[Math.floor(Math.random() * available.length)];
     spawnFragment(game.scene.scenes[0], q); // 获取当前场景
   }
+}
+
+// ===== 图鉴系统 =====
+
+window.toggleCollection = function () {
+  const panel = document.getElementById('collection-panel');
+  if (panel.classList.contains('active')) {
+    panel.classList.remove('active');
+    GameState.paused = false;
+  } else {
+    GameState.paused = true;
+    renderCollection();
+    panel.classList.add('active');
+  }
+};
+
+function renderCollection() {
+  const container = document.getElementById('collection-content');
+  const progress = GameState.player.schoolProgress;
+
+  let html = '';
+  for (const [key, info] of Object.entries(QUESTION_BANK.schools)) {
+    const questions = QUESTION_BANK.getQuestionsBySchool(key);
+    const completed = progress[key] || [];
+    const completeCount = completed.length;
+    const total = questions.length;
+    const mastered = completeCount >= total;
+
+    html += '<div class="school-row" style="margin-bottom:18px;display:flex;align-items:center;gap:12px;">';
+    html += `<span style="font-size:32px;">${mastered ? info.icon : '🔒'}</span>`;
+    html += `<span style="font-size:20px;color:${mastered ? '#ffd54f' : '#888'};min-width:50px;">${info.name}</span>`;
+    html += '<span style="display:flex;gap:4px;">';
+
+    // 显示每道题的完成状态
+    for (const q of questions) {
+      const done = completed.includes(q.id);
+      const tierLabel = ['根', '枝', '叶', '果'][q.tier - 1];
+      html += `<span title="${tierLabel}: ${q.question.substring(0, 20)}..." style="
+        display:inline-block;width:24px;height:24px;border-radius:50%;
+        background:${done ? '#' + info.color.toString(16).padStart(6, '0') : '#555'};
+        text-align:center;line-height:24px;font-size:11px;
+      ">${tierLabel}</span>`;
+    }
+
+    html += `</span><span style="color:#aaa;font-size:14px;">${completeCount}/${total}</span>`;
+
+    if (mastered) {
+      html += '<span style="font-size:20px;">🏆 贯通</span>';
+    }
+
+    html += '</div>';
+  }
+
+  // 总体进度
+  const totalCompleted = Object.values(progress).reduce((s, a) => s + a.length, 0);
+  html += `<div style="margin-top:24px;padding-top:16px;border-top:1px solid #555;color:#aaa;text-align:center;font-size:16px;">
+    总进度: ${totalCompleted} / 30 题
+  </div>`;
+
+  if (totalCompleted >= 30) {
+    html += '<div style="text-align:center;margin-top:16px;font-size:24px;color:#ffd54f;">🏆 百家贯通！诸子之旅完成！🎉</div>';
+  }
+
+  container.innerHTML = html;
+}
+
+// ===== 学派徽章检测 =====
+
+function checkSchoolMastery(schoolKey) {
+  const questions = QUESTION_BANK.getQuestionsBySchool(schoolKey);
+  const completed = GameState.player.schoolProgress[schoolKey] || [];
+  if (completed.length >= questions.length) {
+    // 学派已全部完成 — 首次完成弹提示
+    if (!GameState._schoolMastered) GameState._schoolMastered = {};
+    if (!GameState._schoolMastered[schoolKey]) {
+      GameState._schoolMastered[schoolKey] = true;
+      showSchoolMasteryToast(schoolKey);
+    }
+  }
+}
+
+function showSchoolMasteryToast(schoolKey) {
+  const info = QUESTION_BANK.schools[schoolKey];
+  // 简单实现：弹出 alert（后续可改为动画提示）
+  setTimeout(() => {
+    alert(`🏆 ${info.name} 脉络贯通！获得「${info.name}」徽章！`);
+  }, 1000);
+}
+
+function checkAllMastered() {
+  let allDone = true;
+  for (const key of Object.keys(QUESTION_BANK.schools)) {
+    const questions = QUESTION_BANK.getQuestionsBySchool(key);
+    const completed = GameState.player.schoolProgress[key] || [];
+    if (completed.length < questions.length) { allDone = false; break; }
+  }
+  return allDone;
 }
