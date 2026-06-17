@@ -19,6 +19,7 @@ const GameState = {
     combo: 0,
     multiplier: 1,
     totalFragments: 0,
+    vx: 0, vy: 0,
     schoolProgress: { rujia: [], daojia: [], mojia: [], fajia: [], bingjia: [] },
   },
   fragments: [],        // { x, y, questionId, school, tier, graphic }
@@ -79,6 +80,25 @@ function create() {
     // 设置目标点
     GameState.targetX = pointer.x;
     GameState.targetY = pointer.y;
+  });
+
+  // 触屏滑动
+  let touchStartX = 0, touchStartY = 0;
+  this.input.on('pointerdown', (pointer) => {
+    touchStartX = pointer.x;
+    touchStartY = pointer.y;
+  });
+  this.input.on('pointermove', (pointer) => {
+    if (!pointer.isDown) return;
+    GameState.player.vx = (pointer.x - touchStartX) * 0.15;
+    GameState.player.vy = (pointer.y - touchStartY) * 0.15;
+    // 更新起点以实现持续滑动
+    touchStartX = pointer.x;
+    touchStartY = pointer.y;
+  });
+  this.input.on('pointerup', () => {
+    GameState.player.vx = 0;
+    GameState.player.vy = 0;
   });
 
   // 7. 初始刷新碎片
@@ -261,6 +281,16 @@ function update(time, delta) {
       dx = (tx - GameState.player.x) / dist;
       dy = (ty - GameState.player.y) / dist;
     }
+  }
+
+  // 触屏惯性
+  if (GameState.player.vx !== 0 || GameState.player.vy !== 0) {
+    dx += GameState.player.vx;
+    dy += GameState.player.vy;
+    GameState.player.vx *= 0.92;  // 衰减
+    GameState.player.vy *= 0.92;
+    if (Math.abs(GameState.player.vx) < 0.01) GameState.player.vx = 0;
+    if (Math.abs(GameState.player.vy) < 0.01) GameState.player.vy = 0;
   }
 
   if (dx !== 0 || dy !== 0) {
