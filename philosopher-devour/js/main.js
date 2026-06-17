@@ -304,6 +304,7 @@ let currentQuestionData = null;
 
 function showQuestionOverlay(question) {
   currentQuestionData = question;
+  window._qAnswered = false;
 
   document.getElementById('question-text').textContent =
     `【${QUESTION_BANK.schools[question.school].name}】${question.question}`;
@@ -343,6 +344,8 @@ function hideQuestionOverlay() {
 
 function answerQuestion(chosenIdx) {
   if (!currentQuestionData) return;
+  if (window._qAnswered) return;
+  window._qAnswered = true;
 
   const q = currentQuestionData;
   const correct = chosenIdx === q.correct;
@@ -397,6 +400,7 @@ function handleCorrectAnswer(q) {
   } else {
     // 没有更深题目，直接结算
     applyGrowth(1);
+    hideQuestionOverlay();
     resumeGame();
   }
 }
@@ -410,6 +414,7 @@ function handleWrongAnswer(q) {
     GameState.daolianStake = 1;
   }
   applyGrowth(0);
+  hideQuestionOverlay();
   resumeGame();
 }
 
@@ -430,13 +435,14 @@ function showDaolianPrompt(nextQuestion, nextMultiplier) {
 }
 
 function continueDaolian(nextQuestion) {
+  window._qAnswered = false;
   document.getElementById('daolian-buttons').style.display = 'none';
   document.getElementById('daolian-info').style.display = 'none';
 
   // 显示下一题
   document.getElementById('question-result').style.display = 'none';
   document.getElementById('question-text').textContent =
-    `【问道链 x${GameState.daolianStake}】${nextQuestion.question}`;
+    `【${QUESTION_BANK.schools[nextQuestion.school].name}·问道链 x${GameState.daolianStake}】${nextQuestion.question}`;
 
   const optsDiv = document.getElementById('question-options');
   optsDiv.innerHTML = '';
@@ -462,6 +468,9 @@ function continueDaolian(nextQuestion) {
 }
 
 function handleDaolianAnswer(chosenIdx, question) {
+  if (window._qAnswered) return;
+  window._qAnswered = true;
+
   const correct = chosenIdx === question.correct;
   const opts = document.querySelectorAll('.q-option');
   opts.forEach(o => o.style.pointerEvents = 'none');
@@ -496,6 +505,7 @@ function handleDaolianAnswer(chosenIdx, question) {
       resultDiv.innerHTML = `💔 归零！${question.explanation}`;
       GameState.player.combo = 0;
       GameState.daolianActive = false;
+      GameState.daolianStake = 1;
       updateUI();
       setTimeout(() => {
         hideQuestionOverlay();
@@ -506,6 +516,7 @@ function handleDaolianAnswer(chosenIdx, question) {
 }
 
 function stopDaolian() {
+  document.getElementById('daolian-buttons').style.display = 'none';
   const stake = GameState.daolianStake / 2; // 当前已累积的倍率
   document.getElementById('question-result').textContent =
     `🛑 收手！获得 x${stake} 成长奖励 ✨`;
@@ -529,6 +540,7 @@ function applyGrowth(multiplier) {
 }
 
 function removeFragment(fragData) {
+  if (!fragData || !fragData.graphic) return;
   fragData.graphic.destroy();
   const idx = fragmentData.indexOf(fragData);
   if (idx !== -1) fragmentData.splice(idx, 1);
