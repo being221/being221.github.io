@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>诸子吞噬</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #1a1a2e;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: 'KaiTi', 'STKaiti', '楷体', serif;
+      overflow: hidden;
+    }
+    #game-container {
+      position: relative;
+      width: 800px;
+      height: 600px;
+    }
+    #game-container canvas {
+      display: block;
+    }
+    /* 答题弹窗 */
+    #question-overlay {
+      display: none;
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.75);
+      z-index: 10;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    #question-overlay.active {
+      display: flex;
+    }
+    #question-panel {
+      background: linear-gradient(135deg, #f5e6c8, #e8d5a3);
+      border: 3px solid #8b6914;
+      border-radius: 12px;
+      padding: 30px;
+      max-width: 550px;
+      width: 90%;
+      box-shadow: 0 8px 32px rgba(139, 105, 20, 0.4);
+    }
+    #question-text {
+      font-size: 22px;
+      color: #3d2b0a;
+      margin-bottom: 20px;
+      line-height: 1.6;
+      text-align: center;
+    }
+    #question-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .q-option {
+      background: #faf3e0;
+      border: 2px solid #c9a96e;
+      border-radius: 8px;
+      padding: 14px 20px;
+      font-size: 18px;
+      color: #4a3520;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-align: left;
+      font-family: inherit;
+    }
+    .q-option:hover {
+      background: #d4a853;
+      color: #fff;
+      border-color: #8b6914;
+      transform: scale(1.02);
+    }
+    .q-option.correct-flash {
+      background: #4caf50;
+      color: #fff;
+      border-color: #2e7d32;
+    }
+    .q-option.wrong-flash {
+      background: #e53935;
+      color: #fff;
+      border-color: #b71c1c;
+    }
+    #question-result {
+      display: none;
+      font-size: 16px;
+      color: #5d4037;
+      margin-top: 15px;
+      text-align: center;
+      line-height: 1.5;
+    }
+    #daolian-buttons {
+      display: none;
+      flex-direction: row;
+      gap: 15px;
+      margin-top: 20px;
+      justify-content: center;
+    }
+    .daolian-btn {
+      padding: 12px 28px;
+      font-size: 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: bold;
+      transition: all 0.15s;
+    }
+    .daolian-continue {
+      background: #ff6f00;
+      color: #fff;
+      border: 2px solid #e65100;
+    }
+    .daolian-continue:hover {
+      background: #ff8f00;
+      transform: scale(1.05);
+    }
+    .daolian-stop {
+      background: #66bb6a;
+      color: #fff;
+      border: 2px solid #388e3c;
+    }
+    .daolian-stop:hover {
+      background: #81c784;
+      transform: scale(1.05);
+    }
+    #daolian-info {
+      display: none;
+      text-align: center;
+      margin-top: 12px;
+      color: #e65100;
+      font-weight: bold;
+      font-size: 15px;
+    }
+    /* 图鉴按钮 */
+    #btn-collection {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      z-index: 5;
+      background: rgba(0, 0, 0, 0.5);
+      color: #ffd54f;
+      border: 1px solid #8b6914;
+      border-radius: 6px;
+      padding: 6px 14px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 15px;
+      transition: background 0.15s;
+    }
+    #btn-collection:hover {
+      background: rgba(0, 0, 0, 0.75);
+    }
+    /* 移动端响应式 */
+    @media (max-width: 820px) {
+      #game-container {
+        width: 100vw;
+        height: 75vw; /* 4:3 比例 */
+      }
+    }
+    /* 图鉴面板 */
+    #collection-panel {
+      display: none;
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 15;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px;
+      overflow-y: auto;
+    }
+    #collection-panel.active {
+      display: flex;
+    }
+    #collection-panel h2 {
+      color: #ffd54f;
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+    #collection-panel .school-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+      align-items: center;
+      color: #e0d5b0;
+    }
+    #collection-panel .badge {
+      font-size: 28px;
+    }
+    #collection-panel .badge.locked {
+      filter: grayscale(1);
+      opacity: 0.3;
+    }
+    #collection-panel .close-btn {
+      margin-top: 20px;
+      padding: 10px 30px;
+      background: #8b6914;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 18px;
+    }
+    /* 非阻断式 Toast */
+    #toast {
+      display: none;
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 20;
+      background: linear-gradient(135deg, #ffd54f, #ffb300);
+      color: #3d2b0a;
+      border: 2px solid #8b6914;
+      border-radius: 12px;
+      padding: 16px 32px;
+      font-size: 20px;
+      font-weight: bold;
+      text-align: center;
+      box-shadow: 0 4px 24px rgba(139, 105, 20, 0.6);
+      pointer-events: none;
+    }
+    #toast.show {
+      display: block;
+      animation: toastFade 2.5s ease-in-out forwards;
+    }
+    @keyframes toastFade {
+      0% { opacity: 0; transform: translate(-50%, -50%) scale(0.7); }
+      15% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+      25% { transform: translate(-50%, -50%) scale(1); }
+      75% { opacity: 1; }
+      100% { opacity: 0; transform: translate(-50%, -60%) scale(0.9); }
+    }
+  </style>
+</head>
+<body>
+  <div id="game-container">
+    <!-- Phaser Canvas 在这里插入 -->
+    <button id="btn-collection" onclick="window.toggleCollection()">📜 图鉴</button>
+
+    <!-- 答题弹窗 -->
+    <div id="question-overlay">
+      <div id="question-panel">
+        <div id="question-text"></div>
+        <div id="question-options"></div>
+        <div id="daolian-info"></div>
+        <div id="daolian-buttons">
+          <button class="daolian-btn daolian-continue" id="btn-continue">🔥 继续深入 (x<span id="next-multiplier">2</span>)</button>
+          <button class="daolian-btn daolian-stop" id="btn-stop">🛑 收手落袋</button>
+        </div>
+        <div id="question-result"></div>
+      </div>
+    </div>
+
+    <!-- 图鉴面板 -->
+    <div id="collection-panel">
+      <h2>📜 知识脉络</h2>
+      <div id="collection-content"></div>
+      <button class="close-btn" onclick="window.toggleCollection()">关闭</button>
+    </div>
+
+    <!-- Toast 提示 -->
+    <div id="toast"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
+  <script src="data/questions.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
