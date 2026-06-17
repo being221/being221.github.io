@@ -224,12 +224,14 @@ function updateUI() {
   comboText.setText(p.combo > 0 ? `🔥 连击 x${p.combo}` : '');
   sizeText.setText(`种子 ${Math.floor(p.size)} · 已收集 ${p.totalFragments} 碎片`);
 
-  // 连击光晕
+  // 连击光晕动画
   comboGlow.clear();
   if (p.combo >= 5) {
-    const alpha = Math.min(0.18 + p.combo * 0.015, 0.4);
+    const pulse = Math.sin(Date.now() * 0.005) * 0.5 + 0.5; // 0~1 呼吸
+    const alpha = 0.1 + pulse * 0.2;
     const color = p.combo >= 15 ? 0xffd700 : (p.combo >= 10 ? 0xff9800 : 0xff6f00);
-    comboGlow.lineStyle(8, color, alpha);
+    const thickness = p.combo >= 15 ? 12 : (p.combo >= 10 ? 8 : 5);
+    comboGlow.lineStyle(thickness, color, alpha);
     comboGlow.strokeRect(4, 4, 792, 592);
   }
 }
@@ -280,7 +282,8 @@ function checkFragmentCollisions() {
   for (let i = fragmentData.length - 1; i >= 0; i--) {
     const f = fragmentData[i];
     const dist = Math.hypot(p.x - f.x, p.y - f.y);
-    const collisionDist = p.size + f.size;
+    const absorbBonus = Math.min(p.combo * 0.8, 20); // 最多+20px 范围
+    const collisionDist = p.size + f.size + (p.combo >= 10 ? absorbBonus : 0);
 
     if (dist < collisionDist) {
       // 触发答题
@@ -559,6 +562,47 @@ function resumeGame() {
 
 function maintainFragmentCount() {
   const available = QUESTION_BANK.getAvailableFragments(GameState.player);
+
+  // 连击≥15 时偶尔生成稀有金色碎片
+  if (GameState.player.combo >= 15 && Math.random() < 0.08 && available.length > 2) {
+    const rareQ = available[Math.floor(Math.random() * available.length)];
+    const scene = game.scene.scenes[0];
+    const x = 60 + Math.random() * 680;
+    const y = 40 + Math.random() * 520;
+    const g = scene.add.graphics();
+    // 金色碎片（更大更亮）
+    g.fillStyle(0xffd700, 0.3);
+    g.fillCircle(x, y, 20);
+    g.fillStyle(0xffd700, 0.8);
+    g.fillCircle(x, y, 14);
+    g.fillStyle(0xfff8e1, 0.6);
+    g.fillCircle(x, y, 7);
+    g.setDepth(5);
+
+    const data = {
+      graphic: g, x, y,
+      questionId: rareQ.id,
+      school: rareQ.school,
+      tier: rareQ.tier,
+      size: 14,
+      color: 0xffd700,
+      rare: true,
+    };
+    fragmentData.push(data);
+    fragmentGroup.add(g);
+
+    // 闪烁效果
+    scene.tweens.add({
+      targets: g, alpha: 0.4, duration: 300, yoyo: true, repeat: 10,
+      onComplete: () => {
+        if (!fragmentData.includes(data)) return;
+        // 10 次闪烁后消失
+        fragmentData.splice(fragmentData.indexOf(data), 1);
+        g.destroy();
+      }
+    });
+  }
+
   while (fragmentData.length < 15 && available.length > 0) {
     const q = available[Math.floor(Math.random() * available.length)];
     spawnFragment(game.scene.scenes[0], q); // 获取当前场景
@@ -641,6 +685,29 @@ function checkSchoolMastery(schoolKey) {
       GameState._schoolMastered[schoolKey] = true;
       showSchoolMasteryToast(schoolKey);
     }
+  }
+
+  if (checkAllMastered()) {
+    setTimeout(() => {
+      // 屏幕中央通关文字
+      const victoryText = game.scene.scenes[0].add.text(400, 300, '🏆 百家贯通！\n诸子之旅完成！', {
+        fontSize: '42px',
+        fontFamily: 'KaiTi, STKaiti, serif',
+        color: '#ffd54f',
+        align: 'center',
+        stroke: '#000',
+        strokeThickness: 3,
+      }).setOrigin(0.5).setDepth(200);
+
+      game.scene.scenes[0].tweens.add({
+        targets: victoryText,
+        scaleX: 1.3,
+        scaleY: 1.3,
+        alpha: 0,
+        duration: 4000,
+        ease: 'Power2',
+      });
+    }, 1500);
   }
 }
 
