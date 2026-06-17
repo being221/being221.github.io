@@ -329,7 +329,7 @@ function update(){
   var hh="";for(var i=0;i<3;i++)hh+=(i<player.lives?"❤️":"🖤");document.getElementById("lives").textContent=hh;
 }
 
-function render(){while(1){try{ctx.restore()}catch(e){break}};ctx.setTransform(1,0,0,1,0,0);
+function render(){ctx.setTransform(1,0,0,1,0,0);
   drawBg();
   // NPC
   var sorted=fishes.slice().sort(function(a,b){return a.size-b.size});
