@@ -89,6 +89,19 @@ a{color:inherit;text-decoration:none}
 /* Toast */
 .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);z-index:500;padding:8px 20px;border-radius:16px;background:#2a1f14;color:#c9a96e;font-size:13px;border:1px solid rgba(201,169,110,0.2);animation:fadeIn 0.3s ease}
 @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* 手机端标签切换 */
+.mobile-tabs{display:none;justify-content:center;gap:2px;padding:12px 8px 0;max-width:1400px;margin:0 auto}
+.mobile-tabs button{flex:1;max-width:110px;padding:10px 6px;border:1px solid rgba(255,255,255,0.1);border-radius:8px 8px 0 0;background:rgba(255,255,255,0.03);color:#8b7355;font-size:12px;cursor:pointer;font-family:inherit;transition:all 0.2s;border-bottom:none}
+.mobile-tabs button:hover{color:#c9a96e;background:rgba(255,255,255,0.06)}
+.mobile-tabs button.active{color:#c9a96e;background:rgba(255,255,255,0.08);border-color:rgba(201,169,110,0.3);font-weight:700}
+
+@media(max-width:560px){
+  .mobile-tabs{display:flex}
+  .timeline-grid{grid-template-columns:1fr}
+  .col{display:none}
+  .col.show{display:block}
+}}
 </style>
 </head>
 <body>
@@ -112,6 +125,14 @@ a{color:inherit;text-decoration:none}
   <span class="legend-item"><span class="legend-dot india"></span> 印度</span>
   <span class="legend-item"><span class="legend-dot mideast"></span> 中东</span>
   <span class="legend-item"><span class="legend-dot med"></span> 地中海</span>
+</div>
+
+<!-- 手机端标签 -->
+<div class="mobile-tabs" id="mobileTabs">
+  <button class="active" data-tab="china">🇨🇳 中国</button>
+  <button data-tab="india">🇮🇳 印度</button>
+  <button data-tab="mideast">🌏 中东</button>
+  <button data-tab="med">🏛 地中海</button>
 </div>
 
 <main class="timeline-grid" id="timelineGrid"></main>
@@ -250,10 +271,38 @@ a{color:inherit;text-decoration:none}
   document.getElementById("helpClose").addEventListener("click", function() { helpOverlay.classList.remove("open"); });
   helpOverlay.addEventListener("click", function(e) { if (e.target === helpOverlay) helpOverlay.classList.remove("open"); });
 
+  // ===== 手机端标签切换 =====
+  var mobileTabs = document.getElementById("mobileTabs");
+  var currentTab = "china";
+
+  mobileTabs.addEventListener("click", function(e) {
+    var btn = e.target.closest("button");
+    if (!btn) return;
+    var tab = btn.dataset.tab;
+    if (tab === currentTab) return;
+    currentTab = tab;
+
+    // 更新按钮状态
+    mobileTabs.querySelectorAll("button").forEach(function(b) { b.classList.remove("active"); });
+    btn.classList.add("active");
+
+    // 切换列显示
+    document.querySelectorAll(".col").forEach(function(col) {
+      col.classList.remove("show");
+      if (col.classList.contains("col-" + tab)) col.classList.add("show");
+    });
+  });
+
   // ===== 工具 =====
   function esc(s) { var d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
 
   render();
+  // 初始化：默认显示中国
+  if (window.innerWidth <= 560) {
+    setTimeout(function() {
+      document.querySelectorAll(".col").forEach(function(c) { if (c.classList.contains("col-china")) c.classList.add("show"); });
+    }, 100);
+  }
 })();
 </script>
 </body>
