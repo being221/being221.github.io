@@ -33,7 +33,7 @@ canvas{display:block;margin:0 auto}
 </div></div></div>
 <script>
 (function(){
-var c=document.getElementById("c"),ctx=c.getContext("2d");var AC=null;window.AudioContext=window.AudioContext||window.webkitAudioContext
+var c=document.getElementById("c"),ctx=c.getContext("2d")
 var W,H;
 function resize(){W=c.width=window.innerWidth;H=c.height=window.innerHeight}
 resize();window.addEventListener("resize",resize);
@@ -234,43 +234,15 @@ function spawn(){
   var spd=Math.max(0.12,0.6-sz*0.003);
   fishes.push({x:x,y:y,vx:Math.cos(ang)*spd,vy:Math.sin(ang)*spd,size:sz,species:sp,cid:Math.floor(Math.random()*sp.c.length),tt:80+Math.random()*200});
 }
-// ===== 4 种吃鱼音效方案 =====
-// 吃鱼音效：咬合 + 撕裂 + 吞下
-// 吃鱼音效：真实咀嚼感合成
-var SFX={
-  play:function(s){
-    try{if(!AC||AC.state!=='running')return;var t=AC.currentTime;
-    // 1. 咬合瞬间 — 低频快速下降，模拟牙齿闭合
-    var o1=AC.createOscillator(),g1=AC.createGain();
-    o1.type="sine";o1.frequency.setValueAtTime(300,t);o1.frequency.exponentialRampToValueAtTime(60,t+0.04);
-    g1.gain.setValueAtTime(0.45,t);g1.gain.linearRampToValueAtTime(0,t+0.05);
-    o1.connect(g1);g1.connect(AC.destination);o1.start(t);o1.stop(t+0.06);
-    // 2. 湿润咀嚼 — 过滤噪声多次脉冲
-    for(var j=0;j<4;j++){
-      var buf=AC.createBuffer(1,AC.sampleRate*0.04,AC.sampleRate);
-      var d=buf.getChannelData(0);
-      for(var i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*0.2*(1-i/d.length);
-      var ns=AC.createBufferSource(),ng=AC.createGain(),bp=AC.createBiquadFilter();
-      ns.buffer=buf;bp.type="bandpass";bp.frequency.value=600+Math.random()*400;bp.Q.value=0.5+Math.random()*0.5;
-      ng.gain.setValueAtTime(0.18,t+j*0.035);ng.gain.exponentialRampToValueAtTime(0.001,t+j*0.035+0.04);
-      ns.connect(bp);bp.connect(ng);ng.connect(AC.destination);
-      ns.start(t+j*0.035);ns.stop(t+j*0.035+0.04);
-    }
-    // 3. 脆裂声 — 高频白噪声极短脉冲
-    var buf2=AC.createBuffer(1,AC.sampleRate*0.03,AC.sampleRate);
-    var d2=buf2.getChannelData(0);
-    for(var i=0;i<d2.length;i++){var e=i<d2.length*0.3?i/(d2.length*0.3):(d2.length-i)/(d2.length*0.7);d2[i]=(Math.random()*2-1)*0.15*e}
-    var n2=AC.createBufferSource(),g2=AC.createGain(),hp=AC.createBiquadFilter();
-    n2.buffer=buf2;hp.type="highpass";hp.frequency.value=1200;g2.gain.setValueAtTime(0.15,t+0.01);g2.gain.exponentialRampToValueAtTime(0.001,t+0.04);
-    n2.connect(hp);hp.connect(g2);g2.connect(AC.destination);n2.start(t+0.01);n2.stop(t+0.04);
-    }catch(e){}
-  }
-};
-var sfxName=["A"];var sfxIdx=0
+// 吃鱼音效 — 真实 WAV 文件播放
+var eatAudio = new Audio("eat.wav"); eatAudio.volume = 0.4;
+function playEatSound(fishSize){
+  try{
+    eatAudio.currentTime = 0;
+    eatAudio.play().catch(function(){});
+  }catch(e){}
+}
 
-var sfxName=["A","B","C","D"],sfxIdx=parseInt(localStorage.getItem("fishSfxIdx"))||0
-
-function playEatSound(fishSize){SFX.play(fishSize)}
 function maintain(){
   // 换成固定的出生间隔，不维持数量
   spawnTimer--;
@@ -382,13 +354,7 @@ function gameOver(){
   running=false;document.getElementById("msg").innerHTML='<div>🦈 被大鱼吃了！</div><div style="font-size:18px;margin-top:8px;opacity:0.8">得分：'+player.score+' · 体型：'+Math.floor(player.size)+'</div><button onclick="location.reload()">🔄 再来一局</button><div style="font-size:14px;margin-top:10px;opacity:0.6">或按 R 键重新开始</div>';
 }
 
-// 音效选择器
-var sfxLabels=["A · 咀嚼","B · 咬合","C · 撕裂","D · 吞咽"];
-function updateSfxUI(){document.getElementById("sfxBtn").textContent=sfxLabels[sfxIdx]}
-updateSfxUI();
-document.getElementById("sfxBtn").addEventListener("click",function(){sfxIdx=(sfxIdx+1)%4;localStorage.setItem("fishSfxIdx",sfxIdx);updateSfxUI()});
-document.getElementById("sfxPreview").addEventListener("click",function(){if(!AC){AC=new(window.AudioContext||window.webkitAudioContext);AC.resume()}SFX.play(25)});
-document.getElementById("playBtn").addEventListener("click",function(){if(!AC){AC=new(window.AudioContext||window.webkitAudioContext)}AC.resume().then(function(){console.log("Audio ready, state:",AC.state)}).catch(function(){});var testO=AC.createOscillator(),testG=AC.createGain();testO.frequency.value=1200;testG.gain.setValueAtTime(0.4,AC.currentTime);testG.gain.exponentialRampToValueAtTime(0.001,AC.currentTime+0.15);testO.connect(testG);testG.connect(AC.destination);testO.start();testO.stop(AC.currentTime+0.15);document.getElementById("splash").style.display="none";running=true;init()});
+document.getElementById("playBtn").addEventListener("click",function(){document.getElementById("splash").style.display="none";running=true;init()});
 function init(){
   player.x=W/2;player.y=H/2;player.size=20;player.score=0;player.lives=3;player.invincible=90;
   fishes=[];parts=[];spawnTimer=8;
