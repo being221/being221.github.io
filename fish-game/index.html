@@ -2,49 +2,73 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
 <title>🐟 大鱼吃小鱼</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#020d1a;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none;font-family:"PingFang SC","Microsoft YaHei",sans-serif}
-canvas{display:block;margin:0 auto}
+body{background:#02101c;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none;font-family:"PingFang SC","Microsoft YaHei",sans-serif}
+canvas{display:block}
 #ui{position:fixed;top:12px;left:12px;z-index:10;display:flex;gap:10px;pointer-events:none}
 #ui span{background:rgba(0,0,0,0.55);color:#fff;padding:7px 16px;border-radius:20px;font-size:14px;backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.08)}
 #msg{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:20;color:#fff;font-size:30px;text-align:center;pointer-events:none;text-shadow:0 3px 15px rgba(0,0,0,0.6)}
-#msg button{pointer-events:auto;margin-top:18px;padding:14px 40px;border:none;border-radius:28px;background:linear-gradient(135deg,#ff6b6b,#ee5a24);color:#fff;font-size:20px;cursor:pointer;font-family:inherit;transition:transform 0.15s,box-shadow 0.2s;box-shadow:0 4px 20px rgba(255,107,107,0.4)}
+#msg button{pointer-events:auto;margin-top:18px;padding:14px 40px;border:none;border-radius:28px;background:linear-gradient(135deg,#ff6b6b,#ee5a24);color:#fff;font-size:20px;cursor:pointer;font-family:inherit;box-shadow:0 4px 20px rgba(255,107,107,0.4)}
 #msg button:active{transform:scale(0.94)}
-#levelup{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:15;color:#ffd700;font-size:40px;font-weight:700;pointer-events:none;text-shadow:0 0 40px rgba(255,215,0,0.6);opacity:0;transition:opacity 0.3s}
 </style>
 </head>
-<body>
-<canvas id="c"></canvas>
-<div id="ui">
-  <span>🐟 <b id="score">0</b></span>
-  <span>📏 <b id="size">20</b></span>
-  <span id="lives">❤️❤️❤️</span>
-</div>
-<div id="levelup"></div>
+<body><canvas id="c"></canvas>
+<div id="ui"><span>🐟 <b id="score">0</b></span><span>📏 <b id="size">20</b></span><span id="lives">❤️❤️❤️</span></div>
 <div id="msg"></div>
 <script>
 (function(){
-var c=document.getElementById("c"),ctx=c.getContext("2d");
-var W,H;
-function resize(){W=c.width=window.innerWidth;H=c.height=window.innerHeight}
+var c=document.getElementById("c"),ctx=c.getContext("2d"),W,H,T=0;
 resize();window.addEventListener("resize",resize);
+function resize(){W=c.width=window.innerWidth;H=c.height=window.innerHeight}
+if(!window.__init){window.__init=1;prebuildBg()}
 
-// ===== 全局状态 =====
-var t=0; // 游戏帧计数，用于动画
-var bubbles=[]; // 背景气泡
-for(var i=0;i<60;i++)bubbles.push({x:Math.random()*2000,y:Math.random()*2000,r:1+Math.random()*4,s:0.2+Math.random()*0.4,o:0.03+Math.random()*0.08});
+function prebuildBg(){
+  // 预计算背景元素
+  var bg=document.createElement("canvas");bg.width=2048;bg.height=2048;
+  var bctx=bg.getContext("2d");
+  // 沙地
+  var sg=bctx.createLinearGradient(0,1900,0,2048);
+  sg.addColorStop(0,"rgba(20,40,35,0)");sg.addColorStop(1,"rgba(20,40,35,0.6)");
+  bctx.fillStyle=sg;bctx.fillRect(0,1950,2048,98);
+  // 石头（带纹理）
+  window.__stones=[];for(var i=0;i<30;i++){var sx=Math.random()*2048,sy=1900+Math.random()*140,srx=15+Math.random()*40,sry=6+Math.random()*15;window.__stones.push({x:sx,y:sy,rx:srx,ry:sry,c:"rgba("+(12+Math.random()*15)+","+(25+Math.random()*20)+","+(18+Math.random()*15)+",0.5)"});bctx.beginPath();bctx.ellipse(sx,sy,srx,sry,0,0,Math.PI*2);bctx.fillStyle="rgba(12,28,20,0.5)";bctx.fill();var sgx=sx-srx*0.6+Math.random()*srx*1.2,sgy=sy-sry*0.3+Math.random()*sry*0.6;bctx.beginPath();bctx.ellipse(sgx,sgy,srx*0.4,sry*0.3,0,0,Math.PI*2);bctx.fillStyle="rgba(25,50,35,0.4)";bctx.fill()}
+  // 海草（精致静态，多层次）
+  window.__seaweed=[];bctx.lineCap="round";
+  for(var i=0;i<50;i++){var wx=Math.random()*2048;
+    var wh=80+Math.random()*180,wy=2020-wh;
+    var w=2+Math.random()*3;
+    // 主茎
+    var cp1x=wx-8+Math.random()*16,cp1y=wy+wh*0.35+Math.random()*wh*0.2;
+    var cp2x=wx-15+Math.random()*30,cp2y=wy+wh*0.7+Math.random()*wh*0.2;
+    var topx=wx-5+Math.random()*10,topy=wy+wh;
+    bctx.beginPath();bctx.moveTo(wx,2020);
+    bctx.bezierCurveTo(cp1x,cp1y,cp2x,cp2y,topx,topy);
+    bctx.strokeStyle="rgba(25,80,50,0.45)";bctx.lineWidth=w;bctx.stroke();
+    // 更暗的边线
+    bctx.beginPath();bctx.moveTo(wx+1,2020);
+    bctx.bezierCurveTo(cp1x+1,cp1y,cp2x+1,cp2y,topx+1,topy);
+    bctx.strokeStyle="rgba(15,50,30,0.3)";bctx.lineWidth=w*0.5;bctx.stroke();
+    window.__seaweed.push({x:wx,h:wh,y:2020-wh,cp1x:cp1x,cp1y:cp1y,cp2x:cp2x,cp2y:cp2y,tx:topx,ty:topy,w:w});
+    // 随机小分叶
+    if(Math.random()<0.4){
+      var h2=wh*0.4+Math.random()*wh*0.3,sx2=cp1x,sy2=cp1y;
+      var cp3x=sx2+10+Math.random()*25,cp3y=sy2-h2*0.5;
+      var top2x=sx2+15+Math.random()*20,top2y=sy2-h2*0.8;
+      bctx.beginPath();bctx.moveTo(sx2,sy2);
+      bctx.bezierCurveTo(cp3x,cp3y,cp3x-5,top2y,top2x,top2y);
+      bctx.strokeStyle="rgba(20,70,40,0.35)";bctx.lineWidth=1.5;bctx.stroke();
+    }
+  }
+  window.__bgCanvas=bg;
+  window.__bgImg=new Image();window.__bgImg.src=bg.toDataURL();
+  // 气泡
+  window.__bubbles=[];for(var i=0;i<80;i++)window.__bubbles.push({x:Math.random()*2048,y:Math.random()*2048,r:1+Math.random()*5,s:0.1+Math.random()*0.3,o:0.02+Math.random()*0.06});
+}
 
-// ===== 玩家 =====
-var player={
-  x:0,y:0,size:20,score:0,lives:3,invincible:0,vx:0,vy:0,
-  grow:function(amt){var old=Math.floor(this.size);this.size+=amt;if(this.size>250)this.size=250;var nu=Math.floor(this.size);if(Math.floor(this.size/30)>Math.floor(old/30)&&nu>old){showLevelUp()}}
-};
-function showLevelUp(){var el=document.getElementById("levelup");el.textContent="⬆ 升级！";el.style.opacity="1";setTimeout(function(){el.style.opacity="0"},1500)}
-
-// ===== 鱼种定义 =====
+// 鱼种
 var SPECIES=[
   {n:"沙丁鱼",min:3,max:10,draw:drawSardine,tier:0,c:["#7ec8e3","#8ec5d6","#6ab0c8"]},
   {n:"孔雀鱼",min:4,max:12,draw:drawGuppy,tier:0,c:["#ff9aa2","#ffb347","#ff6f91","#845ec2"]},
@@ -55,210 +79,67 @@ var SPECIES=[
   {n:"鲈鱼",min:25,max:55,draw:drawBass,tier:2,c:["#8d6e63","#795548","#a1887f"]},
   {n:"三文鱼",min:30,max:60,draw:drawSalmon,tier:2,c:["#ef5350","#e57373","#f44336"]},
   {n:"鲶鱼",min:25,max:50,draw:drawCat,tier:2,c:["#78909c","#90a4ae","#607d8b"]},
-  {n:"鲨鱼",min:45,max:100,draw:drawShark,tier:3,c:["#b0bec5","#90a4ae","#78909c"]},
+  {n:"鲨鱼",min:45,max:100,draw:drawShark,tier:3,c:["#6b7b8d","#8e9eab","#546e7a"]},
   {n:"金枪鱼",min:50,max:110,draw:drawTuna,tier:3,c:["#3949ab","#1e88e5","#1565c0"]},
   {n:"鳐鱼",min:40,max:85,draw:drawRay,tier:3,c:["#546e7a","#455a64","#37474f"]},
 ];
+function availTier(){return player.size<25?0:player.size<50?1:player.size<90?2:3}
 
-function avail(){var tier=player.size<25?0:player.size<50?1:player.size<90?2:3;return SPECIES.filter(function(s){return s.tier<=tier})}
-
-// ===== 鱼类绘图（14种独特形状）=====
-function body(x,y,w,h,fc,d){ctx.save();ctx.translate(x,y);ctx.rotate(d);ctx.beginPath();ctx.ellipse(0,0,w,h,0,0,Math.PI*2);ctx.fillStyle=fc;ctx.fill();ctx.restore()}
-function eye(x,y,s,d){ctx.save();ctx.translate(x,y);ctx.rotate(d);ctx.beginPath();ctx.arc(s*0.65,-s*0.1,s*0.22,0,Math.PI*2);ctx.fillStyle="#fff";ctx.fill();ctx.beginPath();ctx.arc(s*0.75,-s*0.08,s*0.11,0,Math.PI*2);ctx.fillStyle="#111";ctx.fill();ctx.restore()}
-function tail(x,y,pa,pb,pc,pd,clr,d){ctx.save();ctx.translate(x,y);ctx.rotate(d);ctx.beginPath();ctx.moveTo(pa[0],pa[1]);ctx.lineTo(pb[0],pb[1]);ctx.lineTo(pc[0],pc[1]);ctx.closePath();ctx.fillStyle=clr;ctx.fill();ctx.restore()}
-
-function drawSardine(x,y,s,fill,accent,d){
-  body(x,y,s*1.3,s*0.48,accent,d);
-  tail(x,y,[-s*0.9,0],[-s*1.7,-s*0.55],[-s*1.7,s*0.55],fill,d);
-  eye(x,y,s,d);
-}
-function drawGuppy(x,y,s,fill,accent,d){
-  body(x,y,s*0.9,s*0.7,accent,d);
-  tail(x,y,[-s*0.8,0],[-s*1.8,-s*1.1],[-s*1.4,-s*0.6],fill,d);
-  eye(x,y,s,d);
-  // 斑斓斑点
+// 12 种鱼形
+function B(x,y,w,h,fc,d){ctx.save();ctx.translate(x,y);ctx.rotate(d);ctx.beginPath();ctx.ellipse(0,0,w,h,0,0,Math.PI*2);ctx.fillStyle=fc;ctx.fill();ctx.restore()}
+function E(x,y,s,d){ctx.save();ctx.translate(x,y);ctx.rotate(d);ctx.beginPath();ctx.arc(s*0.65,-s*0.1,s*0.22,0,Math.PI*2);ctx.fillStyle="#fff";ctx.fill();ctx.beginPath();ctx.arc(s*0.75,-s*0.08,s*0.11,0,Math.PI*2);ctx.fillStyle="#111";ctx.fill();ctx.restore()}
+function T(x,y,p1,p2,p3,clr,d){ctx.save();ctx.translate(x,y);ctx.rotate(d);ctx.beginPath();ctx.moveTo(p1[0],p1[1]);ctx.lineTo(p2[0],p2[1]);ctx.lineTo(p3[0],p3[1]);ctx.closePath();ctx.fillStyle=clr;ctx.fill();ctx.restore()}
+function df(x,y,s,clr,accent,d){
   ctx.save();ctx.translate(x,y);ctx.rotate(d);
-  for(var i=0;i<5;i++){ctx.beginPath();ctx.arc(-s*0.3+Math.random()*s*0.8,-s*0.2+Math.random()*s*0.5,s*0.08,0,Math.PI*2);ctx.fillStyle="rgba(255,255,255,0.3)";ctx.fill()}
+  ctx.beginPath();ctx.moveTo(-s*0.2,-s*0.45);ctx.quadraticCurveTo(0,-s*1.6,-s*0.6,-s*0.4);ctx.fillStyle="rgba(0,0,0,0.12)";ctx.fill();
+  ctx.beginPath();ctx.moveTo(-s*0.2,s*0.45);ctx.quadraticCurveTo(0,s*1.6,-s*0.6,s*0.4);ctx.fill();
   ctx.restore();
 }
-function drawTetra(x,y,s,fill,accent,d){
+function F(x,y,s,clr,accent,d){
   ctx.save();ctx.translate(x,y);ctx.rotate(d);
-  ctx.beginPath();ctx.moveTo(s*1.1,0);ctx.quadraticCurveTo(0,-s*1.1,-s*0.9,0);ctx.quadraticCurveTo(0,s*1.1,s*1.1,0);ctx.fillStyle=accent;ctx.fill();
-  // 荧光条纹
-  ctx.beginPath();ctx.ellipse(0,0,s*0.5,s*0.4,0,0,Math.PI*2);ctx.fillStyle="rgba(255,255,255,0.25)";ctx.fill();
-  ctx.restore();
-  tail(x,y,[-s*0.8,0],[-s*1.4,-s*0.4],[-s*1.4,s*0.4],fill,d);
-  eye(x,y,s,d);
+  ctx.beginPath();ctx.ellipse(0,s*0.15,s*0.6,s*0.25,0,0,Math.PI*2);ctx.fillStyle="rgba(255,255,255,0.12)";ctx.fill();ctx.restore();
 }
-function drawClown(x,y,s,fill,accent,d){
-  body(x,y,s*1.05,s*0.7,fill,d);
-  tail(x,y,[-s*1.0,0],[-s*1.7,-s*0.55],[-s*1.7,s*0.55],accent,d);
-  // 白色条纹
-  ctx.save();ctx.translate(x,y);ctx.rotate(d);ctx.beginPath();ctx.ellipse(s*0.25,0,s*0.1,s*0.7,0,0,Math.PI*2);ctx.fillStyle="#fff";ctx.fill();ctx.beginPath();ctx.ellipse(-s*0.3,0,s*0.1,s*0.7,0,0,Math.PI*2);ctx.fillStyle="#fff";ctx.fill();ctx.restore();
-  eye(x,y,s,d);
-}
-function drawAngel(x,y,s,fill,accent,d){
-  body(x,y,s*0.6,s*1.5,accent,d);
-  tail(x,y,[-s*0.7,0],[-s*1.3,-s*0.35],[-s*1.3,s*0.35],fill,d);
-  eye(x,y,s*0.8,d);
-}
-function drawPuff(x,y,s,fill,accent,d){
-  ctx.save();ctx.translate(x,y);ctx.rotate(d);
-  ctx.beginPath();ctx.arc(0,0,s*0.85,0,Math.PI*2);ctx.fillStyle=accent;ctx.fill();
-  ctx.beginPath();ctx.arc(0,0,s*0.6,0,Math.PI*2);ctx.fillStyle="rgba(255,255,255,0.18)";ctx.fill();
-  for(var i=0;i<14;i++){var an=i/14*Math.PI*2;ctx.beginPath();ctx.moveTo(Math.cos(an)*s*0.8,Math.sin(an)*s*0.8);ctx.lineTo(Math.cos(an)*s*1.05,Math.sin(an)*s*1.05);ctx.strokeStyle="rgba(0,0,0,0.12)";ctx.lineWidth=1.2;ctx.stroke()}
-  ctx.restore();
-  tail(x,y,[-s*0.8,0],[-s*1.2,-s*0.3],[-s*1.2,s*0.3],fill,d);
-  eye(x,y,s*0.9,d);
-}
-function drawBass(x,y,s,fill,accent,d){
-  body(x,y,s*1.2,s*0.65,accent,d);
-  tail(x,y,[-s*1.1,0],[-s*1.8,-s*0.6],[-s*1.8,s*0.6],fill,d);
-  // 侧线
-  ctx.save();ctx.translate(x,y);ctx.rotate(d);ctx.beginPath();ctx.moveTo(-s*0.6,-s*0.3);ctx.quadraticCurveTo(0,-s*0.1,s*0.8,-s*0.25);ctx.strokeStyle="rgba(0,0,0,0.15)";ctx.lineWidth=1.5;ctx.stroke();ctx.restore();
-  eye(x,y,s,d);
-}
-function drawSalmon(x,y,s,fill,accent,d){
-  body(x,y,s*1.3,s*0.6,accent,d);
-  tail(x,y,[-s*1.0,0],[-s*1.9,-s*0.7],[-s*1.3,-s*0.4],fill,d);
-  eye(x,y,s,d);
-}
-function drawCat(x,y,s,fill,accent,d){
-  body(x,y,s*1.1,s*0.55,accent,d);
-  tail(x,y,[-s*1.0,0],[-s*1.6,-s*0.5],[-s*1.6,s*0.5],fill,d);
-  // 胡须
-  ctx.save();ctx.translate(x,y);ctx.rotate(d);
-  ctx.beginPath();ctx.moveTo(s*1.0,-s*0.3);ctx.quadraticCurveTo(s*1.8,-s*1.5,s*1.2,-s*2.0);ctx.strokeStyle=fill;ctx.lineWidth=s*0.08;ctx.stroke();
-  ctx.beginPath();ctx.moveTo(s*1.0,s*0.3);ctx.quadraticCurveTo(s*1.8,s*1.5,s*1.2,s*2.0);ctx.strokeStyle=fill;ctx.lineWidth=s*0.08;ctx.stroke();
-  ctx.restore();
-  eye(x,y,s,d);
-}
-function drawShark(x,y,s,fill,accent,d){
-  body(x,y,s*1.4,s*0.6,accent,d);
-  // 背鳍
-  ctx.save();ctx.translate(x,y);ctx.rotate(d);ctx.beginPath();ctx.moveTo(-s*0.2,-s*0.5);ctx.lineTo(s*0.2,-s*2.2);ctx.lineTo(s*0.5,-s*0.5);ctx.closePath();ctx.fillStyle=fill;ctx.fill();ctx.restore();
-  tail(x,y,[-s*1.0,-s*0.2],[-s*1.9,-s*1.1],[-s*1.6,0],fill,d);
-  tail(x,y,[-s*1.0,s*0.2],[-s*1.9,s*1.1],[-s*1.6,0],fill,d);
-  eye(x,y,s,d);
-}
-function drawTuna(x,y,s,fill,accent,d){
-  ctx.save();ctx.translate(x,y);ctx.rotate(d);
-  ctx.beginPath();ctx.moveTo(s*1.3,0);ctx.bezierCurveTo(s*0.6,-s*0.8,-s*0.3,-s*0.9,-s*0.9,-s*0.3);ctx.bezierCurveTo(-s*1.4,s*0.1,-s*0.8,s*0.7,0,s*0.6);ctx.bezierCurveTo(s*0.4,s*0.5,s*0.8,s*0.3,s*1.3,0);ctx.closePath();ctx.fillStyle=accent;ctx.fill();
-  // 鱼雷纹
-  ctx.beginPath();ctx.ellipse(0,0,s*0.5,s*0.35,0,0,Math.PI*2);ctx.fillStyle="rgba(255,255,255,0.12)";ctx.fill();
-  ctx.restore();
-  tail(x,y,[-s*1.0,0],[-s*1.9,-s*0.6],[-s*1.3,-s*0.4],fill,d);
-  eye(x,y,s,d);
-}
-function drawRay(x,y,s,fill,accent,d){
-  ctx.save();ctx.translate(x,y);ctx.rotate(d);
-  ctx.beginPath();ctx.moveTo(s*1.2,0);ctx.quadraticCurveTo(s*0.6,-s*2,w,s*2.5);ctx.quadraticCurveTo(-s*0.3,-s*2.5,-s*0.5,-s*1.5);ctx.lineTo(-s*0.5,s*1.5);ctx.quadraticCurveTo(-s*0.3,s*2.5,w,s*2.5);ctx.quadraticCurveTo(s*0.6,s*2,s*1.2,0);ctx.closePath();ctx.fillStyle=accent;ctx.fill();
-  ctx.beginPath();ctx.ellipse(0,0,s*0.3,s*0.6,0,0,Math.PI*2);ctx.fillStyle="rgba(255,255,255,0.12)";ctx.fill();
-  ctx.restore();
-}
+function drawSardine(x,y,s,c,a,d){B(x,y,s*1.3,s*0.48,a,d);T(x,y,[-s*0.9,0],[-s*1.7,-s*0.55],[-s*1.7,s*0.55],c,d);E(x,y,s,d);F(x,y,s,c,a,d)}
+function drawGuppy(x,y,s,c,a,d){B(x,y,s*0.9,s*0.7,a,d);T(x,y,[-s*0.8,0],[-s*1.8,-s*1.1],[-s*1.4,-s*0.6],c,d);E(x,y,s,d);df(x,y,s,c,a,d)}
+function drawTetra(x,y,s,c,a,d){ctx.save();ctx.translate(x,y);ctx.rotate(d);ctx.beginPath();ctx.moveTo(s*1.1,0);ctx.quadraticCurveTo(0,-s*1.1,-s*0.9,0);ctx.quadraticCurveTo(0,s*1.1,s*1.1,0);ctx.fillStyle=a;ctx.fill();ctx.restore();T(x,y,[-s*0.8,0],[-s*1.4,-s*0.4],[-s*1.4,s*0.4],c,d);E(x,y,s,d)}
+function drawClown(x,y,s,c,a,d){B(x,y,s*1.05,s*0.7,c,d);T(x,y,[-s*1.0,0],[-s*1.7,-s*0.55],[-s*1.7,s*0.55],a,d);ctx.save();ctx.translate(x,y);ctx.rotate(d);ctx.beginPath();ctx.ellipse(s*0.25,0,s*0.1,s*0.7,0,0,Math.PI*2);ctx.fillStyle="#fff";ctx.fill();ctx.beginPath();ctx.ellipse(-s*0.3,0,s*0.1,s*0.7,0,0,Math.PI*2);ctx.fillStyle="#fff";ctx.fill();ctx.restore();E(x,y,s,d);df(x,y,s,c,a,d)}
+function drawAngel(x,y,s,c,a,d){B(x,y,s*0.6,s*1.5,a,d);T(x,y,[-s*0.7,0],[-s*1.3,-s*0.35],[-s*1.3,s*0.35],c,d);E(x,y,s*0.8,d);F(x,y,s,c,a,d)}
+function drawPuff(x,y,s,c,a,d){ctx.save();ctx.translate(x,y);ctx.rotate(d);ctx.beginPath();ctx.arc(0,0,s*0.85,0,Math.PI*2);ctx.fillStyle=a;ctx.fill();for(var i=0;i<12;i++){var an=i/12*Math.PI*2;ctx.beginPath();ctx.moveTo(Math.cos(an)*s*0.75,Math.sin(an)*s*0.75);ctx.lineTo(Math.cos(an)*s*1.0,Math.sin(an)*s*1.0);ctx.strokeStyle="rgba(0,0,0,0.1)";ctx.lineWidth=1;ctx.stroke()}ctx.restore();T(x,y,[-s*0.8,0],[-s*1.2,-s*0.3],[-s*1.2,s*0.3],c,d);E(x,y,s*0.9,d)}
+function drawBass(x,y,s,c,a,d){B(x,y,s*1.2,s*0.65,a,d);T(x,y,[-s*1.1,0],[-s*1.8,-s*0.6],[-s*1.8,s*0.6],c,d);ctx.save();ctx.translate(x,y);ctx.rotate(d);ctx.beginPath();ctx.moveTo(-s*0.6,-s*0.3);ctx.quadraticCurveTo(0,-s*0.05,s*0.8,-s*0.2);ctx.strokeStyle="rgba(0,0,0,0.12)";ctx.lineWidth=1.5;ctx.stroke();ctx.restore();E(x,y,s,d);df(x,y,s,c,a,d)}
+function drawSalmon(x,y,s,c,a,d){B(x,y,s*1.3,s*0.6,a,d);T(x,y,[-s*1.0,0],[-s*1.9,-s*0.7],[-s*1.3,-s*0.4],c,d);E(x,y,s,d);F(x,y,s,c,a,d)}
+function drawCat(x,y,s,c,a,d){B(x,y,s*1.1,s*0.55,a,d);T(x,y,[-s*1.0,0],[-s*1.6,-s*0.5],[-s*1.6,s*0.5],c,d);ctx.save();ctx.translate(x,y);ctx.rotate(d);ctx.beginPath();ctx.moveTo(s*1.0,-s*0.3);ctx.quadraticCurveTo(s*1.8,-s*1.5,s*1.2,-s*2.0);ctx.strokeStyle=c;ctx.lineWidth=s*0.08;ctx.stroke();ctx.beginPath();ctx.moveTo(s*1.0,s*0.3);ctx.quadraticCurveTo(s*1.8,s*1.5,s*1.2,s*2.0);ctx.stroke();ctx.restore();E(x,y,s,d)}
+function drawShark(x,y,s,c,a,d){B(x,y,s*1.4,s*0.6,a,d);ctx.save();ctx.translate(x,y);ctx.rotate(d);ctx.beginPath();ctx.moveTo(-s*0.2,-s*0.5);ctx.lineTo(s*0.2,-s*2.2);ctx.lineTo(s*0.5,-s*0.5);ctx.closePath();ctx.fillStyle=c;ctx.fill();ctx.restore();T(x,y,[-s*1.0,-s*0.2],[-s*1.9,-s*1.1],[-s*1.6,0],c,d);T(x,y,[-s*1.0,s*0.2],[-s*1.9,s*1.1],[-s*1.6,0],c,d);E(x,y,s,d)}
+function drawTuna(x,y,s,c,a,d){ctx.save();ctx.translate(x,y);ctx.rotate(d);ctx.beginPath();ctx.moveTo(s*1.3,0);ctx.bezierCurveTo(s*0.6,-s*0.8,-s*0.3,-s*0.9,-s*0.9,-s*0.3);ctx.bezierCurveTo(-s*1.4,s*0.1,-s*0.8,s*0.7,0,s*0.6);ctx.bezierCurveTo(s*0.4,s*0.5,s*0.8,s*0.3,s*1.3,0);ctx.closePath();ctx.fillStyle=a;ctx.fill();ctx.restore();T(x,y,[-s*1.0,0],[-s*1.9,-s*0.6],[-s*1.3,-s*0.4],c,d);E(x,y,s,d)}
+function drawRay(x,y,s,c,a,d){ctx.save();ctx.translate(x,y);ctx.rotate(d);ctx.beginPath();ctx.moveTo(s*1.2,0);ctx.quadraticCurveTo(s*0.6,-s*2.2,-s*0.2,-s*2.8);ctx.quadraticCurveTo(-s*0.4,-s*2.5,-s*0.5,-s*1.5);ctx.lineTo(-s*0.5,s*1.5);ctx.quadraticCurveTo(-s*0.4,s*2.5,-s*0.2,s*2.8);ctx.quadraticCurveTo(s*0.6,s*2.2,s*1.2,0);ctx.closePath();ctx.fillStyle=a;ctx.fill();ctx.restore();E(x,y,s*0.7,d)}
 
-// ===== 背景渲染 =====
-function drawBg(){
-  // 深海渐变
-  var grad=ctx.createLinearGradient(0,0,0,H);
-  grad.addColorStop(0,"#0a3d62");
-  grad.addColorStop(0.4,"#0c5278");
-  grad.addColorStop(0.7,"#072d4a");
-  grad.addColorStop(1,"#021520");
-  ctx.fillStyle=grad;ctx.fillRect(0,0,W,H);
-
-  // 海底沙地
-  var sand=ctx.createLinearGradient(0,H-60,0,H);
-  sand.addColorStop(0,"rgba(30,60,50,0)");
-  sand.addColorStop(1,"rgba(20,40,35,0.5)");
-  ctx.fillStyle=sand;ctx.fillRect(0,H-60,W,60);
-
-  // 海底石头（预计算）
-  if(!window.__stones){
-    window.__stones=[];
-    for(var ii=0;ii<2000;ii+=80+Math.random()*60){
-      window.__stones.push({x:ii,yOff:10+Math.random()*20,rx:15+Math.random()*20,ry:6+Math.random()*8});
-    }
-  }
-  for(var i=0;i<window.__stones.length;i++){
-    var st=window.__stones[i];
-    ctx.beginPath();ctx.ellipse(st.x,H-st.yOff,st.rx,st.ry,0,0,Math.PI*2);
-    ctx.fillStyle="rgba(15,30,25,0.4)";ctx.fill();
-  }
-  // 海草（预计算，不闪烁）
-  if(!window.__seaweeds){
-    window.__seaweeds=[];
-    for(var ii=10;ii<2000;ii+=40+Math.random()*35){
-      var hh=60+Math.random()*100;
-      window.__seaweeds.push({x:ii,h:hh,leaf:Math.random()<0.5,cp1:ii-15+Math.random()*30,cp2:ii+20-Math.random()*30,cp3:ii-5+Math.random()*10,lcp1:ii+10,lcp2:ii-10,lcp3:ii+15});
-    }
-  }
-  ctx.lineWidth=2.5;
-  for(var i=0;i<window.__seaweeds.length;i++){
-    var sw=window.__seaweeds[i];
-    // 海草随帧缓慢轻微摆动
-    var off=Math.sin(t*0.003+sw.x*0.02)*3;
-    ctx.beginPath();ctx.moveTo(sw.x,H-5);
-    ctx.bezierCurveTo(sw.cp1+off,H-sw.h*0.4,sw.cp2-off,H-sw.h*0.75,sw.cp3,H-sw.h);
-    ctx.strokeStyle="rgba(30,90,60,0.35)";ctx.stroke();
-    if(sw.leaf){ctx.beginPath();ctx.moveTo(sw.x,H-5);ctx.bezierCurveTo(sw.lcp1+off*0.5,H-sw.h*0.5,sw.lcp2-off*0.3,H-sw.h*0.8,sw.lcp3,H-sw.h*0.7);ctx.stroke()}
-  }
-
-  // 光线
-  ctx.globalAlpha=0.04;
-  for(var i=0;i<5;i++){
-    var lx=W*0.1+Math.random()*W*0.8;
-    var grad2=ctx.createLinearGradient(lx,0,lx+20+Math.random()*30,H);
-    grad2.addColorStop(0,"#fff");grad2.addColorStop(1,"transparent");
-    ctx.fillStyle=grad2;ctx.fillRect(lx,0,25+Math.random()*20,H);
-  }
-  ctx.globalAlpha=1;
-
-  // 气泡
-  for(var i=0;i<bubbles.length;i++){
-    var b=bubbles[i];
-    b.y-=b.s;if(b.y<-10){b.y=H+10;b.x=Math.random()*W}
-    b.x+=Math.sin(t*0.02+b.y*0.01)*0.3;
-    ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,Math.PI*2);
-    ctx.strokeStyle="rgba(255,255,255,"+b.o+")";ctx.lineWidth=0.8;ctx.stroke();
-    ctx.beginPath();ctx.arc(b.x-1,b.y-1,b.r*0.4,0,Math.PI*2);
-    ctx.fillStyle="rgba(255,255,255,"+(b.o*1.5)+")";ctx.fill();
-  }
-}
-
-// ===== NPC 鱼管理 =====
-var fishes=[],spawnTimer=0;
-function randIn(n){var v=Math.random()*n;return v<8?8+n*0.4:v}
+var player={x:0,y:0,size:20,score:0,lives:3,invincible:0,vx:0,vy:0,
+  grow:function(a){this.size+=a;if(this.size>220)this.size=220}};
+var fishes=[],spawnT=0;
 function spawn(){
-  var as=avail();var sp=as[Math.floor(Math.random()*as.length)];
-  // 尺寸围绕玩家，极度偏重威胁
-  var edibleChance=player.size<20?0.25:player.size<50?0.15:player.size<90?0.1:0.06;
+  var tier=availTier();var as=SPECIES.filter(function(s){return s.tier<=tier});
+  var sp=as[Math.floor(Math.random()*as.length)];
+  // 85% 比玩家大，15% 能吃
   var bs;
-  if(Math.random()<edibleChance) bs=player.size*(0.5+Math.random()*0.4);
-  else bs=player.size*(1.3+Math.random()*1.6);
+  if(Math.random()<0.15) bs=player.size*(0.5+Math.random()*0.4);
+  else bs=player.size*(1.2+Math.random()*2);
   var sz=Math.max(sp.min,Math.min(sp.max,bs));
-  var side=Math.floor(Math.random()*4),x,y,m=60;
-  if(side===0){x=-m-randIn(sz*3);y=Math.random()*H}
-  else if(side===1){x=W+m+randIn(sz*3);y=Math.random()*H}
-  else if(side===2){x=Math.random()*W;y=-m-randIn(sz*3)}
-  else{x=Math.random()*W;y=H+m+randIn(sz*3)}
+  // 边缘出生
+  var side=Math.floor(Math.random()*4),x,y,m=sz*2+20;
+  if(side===0){x=-m;y=Math.random()*H}else if(side===1){x=W+m;y=Math.random()*H}else if(side===2){x=Math.random()*W;y=-m}else{x=Math.random()*W;y=H+m}
   var tx=W/2+(Math.random()-0.5)*W*0.7,ty=H/2+(Math.random()-0.5)*H*0.7;
-  var ang=Math.atan2(ty-y,tx-x);
-  var spd=Math.max(0.08,0.45-sz*0.002);
-  fishes.push({x:x,y:y,vx:Math.cos(ang)*spd,vy:Math.sin(ang)*spd,size:sz,species:sp,cid:Math.floor(Math.random()*sp.c.length),tt:80+Math.random()*200});
+  var ang=Math.atan2(ty-y,tx-x),spd=Math.max(0.08,0.4-sz*0.0015);
+  fishes.push({x:x,y:y,vx:Math.cos(ang)*spd,vy:Math.sin(ang)*spd,size:sz,sp:sp,cid:0,tt:120+Math.random()*200});
 }
 function maintain(){
-  var target=player.size<25?3:player.size<50?5:player.size<90?7:9;
-  spawnTimer--;if(fishes.length<target&&spawnTimer<=0){spawn();spawnTimer=Math.max(40,80-fishes.length*5)}
+  var tar=player.size<25?3:player.size<50?5:player.size<90?7:9;
+  spawnT--;if(fishes.length<tar&&spawnT<=0){spawn();spawnT=Math.max(35,75-fishes.length*5)}
 }
 
-// ===== 粒子 =====
+// 粒子
 var parts=[];
-function burst(x,y,clr,n){
-  for(var i=0;i<n;i++){var a=Math.random()*Math.PI*2,s=1+Math.random()*3,l=15+Math.random()*25;parts.push({x:x,y:y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:l,max:l,r:1+Math.random()*3,c:clr})}
-}
+function burst(x,y,c,n){for(var i=0;i<n;i++){var a=Math.random()*Math.PI*2,s=1+Math.random()*3;parts.push({x:x,y:y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,l:20+Math.random()*30,m:20+Math.random()*30,r:1+Math.random()*3,c:c})}}
 
-// ===== 输入 =====
+// 输入
 var keys={},ta=false,tx=0,ty=0,ltx=0,lty=0;
 document.addEventListener("keydown",function(e){keys[e.key]=true;e.preventDefault()});
 document.addEventListener("keyup",function(e){keys[e.key]=false});
@@ -270,80 +151,93 @@ c.addEventListener("mousedown",function(e){md=true;mx=e.clientX;my=e.clientY});
 c.addEventListener("mousemove",function(e){if(md){mx=e.clientX;my=e.clientY}});
 c.addEventListener("mouseup",function(e){md=false});
 
-// ===== 主循环 =====
 function update(){
-  t++;
+  T++;
   var ux=0,uy=0;
   if(keys["ArrowLeft"]||keys["a"]||keys["A"])ux-=1;if(keys["ArrowRight"]||keys["d"]||keys["D"])ux+=1;
   if(keys["ArrowUp"]||keys["w"]||keys["W"])uy-=1;if(keys["ArrowDown"]||keys["s"]||keys["S"])uy+=1;
-  if(ta){var dtlx=tx-ltx,dtly=ty-lty;var td=Math.sqrt(dtlx*dtlx+dtly*dtly);if(td>1){ux=dtlx/td;uy=dtly/td}}
+  if(ta){var dx=tx-ltx,dy=ty-lty;var d=Math.sqrt(dx*dx+dy*dy);if(d>1){ux=dx/d;uy=dy/d}}
   if(md){var dmx=mx-player.x,dmy=my-player.y;var dm=Math.sqrt(dmx*dmx+dmy*dmy);if(dm>10){ux=dmx/dm;uy=dmy/dm}}
-  var acc=0.04,maxSpd=1.4+player.size*0.001;
+  var acc=0.04,max=1.2+player.size*0.001;
   if(ux||uy){player.vx+=ux*acc;player.vy+=uy*acc}else{player.vx*=0.93;player.vy*=0.93}
-  var sp=Math.sqrt(player.vx*player.vx+player.vy*player.vy);if(sp>maxSpd){player.vx=player.vx/sp*maxSpd;player.vy=player.vy/sp*maxSpd}
+  var sp=Math.sqrt(player.vx*player.vx+player.vy*player.vy);if(sp>max){player.vx=player.vx/sp*max;player.vy=player.vy/sp*max}
   player.x+=player.vx;player.y+=player.vy;
-  if(player.x<-player.size*2)player.x=W+player.size;if(player.x>W+player.size*2)player.x=-player.size;
-  if(player.y<-player.size*2)player.y=H+player.size;if(player.y>H+player.size*2)player.y=-player.size;
+  // 反弹不越界
+  if(player.x<player.size){player.x=player.size;player.vx=Math.abs(player.vx)*0.5}
+  if(player.x>W-player.size){player.x=W-player.size;player.vx=-Math.abs(player.vx)*0.5}
+  if(player.y<player.size){player.y=player.size;player.vy=Math.abs(player.vy)*0.5}
+  if(player.y>H-player.size){player.y=H-player.size;player.vy=-Math.abs(player.vy)*0.5}
   if(player.invincible>0)player.invincible--;
   maintain();
 
-  // NPC 移动 + AI
+  // NPC 移动
   for(var i=fishes.length-1;i>=0;i--){
     var f=fishes[i];f.x+=f.vx;f.y+=f.vy;f.tt--;
     var dpx=player.x-f.x,dpy=player.y-f.y,dpv=Math.sqrt(dpx*dpx+dpy*dpy);
-    if(f.tt<=0){f.tt=100+Math.random()*200;
+    if(f.tt<=0){f.tt=100+Math.random()*180;
       var ang;
-      if(f.size>player.size*1.2&&dpv<W*0.5&&Math.random()<0.4) ang=Math.atan2(dpy,dpx)+(Math.random()-0.5)*0.3; // 追
-      else if(f.size<player.size*0.7&&dpv<80&&Math.random()<0.3) ang=Math.atan2(dpy,dpx)+Math.PI+(Math.random()-0.5)*0.6; // 逃
+      if(f.size>player.size*1.2&&dpv<W*0.5&&Math.random()<0.4) ang=Math.atan2(dpy,dpx)+(Math.random()-0.5)*0.3;
+      else if(f.size<player.size*0.6&&dpv<90&&Math.random()<0.3) ang=Math.atan2(dpy,dpx)+Math.PI+(Math.random()-0.5)*0.6;
       else ang=Math.atan2(f.vy,f.vx)+(Math.random()-0.5)*1.5;
-      var spd=Math.sqrt(f.vx*f.vx+f.vy*f.vy);f.vx=Math.cos(ang)*spd;f.vy=Math.sin(ang)*spd;
+      var s=Math.sqrt(f.vx*f.vx+f.vy*f.vy);f.vx=Math.cos(ang)*s;f.vy=Math.sin(ang)*s;
     }
-    // 边缘环绕，不回收到画面外
-    if(f.x<-f.size) f.x=W+f.size;
-    if(f.x>W+f.size) f.x=-f.size;
-    if(f.y<-f.size) f.y=H+f.size;
-    if(f.y>H+f.size) f.y=-f.size;
+    // 反弹
+    var m=Math.max(f.size*2,40);
+    if(f.x<m){f.x=m;f.vx=Math.abs(f.vx)}
+    if(f.x>W-m){f.x=W-m;f.vx=-Math.abs(f.vx)}
+    if(f.y<m){f.y=m;f.vy=Math.abs(f.vy)}
+    if(f.y>H-m){f.y=H-m;f.vy=-Math.abs(f.vy)}
+    // 回收：超出太远
+    if(f.x<-500||f.x>W+500||f.y<-500||f.y>H+500)fishes.splice(i,1);
   }
 
   // 碰撞
   for(var i=fishes.length-1;i>=0;i--){
-    var f=fishes[i];var dx=player.x-f.x,dy=player.y-f.y;var dd=Math.sqrt(dx*dx+dy*dy);
+    var f=fishes[i];var dx=player.x-f.x,dy=player.y-f.y,dd=Math.sqrt(dx*dx+dy*dy);
     if(dd<(player.size+f.size)*0.65){
-      if(player.size>f.size*1.2){player.grow(player.size*0.035);player.score+=Math.floor(f.size);burst(f.x,f.y,f.species.c[f.cid],8);fishes.splice(i,1)}
-      else if(player.size<f.size&&player.invincible<=0){player.lives--;player.invincible=150;player.vx=0;player.vy=0;burst(player.x,player.y,"#ff4444",25);if(player.lives<=0)gameOver()}
+      if(player.size>f.size*1.2){player.grow(player.size*0.03);player.score+=Math.floor(f.size);burst(f.x,f.y,f.sp.c[f.cid],6);fishes.splice(i,1)}
+      else if(player.size<f.size*0.9&&player.invincible<=0){player.lives--;player.invincible=150;player.vx=0;player.vy=0;burst(player.x,player.y,"#ff4444",25);if(player.lives<=0)gameOver()}
     }
   }
-
-  // 粒子衰减
-  for(var i=parts.length-1;i>=0;i--){var p=parts[i];p.x+=p.vx;p.y+=p.vy;p.life--;if(p.life<=0)parts.splice(i,1)}
-  // UI
+  for(var i=parts.length-1;i>=0;i--){var p=parts[i];p.x+=p.vx;p.y+=p.vy;p.l--;if(p.l<=0)parts.splice(i,1)}
   document.getElementById("score").textContent=player.score;
   document.getElementById("size").textContent=Math.floor(player.size);
   var hh="";for(var i=0;i<3;i++)hh+=(i<player.lives?"❤️":"🖤");document.getElementById("lives").textContent=hh;
 }
 
 function render(){
-  drawBg();
+  // 背景渐变
+  var grad=ctx.createLinearGradient(0,0,0,H);
+  grad.addColorStop(0,"#062a4a");grad.addColorStop(0.5,"#084e70");grad.addColorStop(1,"#02182a");
+  ctx.fillStyle=grad;ctx.fillRect(0,0,W,H);
+  // 预计算背景
+  if(window.__bgImg&&window.__bgImg.complete){
+    var bh=2048,bw=2048,scale=Math.max(W/bw,H/bh);
+    ctx.drawImage(window.__bgImg,(W-bw*scale)/2,H-bh*scale+bh*scale-(H+80),(W+bw*scale)/2,H+80);
+  }
+  // 光线
+  ctx.globalAlpha=0.03;
+  for(var i=0;i<5;i++){var lx=W*0.1+Math.random()*W*0.8;var g2=ctx.createLinearGradient(lx,0,lx+30,H);g2.addColorStop(0,"#fff");g2.addColorStop(1,"transparent");ctx.fillStyle=g2;ctx.fillRect(lx,0,20,H)}
+  ctx.globalAlpha=1;
+  // 气泡
+  for(var i=0;i<window.__bubbles.length;i++){var b=window.__bubbles[i];b.y-=b.s;if(b.y<-10){b.y=H+10;b.x=Math.random()*W}b.x+=Math.sin(T*0.015+b.y*0.008)*0.2;ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,Math.PI*2);ctx.strokeStyle="rgba(255,255,255,"+b.o+")";ctx.lineWidth=0.7;ctx.stroke()}
   // NPC
   var sorted=fishes.slice().sort(function(a,b){return a.size-b.size});
-  for(var i=0;i<sorted.length;i++){var f=sorted[i];var dir=Math.atan2(f.vy,f.vx);f.species.draw(f.x,f.y,f.size,f.species.c[f.cid],f.species.c[(f.cid+1)%f.species.c.length],dir)}
+  for(var i=0;i<sorted.length;i++){var f=sorted[i];var dir=Math.atan2(f.vy,f.vx);f.sp.draw(f.x,f.y,f.size,f.sp.c[f.cid],f.sp.c[(f.cid+1)%f.sp.c.length],dir)}
   // 玩家
-  if(player.invincible<=0||Math.floor(player.invincible/4)%2===0){var pd=player.vx||player.vy?Math.atan2(player.vy,player.vx):0;ctx.save();ctx.translate(player.x,player.y);ctx.shadowColor="rgba(255,150,100,0.6)";ctx.shadowBlur=player.size*0.6;ctx.translate(-player.x,-player.y);drawBass(player.x,player.y,player.size,"#ff6b6b","#ff8e8e",pd);ctx.restore()}
+  if(player.invincible<=0||Math.floor(player.invincible/5)%2===0){var pd=player.vx||player.vy?Math.atan2(player.vy,player.vx):0;ctx.save();ctx.translate(player.x,player.y);ctx.shadowColor="rgba(255,150,100,0.5)";ctx.shadowBlur=player.size*0.5;ctx.translate(-player.x,-player.y);drawBass(player.x,player.y,player.size,"#ff6b6b","#ff8e8e",pd);ctx.restore()}
   // 粒子
-  for(var i=0;i<parts.length;i++){var p=parts[i];ctx.beginPath();ctx.arc(p.x,p.y,p.r*p.life/p.max,0,Math.PI*2);ctx.fillStyle="rgba(255,255,255,"+(p.life/p.max*0.7)+")";ctx.fill()}
-  // 大鱼警示虚线
-  for(var i=0;i<sorted.length;i++){var f=sorted[i];if(f.size>player.size){ctx.beginPath();ctx.arc(f.x,f.y,f.size*1.2,0,Math.PI*2);ctx.setLineDash([4,8]);ctx.strokeStyle="rgba(255,60,60,0.3)";ctx.lineWidth=2;ctx.stroke();ctx.setLineDash([])}}
+  for(var i=0;i<parts.length;i++){var p=parts[i];ctx.beginPath();ctx.arc(p.x,p.y,p.r*p.l/p.m,0,Math.PI*2);ctx.fillStyle="rgba(255,255,255,"+(p.l/p.m*0.6)+")";ctx.fill()}
+  // 大鱼警示
+  for(var i=0;i<sorted.length;i++){var f=sorted[i];if(f.size>player.size){ctx.beginPath();ctx.arc(f.x,f.y,f.size*1.15,0,Math.PI*2);ctx.setLineDash([4,8]);ctx.strokeStyle="rgba(255,50,50,0.28)";ctx.lineWidth=2;ctx.stroke();ctx.setLineDash([])}}
 }
 
 var running=true;
-function gameOver(){
-  running=false;document.getElementById("msg").innerHTML='<div>🦈 被大鱼吃了！</div><div style="font-size:18px;margin-top:8px;opacity:0.8">得分：'+player.score+' · 体型：'+Math.floor(player.size)+'</div><button onclick="location.reload()">🔄 再来一局</button>';
-}
+function gameOver(){running=false;document.getElementById("msg").innerHTML='<div>🦈 被大鱼吃了！</div><div style="font-size:18px;margin-top:8px;opacity:0.8">得分：'+player.score+' · 体型：'+Math.floor(player.size)+'</div><button onclick="location.reload()">🔄 再来一局</button>'}
 
 function init(){
-  player.x=W/2;player.y=H/2;player.size=20;player.score=0;player.lives=3;player.invincible=90;
-  fishes=[];parts=[];spawnTimer=8;
-  for(var i=0;i<2;i++){var as=avail(),sp=as[0];var sz=sp.min+Math.random()*(sp.max-sp.min)*0.5;var ang=Math.PI*2/2*i;var d=100+Math.random()*100;fishes.push({x:W/2+Math.cos(ang)*d,y:H/2+Math.sin(ang)*d,vx:Math.cos(ang+1)*0.4,vy:Math.sin(ang+1)*0.4,size:sz,species:sp,cid:0,tt:120})}
+  player.x=W/2;player.y=H/2;player.size=20;player.score=0;player.lives=3;player.invincible=90;fishes=[];parts=[];spawnT=10;
+  for(var i=0;i<2;i++){var as=SPECIES.filter(function(s){return s.tier<=0});var sp=as[Math.floor(Math.random()*as.length)];var sz=sp.min+Math.random()*5;var ang=Math.PI*2/2*i;fishes.push({x:W/2+Math.cos(ang)*120,y:H/2+Math.sin(ang)*120,vx:Math.cos(ang+1)*0.3,vy:Math.sin(ang+1)*0.3,size:sz,sp:sp,cid:0,tt:150})}
 }
 function loop(){if(running)update();render();requestAnimationFrame(loop)}
 init();loop();
