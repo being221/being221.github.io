@@ -243,11 +243,11 @@ function mathrand(n){var s=Math.random()*n;return s<10?10+n+s*0.5:s}
 
 // 渐进生成：根据玩家体型决定鱼群数量
 function maintainFish(){
-  var target=player.size<25?8:player.size<50?12:player.size<90?16:20;
+  var target=player.size<25?5:player.size<50?8:player.size<90?12:16;
   spawnTimer--;
   if(fishes.length<target && spawnTimer<=0){
     spawnFish();
-    spawnTimer=Math.max(5,25-fishes.length);
+    spawnTimer=Math.max(15,40-fishes.length*2);
   }
 }
 
@@ -368,8 +368,8 @@ function update(){
     var dx=player.x-f.x,dy=player.y-f.y;
     var dist=Math.sqrt(dx*dx+dy*dy);
     if(dist<(player.size+f.size)*0.7){
-      if(player.size>f.size*1.05){
-        player.grow(f.size*0.42);
+      if(player.size>f.size*1.12){
+        player.grow(f.size*0.25);
         player.score+=Math.floor(f.size);
         emitParticles(f.x,f.y,speciesColor(f),10);
         fishes.splice(i,1);
@@ -432,7 +432,8 @@ function gameOver(){
 function init(){
   player.x=W/2;player.y=H/2;player.size=20;player.score=0;player.lives=3;player.invincible=60;
   fishes=[];particles=[];spawnTimer=5;
-  for(var i=0;i<6;i++){var sp=getAvailableSpecies()[0];var size=sp.minSize+Math.random()*(sp.maxSize-sp.minSize);var ang=Math.random()*Math.PI*2;var spd=Math.max(0.6,2.5-size*0.015);fishes.push({x:W/2+(Math.random()-0.5)*200,y:H/2+(Math.random()-0.5)*200,vx:Math.cos(ang)*spd,vy:Math.sin(ang)*spd,size:size,species:sp,colorIdx:Math.floor(Math.random()*sp.colors.length),turnTimer:120+Math.random()*240})}
+  // 开局只放 4 条小鱼在边缘附近
+  for(var i=0;i<4;i++){var sp=getAvailableSpecies()[0];var size=sp.minSize+Math.random()*(sp.maxSize-sp.minSize*0.6);var ang=Math.random()*Math.PI*2;var spd=Math.max(0.6,2.5-size*0.015);var margin=80;var side=Math.floor(Math.random()*4);var sx,sy;if(side===0){sx=-margin-mathrand(size*2);sy=Math.random()*H}else if(side===1){sx=W+margin+mathrand(size*2);sy=Math.random()*H}else if(side===2){sx=Math.random()*W;sy=-margin-mathrand(size*2)}else{sx=Math.random()*W;sy=H+margin+mathrand(size*2)};fishes.push({x:sx,y:sy,vx:Math.cos(ang)*spd,vy:Math.sin(ang)*spd,size:size,species:sp,colorIdx:Math.floor(Math.random()*sp.colors.length),turnTimer:120+Math.random()*240})}
 }
 
 function loop(){if(running)update();render();requestAnimationFrame(loop)}
