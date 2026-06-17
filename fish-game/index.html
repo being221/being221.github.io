@@ -30,7 +30,7 @@ canvas{display:block;margin:0 auto}
 </div></div></div>
 <script>
 (function(){
-var c=document.getElementById("c"),ctx=c.getContext("2d")
+var c=document.getElementById("c"),ctx=c.getContext("2d");var __sd=0,__origSave=ctx.save.bind(ctx),__origRestore=ctx.restore.bind(ctx);ctx.save=function(){__origSave();__sd++};ctx.restore=function(){__origRestore();__sd=Math.max(0,__sd-1)}
 var W,H;
 function resize(){W=c.width=window.innerWidth;H=c.height=window.innerHeight}
 resize();window.addEventListener("resize",resize);
@@ -218,8 +218,8 @@ function spawn(){
   // 15% 能吃，85% 吃不了（始终跟随玩家体型）
   var bs;
   // 只有 6% 的鱼你能吃，其余 94% 都比你大
-  if(Math.random()<0.03) bs=player.size*(0.4+Math.random()*0.3);
-  else bs=player.size*(1.5+Math.random()*3.0);
+  if(Math.random()<0.15) bs=player.size*(0.4+Math.random()*0.3);
+  else bs=player.size*(1.3+Math.random()*2.5);
   var sz=Math.max(sp.min,Math.min(sp.max,bs));
   var side=Math.floor(Math.random()*4),x,y,m=60;
   if(side===0){x=-m-randIn(sz*3);y=Math.random()*H}
@@ -245,7 +245,7 @@ function playEatSound(fishSize){
 function maintain(){
   // 换成固定的出生间隔，不维持数量
   spawnTimer--;
-  if(fishes.length<15 && spawnTimer<=0){spawn(); spawnTimer=80+Math.floor(Math.random()*40);}
+  if(fishes.length<8 && spawnTimer<=0){spawn(); spawnTimer=80+Math.floor(Math.random()*40);}
 }
 
 // ===== 粒子 =====
@@ -316,7 +316,7 @@ function update(){
   for(var i=fishes.length-1;i>=0;i--){
     var f=fishes[i];var dx=player.x-f.x,dy=player.y-f.y;var dd=Math.sqrt(dx*dx+dy*dy);
     if(dd<(player.size+f.size)*0.65){
-      if(player.size>f.size*1.25){player.grow(player.size*0.02);player.score+=Math.floor(f.size);burst(f.x,f.y,f.species.c[f.cid],8);fishes.splice(i,1);playEatSound(f.size)}
+      if(player.size>f.size*1.25){player.grow(player.size*0.04);player.score+=Math.floor(f.size);burst(f.x,f.y,f.species.c[f.cid],8);fishes.splice(i,1);playEatSound(f.size)}
       else if(player.invincible<=0){player.lives--;player.invincible=150;player.vx=0;player.vy=0;burst(player.x,player.y,"#ff4444",25);if(player.lives<=0)gameOver()}
     }
   }
@@ -329,7 +329,8 @@ function update(){
   var hh="";for(var i=0;i<3;i++)hh+=(i<player.lives?"❤️":"🖤");document.getElementById("lives").textContent=hh;
 }
 
-function render(){ctx.setTransform(1,0,0,1,0,0);
+function render(){
+  while(__sd>0){__origRestore()}ctx.setTransform(1,0,0,1,0,0);
   drawBg();
   // NPC
   var sorted=fishes.slice().sort(function(a,b){return a.size-b.size});
