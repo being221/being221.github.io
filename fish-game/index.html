@@ -281,8 +281,11 @@ function update(){
   if(ux||uy){player.vx+=ux*acc;player.vy+=uy*acc}else{player.vx*=0.93;player.vy*=0.93}
   var sp=Math.sqrt(player.vx*player.vx+player.vy*player.vy);if(sp>maxSpd){player.vx=player.vx/sp*maxSpd;player.vy=player.vy/sp*maxSpd}
   player.x+=player.vx;player.y+=player.vy;
-  if(player.x<-player.size*2)player.x=W+player.size;if(player.x>W+player.size*2)player.x=-player.size;
-  if(player.y<-player.size*2)player.y=H+player.size;if(player.y>H+player.size*2)player.y=-player.size;
+  // 碰到边界就停住
+  if(player.x<player.size){player.x=player.size;player.vx=0}
+  if(player.x>W-player.size){player.x=W-player.size;player.vx=0}
+  if(player.y<player.size){player.y=player.size;player.vy=0}
+  if(player.y>H-player.size){player.y=H-player.size;player.vy=0}
   if(player.invincible>0)player.invincible--;
   maintain();
 
@@ -310,7 +313,7 @@ function update(){
     var f=fishes[i];var dx=player.x-f.x,dy=player.y-f.y;var dd=Math.sqrt(dx*dx+dy*dy);
     if(dd<(player.size+f.size)*0.65){
       if(player.size>f.size*1.25){player.grow(player.size*0.035);player.score+=Math.floor(f.size);burst(f.x,f.y,f.species.c[f.cid],8);fishes.splice(i,1)}
-      else if(player.size<f.size*0.95&&player.invincible<=0){player.lives--;player.invincible=150;player.vx=0;player.vy=0;burst(player.x,player.y,"#ff4444",25);if(player.lives<=0)gameOver()}
+      else if(player.invincible<=0){player.lives--;player.invincible=150;player.vx=0;player.vy=0;burst(player.x,player.y,"#ff4444",25);if(player.lives<=0)gameOver()}
     }
   }
 
