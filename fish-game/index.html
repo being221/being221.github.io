@@ -44,7 +44,7 @@ for(var i=0;i<40;i++)bubbles.push({x:Math.random()*W,y:Math.random()*H,r:1+Math.
 var startTime=Date.now();
 var player={
   x:0,y:0,size:20,score:0,lives:3,invincible:0,vx:0,vy:0,
-  grow:function(amt){var old=this.size;this.size+=amt;if(this.size>=220){this.size=220;if(old<220)gameWin();return}var nu=Math.floor(this.size);if(Math.floor(this.size/30)>Math.floor(old/30)&&nu>old){showLevelUp()}}
+  grow:function(amt){var old=this.size;this.size+=amt;if(this.size>=180){this.size=180;if(old<180)gameWin();return}var nu=Math.floor(this.size);if(Math.floor(this.size/30)>Math.floor(old/30)&&nu>old){showLevelUp()}}
 };
 function showLevelUp(){var el=document.getElementById("levelup");el.textContent="⬆ 升级！";el.style.opacity="1";setTimeout(function(){el.style.opacity="0"},1500)}
 
@@ -329,7 +329,9 @@ function update(){
   var hh="";for(var i=0;i<3;i++)hh+=(i<player.lives?"❤️":"🖤");document.getElementById("lives").textContent=hh;
 }
 
-function render(){for(var si=0;si<99;si++){try{ctx.restore()}catch(e){break}}ctx.setTransform(1,0,0,1,0,0);
+function render(){ctx.setTransform(1,0,0,1,0,0);
+  // 硬核画布重置——每 5 秒一次，彻底清空所有累积的 Canvas 状态
+  if(T%300===0){var w=c.width;c.width=w+1;c.width=w;ctx=w===c.width?c.getContext("2d"):ctx}
   drawBg();
   // NPC
   var sorted=fishes.slice().sort(function(a,b){return a.size-b.size});
@@ -345,9 +347,11 @@ function render(){for(var si=0;si<99;si++){try{ctx.restore()}catch(e){break}}ctx
 var running=true;
 function gameWin(){
   running=false;
+  // 胜利粒子爆炸
+  for(var i=0;i<60;i++){var a=Math.random()*Math.PI*2,s=3+Math.random()*6;parts.push({x:player.x,y:player.y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,l:40+Math.random()*60,m:40+Math.random()*60,r:3+Math.random()*8,c:"hsl("+Math.floor(Math.random()*360)+",80%,60%)"})}
   var elapsed=Math.floor((Date.now()-startTime)/1000);
   var mins=Math.floor(elapsed/60),secs=elapsed%60;
-  document.getElementById("msg").innerHTML='<div style="font-size:80px">👑</div><h1 style="font-size:36px;color:#ffd700;margin:12px 0;text-shadow:0 3px 20px rgba(255,215,0,0.6)">你是池塘之王！</h1><p style="color:#8ab4d8;font-size:18px">你从一条小鱼成长为这片水域的霸主</p><div style="background:rgba(255,255,255,0.06);border-radius:16px;padding:20px;margin:20px auto;max-width:300px;text-align:left"><div style="display:flex;justify-content:space-between;margin:8px 0;font-size:16px"><span>🏆 最终体型</span><span style="color:#ffd700">220</span></div><div style="display:flex;justify-content:space-between;margin:8px 0;font-size:16px"><span>🐟 得分</span><span style="color:#ffd700">'+player.score+'</span></div><div style="display:flex;justify-content:space-between;margin:8px 0;font-size:16px"><span>⏱ 用时</span><span style="color:#ffd700">'+mins+'分'+secs+'秒</span></div></div><p style="color:#5a7a8a;font-size:13px;margin-top:16px">没有鱼能吃你了。你是池塘之王。</p><button onclick="location.reload()" style="pointer-events:auto;margin-top:16px;padding:16px 48px;border:none;border-radius:32px;background:linear-gradient(135deg,#ffd700,#ff8c00);color:#000;font-size:20px;cursor:pointer;box-shadow:0 6px 24px rgba(255,215,0,0.4);font-weight:700">🔄 再游一遍</button>';
+  document.getElementById("msg").innerHTML='<div style="font-size:80px">👑</div><h1 style="font-size:36px;color:#ffd700;margin:12px 0;text-shadow:0 3px 20px rgba(255,215,0,0.6)">你是池塘之王！</h1><p style="color:#8ab4d8;font-size:18px">你从一条小鱼成长为这片水域的霸主</p><div style="background:rgba(255,255,255,0.06);border-radius:16px;padding:20px;margin:20px auto;max-width:300px;text-align:left"><div style="display:flex;justify-content:space-between;margin:8px 0;font-size:16px"><span>🏆 最终体型</span><span style="color:#ffd700">180</span></div><div style="display:flex;justify-content:space-between;margin:8px 0;font-size:16px"><span>🐟 得分</span><span style="color:#ffd700">'+player.score+'</span></div><div style="display:flex;justify-content:space-between;margin:8px 0;font-size:16px"><span>⏱ 用时</span><span style="color:#ffd700">'+mins+'分'+secs+'秒</span></div></div><p style="color:#5a7a8a;font-size:13px;margin-top:16px">没有鱼能吃你了。你是池塘之王。</p><button onclick="location.reload()" style="pointer-events:auto;margin-top:16px;padding:16px 48px;border:none;border-radius:32px;background:linear-gradient(135deg,#ffd700,#ff8c00);color:#000;font-size:20px;cursor:pointer;box-shadow:0 6px 24px rgba(255,215,0,0.4);font-weight:700">🔄 再游一遍</button>';
 }
 function gameOver(){
   running=false;document.getElementById("msg").innerHTML='<div>🦈 被大鱼吃了！</div><div style="font-size:18px;margin-top:8px;opacity:0.8">得分：'+player.score+' · 体型：'+Math.floor(player.size)+'</div><button onclick="location.reload()" style="pointer-events:auto">🔄 再来一局</button><div style="font-size:14px;margin-top:10px;opacity:0.6">或按 R 键重新开始</div>';
