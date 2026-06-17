@@ -13,6 +13,7 @@ canvas{display:block;margin:0 auto}
 #msg{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:20;color:#fff;font-size:30px;text-align:center;pointer-events:none;text-shadow:0 3px 15px rgba(0,0,0,0.6)}
 #msg button{pointer-events:auto;margin-top:18px;padding:14px 40px;border:none;border-radius:28px;background:linear-gradient(135deg,#ff6b6b,#ee5a24);color:#fff;font-size:20px;cursor:pointer;font-family:inherit;transition:transform 0.15s,box-shadow 0.2s;box-shadow:0 4px 20px rgba(255,107,107,0.4)}
 #msg button:active{transform:scale(0.94)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 #levelup{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:15;color:#ffd700;font-size:40px;font-weight:700;pointer-events:none;text-shadow:0 0 40px rgba(255,215,0,0.6);opacity:0;transition:opacity 0.3s}
 </style>
 </head>
@@ -25,6 +26,7 @@ canvas{display:block;margin:0 auto}
 </div>
 <div id="levelup"></div>
 <div id="msg"></div>
+<div id="splash" style="position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(2,13,26,0.85);backdrop-filter:blur(10px)"><div style="text-align:center;color:#fff;animation:fadeIn 0.6s ease"><div style="font-size:70px;margin-bottom:16px">🐟</div><h1 style="font-size:38px;margin:0 0 10px;text-shadow:0 3px 20px rgba(0,0,0,0.6)">大鱼吃小鱼</h1><p style="color:#8ab4d8;font-size:15px;margin:0 0 8px">吃小鱼长大 · 躲大鱼保命</p><p style="color:#5a7a8a;font-size:12px;margin:0 0 24px">电脑 WASD/方向键 · 手机滑动</p><button id="playBtn" style="padding:18px 52px;border:none;border-radius:34px;background:linear-gradient(135deg,#ff6b6b,#ee5a24);color:#fff;font-size:24px;cursor:pointer;box-shadow:0 6px 24px rgba(255,107,107,0.5);transition:transform 0.15s;font-family:inherit" onmousedown="this.style.transform='scale(0.94)'" onmouseup="this.style.transform='scale(1)'">🎮 开始游戏</button></div></div>
 <script>
 (function(){
 var c=document.getElementById("c"),ctx=c.getContext("2d");
@@ -241,7 +243,7 @@ function burst(x,y,clr,n){
 
 // ===== 输入 =====
 var keys={},ta=false,tx=0,ty=0,ltx=0,lty=0;
-document.addEventListener("keydown",function(e){keys[e.key]=true;e.preventDefault()});
+document.addEventListener("keydown",function(e){keys[e.key]=true;if(e.key==="r"&&!running){restartGame()}e.preventDefault()});
 document.addEventListener("keyup",function(e){keys[e.key]=false});
 c.addEventListener("touchstart",function(e){e.preventDefault();var t=e.touches[0];ta=true;tx=t.clientX;ty=t.clientY;ltx=tx;lty=ty},{passive:false});
 c.addEventListener("touchmove",function(e){e.preventDefault();var t=e.touches[0];ltx=tx;lty=ty;tx=t.clientX;ty=t.clientY},{passive:false});
@@ -329,16 +331,17 @@ function render(){
 
 var running=true;
 function gameOver(){
-  running=false;document.getElementById("msg").innerHTML='<div>🦈 被大鱼吃了！</div><div style="font-size:18px;margin-top:8px;opacity:0.8">得分：'+player.score+' · 体型：'+Math.floor(player.size)+'</div><button onclick="location.reload()">🔄 再来一局</button>';
+  running=false;document.getElementById("msg").innerHTML='<div>🦈 被大鱼吃了！</div><div style="font-size:18px;margin-top:8px;opacity:0.8">得分：'+player.score+' · 体型：'+Math.floor(player.size)+'</div><button onclick="location.reload()">🔄 再来一局</button><div style="font-size:14px;margin-top:10px;opacity:0.6">或按 R 键重新开始</div>';
 }
 
+document.getElementById("playBtn").addEventListener("click",function(){document.getElementById("splash").style.display="none";running=true;init()});
 function init(){
   player.x=W/2;player.y=H/2;player.size=20;player.score=0;player.lives=3;player.invincible=90;
   fishes=[];parts=[];spawnTimer=8;
   for(var i=0;i<2;i++){var as=avail(),sp=as[0];var sz=sp.min+Math.random()*(sp.max-sp.min)*0.5;var ang=Math.PI*2/2*i;var d=100+Math.random()*100;fishes.push({x:W/2+Math.cos(ang)*d,y:H/2+Math.sin(ang)*d,vx:Math.cos(ang+1)*0.4,vy:Math.sin(ang+1)*0.4,size:sz,species:sp,cid:0,tt:120})}
 }
 function loop(){if(running)update();render();requestAnimationFrame(loop)}
-init();loop();
+loop();
 })();
 </script>
 </body>
