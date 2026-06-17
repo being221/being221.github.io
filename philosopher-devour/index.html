@@ -207,6 +207,36 @@
       font-family: inherit;
       font-size: 18px;
     }
+    /* 非阻断式 Toast */
+    #toast {
+      display: none;
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 20;
+      background: linear-gradient(135deg, #ffd54f, #ffb300);
+      color: #3d2b0a;
+      border: 2px solid #8b6914;
+      border-radius: 12px;
+      padding: 16px 32px;
+      font-size: 20px;
+      font-weight: bold;
+      text-align: center;
+      box-shadow: 0 4px 24px rgba(139, 105, 20, 0.6);
+      pointer-events: none;
+    }
+    #toast.show {
+      display: block;
+      animation: toastFade 2.5s ease-in-out forwards;
+    }
+    @keyframes toastFade {
+      0% { opacity: 0; transform: translate(-50%, -50%) scale(0.7); }
+      15% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+      25% { transform: translate(-50%, -50%) scale(1); }
+      75% { opacity: 1; }
+      100% { opacity: 0; transform: translate(-50%, -60%) scale(0.9); }
+    }
   </style>
 </head>
 <body>
@@ -234,6 +264,9 @@
       <div id="collection-content"></div>
       <button class="close-btn" onclick="window.toggleCollection()">关闭</button>
     </div>
+
+    <!-- Toast 提示 -->
+    <div id="toast"></div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>

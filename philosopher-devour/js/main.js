@@ -747,10 +747,11 @@ function checkSchoolMastery(schoolKey) {
 
 function showSchoolMasteryToast(schoolKey) {
   const info = QUESTION_BANK.schools[schoolKey];
-  // 简单实现：弹出 alert（后续可改为动画提示）
-  setTimeout(() => {
-    alert(`🏆 ${info.name} 脉络贯通！获得「${info.name}」徽章！`);
-  }, 1000);
+  const toast = document.getElementById('toast');
+  toast.textContent = `🏆 ${info.name} 脉络贯通！获得「${info.name}」徽章！`;
+  toast.classList.remove('show');
+  void toast.offsetWidth; // 触发回流以重启动画
+  toast.classList.add('show');
 }
 
 function checkAllMastered() {
