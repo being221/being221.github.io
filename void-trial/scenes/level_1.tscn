@@ -1,5 +1,7 @@
 [gd_scene format=3 uid="uid://rmubp8kchw4g"]
 
+[ext_resource type="PackedScene" uid="uid://7c8uf2kjod7e" path="res://scenes/player.tscn" id="1_014kd"]
+
 [sub_resource type="Environment" id="Environment_gkh53"]
 background_mode = 1
 background_color = Color(0.039215688, 0.039215688, 0.07058824, 1)
@@ -376,3 +378,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19, 0, 0)
 
 [node name="SpawnPoint8" type="Marker3D" parent="SpawnPoints" unique_id=1820550800]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, 0, 0)
+
+[node name="Player" parent="." unique_id=551368877 instance=ExtResource("1_014kd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 18)

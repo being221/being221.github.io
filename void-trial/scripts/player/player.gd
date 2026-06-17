@@ -116,7 +116,12 @@ func _shoot() -> void:
 	var bullet := bullet_scene.instantiate()
 	get_tree().root.add_child(bullet)
 	bullet.global_position = shoot_origin.global_position
-	bullet.global_basis = shoot_origin.global_basis
+	# 直接用相机方向设速度，避开实例化时 basis 未就绪的问题
+	var shoot_dir := -camera.global_transform.basis.z
+	if bullet.has_method("set_shoot_direction"):
+		bullet.set_shoot_direction(shoot_dir)
+	else:
+		bullet.linear_velocity = shoot_dir * 40.0
 
 
 func _dash(direction: Vector3) -> void:
