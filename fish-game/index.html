@@ -23,49 +23,21 @@ canvas{display:block}
 var c=document.getElementById("c"),ctx=c.getContext("2d"),W,H,T=0;
 resize();window.addEventListener("resize",resize);
 function resize(){W=c.width=window.innerWidth;H=c.height=window.innerHeight}
-if(!window.__init){window.__init=1;prebuildBg()}
-
-function prebuildBg(){
-  // 预计算背景元素
-  var bg=document.createElement("canvas");bg.width=2048;bg.height=2048;
-  var bctx=bg.getContext("2d");
-  // 沙地
-  var sg=bctx.createLinearGradient(0,1900,0,2048);
-  sg.addColorStop(0,"rgba(20,40,35,0)");sg.addColorStop(1,"rgba(20,40,35,0.6)");
-  bctx.fillStyle=sg;bctx.fillRect(0,1950,2048,98);
-  // 石头（带纹理）
-  window.__stones=[];for(var i=0;i<30;i++){var sx=Math.random()*2048,sy=1900+Math.random()*140,srx=15+Math.random()*40,sry=6+Math.random()*15;window.__stones.push({x:sx,y:sy,rx:srx,ry:sry,c:"rgba("+(12+Math.random()*15)+","+(25+Math.random()*20)+","+(18+Math.random()*15)+",0.5)"});bctx.beginPath();bctx.ellipse(sx,sy,srx,sry,0,0,Math.PI*2);bctx.fillStyle="rgba(12,28,20,0.5)";bctx.fill();var sgx=sx-srx*0.6+Math.random()*srx*1.2,sgy=sy-sry*0.3+Math.random()*sry*0.6;bctx.beginPath();bctx.ellipse(sgx,sgy,srx*0.4,sry*0.3,0,0,Math.PI*2);bctx.fillStyle="rgba(25,50,35,0.4)";bctx.fill()}
-  // 海草（精致静态，多层次）
-  window.__seaweed=[];bctx.lineCap="round";
-  for(var i=0;i<50;i++){var wx=Math.random()*2048;
-    var wh=80+Math.random()*180,wy=2020-wh;
-    var w=2+Math.random()*3;
-    // 主茎
+// 预计算背景缓存（只在首次加载时执行）
+if(!window.__cache){
+  window.__cache=1;
+  window.__stones=[];
+  for(var i=0;i<26;i++){var sx=Math.random()*2200,sy=Math.random()*120,srx=15+Math.random()*40,sry=6+Math.random()*15;window.__stones.push({x:sx,y:sy,rx:srx,ry:sry,c:"rgba("+(12+Math.random()*15)+","+(25+Math.random()*20)+","+(18+Math.random()*15)+",0.5)"})}
+  window.__seaweed=[];
+  for(var i=0;i<40;i++){
+    var wx=Math.random()*2200,wh=80+Math.random()*180,wy=Math.random()*100,w=2+Math.random()*3;
     var cp1x=wx-8+Math.random()*16,cp1y=wy+wh*0.35+Math.random()*wh*0.2;
     var cp2x=wx-15+Math.random()*30,cp2y=wy+wh*0.7+Math.random()*wh*0.2;
     var topx=wx-5+Math.random()*10,topy=wy+wh;
-    bctx.beginPath();bctx.moveTo(wx,2020);
-    bctx.bezierCurveTo(cp1x,cp1y,cp2x,cp2y,topx,topy);
-    bctx.strokeStyle="rgba(25,80,50,0.45)";bctx.lineWidth=w;bctx.stroke();
-    // 更暗的边线
-    bctx.beginPath();bctx.moveTo(wx+1,2020);
-    bctx.bezierCurveTo(cp1x+1,cp1y,cp2x+1,cp2y,topx+1,topy);
-    bctx.strokeStyle="rgba(15,50,30,0.3)";bctx.lineWidth=w*0.5;bctx.stroke();
-    window.__seaweed.push({x:wx,h:wh,y:2020-wh,cp1x:cp1x,cp1y:cp1y,cp2x:cp2x,cp2y:cp2y,tx:topx,ty:topy,w:w});
-    // 随机小分叶
-    if(Math.random()<0.4){
-      var h2=wh*0.4+Math.random()*wh*0.3,sx2=cp1x,sy2=cp1y;
-      var cp3x=sx2+10+Math.random()*25,cp3y=sy2-h2*0.5;
-      var top2x=sx2+15+Math.random()*20,top2y=sy2-h2*0.8;
-      bctx.beginPath();bctx.moveTo(sx2,sy2);
-      bctx.bezierCurveTo(cp3x,cp3y,cp3x-5,top2y,top2x,top2y);
-      bctx.strokeStyle="rgba(20,70,40,0.35)";bctx.lineWidth=1.5;bctx.stroke();
-    }
+    window.__seaweed.push({x:wx,y:wy,wh:wh,cp1x:cp1x,cp1y:cp1y,cp2x:cp2x,cp2y:cp2y,tx:topx,ty:topy,w:w,leaf:Math.random()<0.35});
   }
-  window.__bgCanvas=bg;
-  window.__bgImg=new Image();window.__bgImg.src=bg.toDataURL();
-  // 气泡
-  window.__bubbles=[];for(var i=0;i<80;i++)window.__bubbles.push({x:Math.random()*2048,y:Math.random()*2048,r:1+Math.random()*5,s:0.1+Math.random()*0.3,o:0.02+Math.random()*0.06});
+  window.__bubbles=[];
+  for(var i=0;i<80;i++)window.__bubbles.push({x:Math.random()*2000,y:Math.random()*2000,r:1+Math.random()*5,s:0.08+Math.random()*0.25,o:0.02+Math.random()*0.06});
 }
 
 // 鱼种
@@ -210,14 +182,16 @@ function render(){
   var grad=ctx.createLinearGradient(0,0,0,H);
   grad.addColorStop(0,"#062a4a");grad.addColorStop(0.5,"#084e70");grad.addColorStop(1,"#02182a");
   ctx.fillStyle=grad;ctx.fillRect(0,0,W,H);
-  // 预计算背景
-  if(window.__bgImg&&window.__bgImg.complete){
-    var bh=2048,bw=2048,scale=Math.max(W/bw,H/bh);
-    ctx.drawImage(window.__bgImg,(W-bw*scale)/2,H-bh*scale+bh*scale-(H+80),(W+bw*scale)/2,H+80);
-  }
-  // 光线
+  // 海底沙地
+  ctx.fillStyle="rgba(20,40,35,0.35)";ctx.fillRect(0,H-40,W,40);
+  // 石头（缓存位置，直接画）
+  if(window.__stones) for(var i=0;i<window.__stones.length;i++){var st=window.__stones[i];var sy=H-st.y;ctx.beginPath();ctx.ellipse(st.x,sy,st.rx,st.ry,0,0,Math.PI*2);ctx.fillStyle=st.c;ctx.fill()}
+  // 海草（缓存位置，直接画，不动）
+  ctx.lineCap="round";
+  if(window.__seaweed) for(var i=0;i<window.__seaweed.length;i++){var sw=window.__seaweed[i];var sy2=H-sw.y;ctx.beginPath();ctx.moveTo(sw.x,H);ctx.bezierCurveTo(sw.cp1x,sy2+sw.wh*0.65,sw.cp2x,sy2+sw.wh*0.35,sw.tx,sy2);ctx.strokeStyle="rgba(22,70,45,0.4)";ctx.lineWidth=sw.w;ctx.stroke();ctx.beginPath();ctx.moveTo(sw.x+1,H);ctx.bezierCurveTo(sw.cp1x+1,sy2+sw.wh*0.65,sw.cp2x+1,sy2+sw.wh*0.35,sw.tx+1,sy2);ctx.strokeStyle="rgba(12,45,28,0.25)";ctx.lineWidth=sw.w*0.5;ctx.stroke()}
+  // 光线（固定位置）
   ctx.globalAlpha=0.03;
-  for(var i=0;i<5;i++){var lx=W*0.1+Math.random()*W*0.8;var g2=ctx.createLinearGradient(lx,0,lx+30,H);g2.addColorStop(0,"#fff");g2.addColorStop(1,"transparent");ctx.fillStyle=g2;ctx.fillRect(lx,0,20,H)}
+  for(var i=0;i<4;i++){var lx=W*0.15+i*W*0.21;var g2=ctx.createLinearGradient(lx,0,lx+25,H);g2.addColorStop(0,"#fff");g2.addColorStop(1,"transparent");ctx.fillStyle=g2;ctx.fillRect(lx,0,18,H)}
   ctx.globalAlpha=1;
   // 气泡
   for(var i=0;i<window.__bubbles.length;i++){var b=window.__bubbles[i];b.y-=b.s;if(b.y<-10){b.y=H+10;b.x=Math.random()*W}b.x+=Math.sin(T*0.015+b.y*0.008)*0.2;ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,Math.PI*2);ctx.strokeStyle="rgba(255,255,255,"+b.o+")";ctx.lineWidth=0.7;ctx.stroke()}
