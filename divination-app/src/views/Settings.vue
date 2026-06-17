@@ -14,35 +14,6 @@
         <div class="settings-group">
           <div class="setting-item">
             <div class="setting-info">
-              <h3>默认起卦方式</h3>
-              <p>选择您喜欢的起卦方式</p>
-            </div>
-            <select v-model="settings.divination.defaultMethod" @change="saveSettings">
-              <option value="click">点击起卦</option>
-              <option value="shake">摇一摇</option>
-              <option value="random">随机起卦</option>
-            </select>
-          </div>
-
-          <div class="setting-item">
-            <div class="setting-info">
-              <h3>摇动灵敏度</h3>
-              <p>调整摇动检测的灵敏度</p>
-            </div>
-            <div class="sensitive-slider">
-              <input
-                type="range"
-                v-model="settings.divination.sensitivity"
-                min="10"
-                max="30"
-                @input="updateSensitivity"
-              />
-              <span class="sensitive-value">{{ settings.divination.sensitivity }}</span>
-            </div>
-          </div>
-
-          <div class="setting-item">
-            <div class="setting-info">
               <h3>音效</h3>
               <p>摇动和起卦时播放音效</p>
             </div>

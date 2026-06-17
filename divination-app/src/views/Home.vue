@@ -46,12 +46,7 @@
             </div>
             <h3>{{ buttonText }}</h3>
             <p class="yao-result-preview" v-if="yaoResultPreview.length">{{ yaoResultPreview }}</p>
-            <p v-if="!isListeningShake" class="card-hint">
-              点击起卦 | 摇动手机感应
-            </p>
-            <p v-else class="card-hint shake-hint">
-              摇动手机开始起卦...
-            </p>
+            <p class="card-hint">点击卡片开始起卦</p>
           </div>
         </div>
       </div>
