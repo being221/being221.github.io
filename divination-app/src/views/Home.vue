@@ -322,13 +322,12 @@ export default {
 
       const handleShake = (event) => {
         divination.detectShake(event, () => {
-          // 摇一摇直接起卦，不走弹窗，用默认问题
+    // 摇一摇直接起卦，不走弹窗，用默认问题
           if (isShaking.value) return
           stopShakeListening()
           userQuestion.value = '今日运势'
           startDivination()
-          // 起卦完成后重新开启摇动监听
-          setTimeout(() => { if (!isShaking.value) startShakeListening() }, 5000)
+          // 起卦完成后不自动重启摇动——用户自己点卡片再起下一卦
         })
       }
 
@@ -414,7 +413,7 @@ export default {
 
     onMounted(() => {
       calculateTodayCount()
-      startShakeListening()
+      // 摇一摇功能已移除
     })
 
     onBeforeUnmount(() => {
