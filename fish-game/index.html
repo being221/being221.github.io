@@ -347,10 +347,10 @@ function gameWin(){
   running=false;
   var elapsed=Math.floor((Date.now()-startTime)/1000);
   var mins=Math.floor(elapsed/60),secs=elapsed%60;
-  document.getElementById("msg").innerHTML='<div style="font-size:40px">👑</div><div style="font-size:28px;margin-top:8px">你已成长为池塘之王！</div><div style="font-size:16px;margin-top:12px;opacity:0.8">最终体型：220 · 得分：'+player.score+'<br>用时：'+mins+'分'+secs+'秒</div><button onclick="location.reload()">🔄 再来一局</button><div style="font-size:14px;margin-top:10px;opacity:0.6">或按 R 键重新开始</div>';
+  document.getElementById("msg").innerHTML='<div style="font-size:40px">👑</div><div style="font-size:28px;margin-top:8px">你已成长为池塘之王！</div><div style="font-size:16px;margin-top:12px;opacity:0.8">最终体型：220 · 得分：'+player.score+'<br>用时：'+mins+'分'+secs+'秒</div><button onclick="location.reload()" style="pointer-events:auto">🔄 再来一局</button><div style="font-size:14px;margin-top:10px;opacity:0.6">或按 R 键重新开始</div>';
 }
 function gameOver(){
-  running=false;document.getElementById("msg").innerHTML='<div>🦈 被大鱼吃了！</div><div style="font-size:18px;margin-top:8px;opacity:0.8">得分：'+player.score+' · 体型：'+Math.floor(player.size)+'</div><button onclick="location.reload()">🔄 再来一局</button><div style="font-size:14px;margin-top:10px;opacity:0.6">或按 R 键重新开始</div>';
+  running=false;document.getElementById("msg").innerHTML='<div>🦈 被大鱼吃了！</div><div style="font-size:18px;margin-top:8px;opacity:0.8">得分：'+player.score+' · 体型：'+Math.floor(player.size)+'</div><button onclick="location.reload()" style="pointer-events:auto">🔄 再来一局</button><div style="font-size:14px;margin-top:10px;opacity:0.6">或按 R 键重新开始</div>';
 }
 
 document.getElementById("playBtn").addEventListener("click",function(){document.getElementById("splash").style.display="none";running=true;init()});
@@ -359,7 +359,7 @@ function init(){
   fishes=[];parts=[];spawnTimer=8;
   for(var i=0;i<2;i++){var as=avail(),sp=as[0];var sz=sp.min+Math.random()*(sp.max-sp.min)*0.5;var ang=Math.PI*2/2*i;var d=100+Math.random()*100;fishes.push({x:W/2+Math.cos(ang)*d,y:H/2+Math.sin(ang)*d,vx:Math.cos(ang+1)*0.4,vy:Math.sin(ang+1)*0.4,size:sz,species:sp,cid:0,tt:120})}
 }
-function loop(){try{if(running)update();render()}catch(e){running=false}if(T%600===0&&fishes.length>15){fishes.splice(0,2)}requestAnimationFrame(loop)}
+function loop(){try{if(running)update();render()}catch(e){running=false}requestAnimationFrame(loop)}
 loop();
 })();
 </script>
