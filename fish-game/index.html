@@ -224,14 +224,16 @@ var spawnTimer=0;
 function spawnFish(){
   var available=getAvailableSpecies();
   var sp=available[Math.floor(Math.random()*available.length)];
-  // 鱼的大小围绕玩家体型分布：70% 比玩家大，30% 比玩家小
+  // 鱼的大小围绕玩家分布，难度随体型递增
+  // 小体型时多数可吃（温和发展），大体型时多数是威胁
+  var edibleChance=player.size<20?0.6:player.size<50?0.35:player.size<90?0.22:0.15;
   var baseSize;
-  if(Math.random()<0.7){
-    // 比玩家大 1.1~2.5 倍
-    baseSize=player.size*(1.1+Math.random()*1.4);
+  if(Math.random()>edibleChance){
+    // 比你大：1.2x ~ 2.8x
+    baseSize=player.size*(1.2+Math.random()*1.6);
   }else{
-    // 比玩家小 0.5~0.9 倍
-    baseSize=player.size*(0.5+Math.random()*0.4);
+    // 比你小：0.4x ~ 0.85x
+    baseSize=player.size*(0.4+Math.random()*0.45);
   }
   // 限制在鱼种的体型范围内
   var size=Math.max(sp.minSize,Math.min(sp.maxSize,baseSize));
@@ -356,13 +358,22 @@ function update(){
 
   maintainFish();
 
-  // NPC 移动
+  // NPC 移动：比你大的鱼有几率追你，比你小的鱼有几率逃你
   for(var i=fishes.length-1;i>=0;i--){
     var f=fishes[i];
     f.x+=f.vx;f.y+=f.vy;f.turnTimer--;
+    var dxp=player.x-f.x,dyp=player.y-f.y,dp=Math.sqrt(dxp*dxp+dyp*dyp);
     if(f.turnTimer<=0){
-      f.turnTimer=120+Math.random()*240;
-      var ang=Math.atan2(f.vy,f.vx)+(Math.random()-0.5)*1.5;
+      f.turnTimer=80+Math.random()*160;
+      if(f.size>player.size*1.3 && dp<W*0.6 && Math.random()<0.4){
+        // 大你 30%+ 且在视野内 → 40% 概率追你
+        var ang=Math.atan2(dyp,dxp)+(Math.random()-0.5)*0.4;
+      }else if(f.size<player.size*0.7 && dp<100 && Math.random()<0.3){
+        // 明显小於你且在近处 → 30% 概率逃跑
+        var ang=Math.atan2(dyp,dxp)+Math.PI+(Math.random()-0.5)*0.8;
+      }else{
+        var ang=Math.atan2(f.vy,f.vx)+(Math.random()-0.5)*1.5;
+      }
       var s=Math.sqrt(f.vx*f.vx+f.vy*f.vy);
       f.vx=Math.cos(ang)*s;f.vy=Math.sin(ang)*s;
     }
@@ -378,7 +389,7 @@ function update(){
     var dist=Math.sqrt(dx*dx+dy*dy);
     if(dist<(player.size+f.size)*0.7){
       if(player.size>f.size*1.2){
-        player.grow(f.size*0.18);
+        player.grow(player.size*0.04);
         player.score+=Math.floor(f.size);
         emitParticles(f.x,f.y,speciesColor(f),10);
         fishes.splice(i,1);
