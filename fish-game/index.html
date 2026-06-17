@@ -232,13 +232,13 @@ function spawn(){
 }
 function playEatSound(fishSize){
   try{
-    if(!AC){AC=new AudioContext()}
-    if(AC.state==='suspended')AC.resume()
+    if(!AC||AC.state==='closed')return;
+    if(AC.state==='suspended'){AC.resume();return}
     var t=AC.currentTime,freq=400+fishSize*8
     var o=AC.createOscillator(),g=AC.createGain()
     o.type="sine";o.frequency.setValueAtTime(freq,t);o.frequency.exponentialRampToValueAtTime(freq*1.5,t+0.06)
-    g.gain.setValueAtTime(0.8,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.3)
-    o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+0.15)
+    g.gain.setValueAtTime(0.6,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.2)
+    o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+0.2)
   }catch(e){}
 }
 function maintain(){
@@ -352,7 +352,7 @@ function gameOver(){
   running=false;document.getElementById("msg").innerHTML='<div>🦈 被大鱼吃了！</div><div style="font-size:18px;margin-top:8px;opacity:0.8">得分：'+player.score+' · 体型：'+Math.floor(player.size)+'</div><button onclick="location.reload()">🔄 再来一局</button><div style="font-size:14px;margin-top:10px;opacity:0.6">或按 R 键重新开始</div>';
 }
 
-document.getElementById("playBtn").addEventListener("click",function(){try{AC=new(window.AudioContext||window.webkitAudioContext)();AC.resume()}catch(e){}document.getElementById("splash").style.display="none";running=true;init()});
+document.getElementById("playBtn").addEventListener("click",function(){if(!AC){AC=new(window.AudioContext||window.webkitAudioContext)}AC.resume().then(function(){console.log("Audio ready, state:",AC.state)}).catch(function(){});var testO=AC.createOscillator(),testG=AC.createGain();testO.frequency.value=1200;testG.gain.setValueAtTime(0.4,AC.currentTime);testG.gain.exponentialRampToValueAtTime(0.001,AC.currentTime+0.15);testO.connect(testG);testG.connect(AC.destination);testO.start();testO.stop(AC.currentTime+0.15);document.getElementById("splash").style.display="none";running=true;init()});
 function init(){
   player.x=W/2;player.y=H/2;player.size=20;player.score=0;player.lives=3;player.invincible=90;
   fishes=[];parts=[];spawnTimer=8;
