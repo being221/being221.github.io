@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://7c8uf2kjod7e"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_u8vuu"]
+radius = 0.4
+height = 1.8
+
+[node name="Player" type="CharacterBody3D" unique_id=551368877]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=588735042]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+shape = SubResource("CapsuleShape3D_u8vuu")
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1534472243]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)
+current = true
+fov = 90.0
+
+[node name="ShootOrigin" type="Marker3D" parent="Camera3D" unique_id=1079616968]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, -0.5)
+
+[node name="MuzzleFlash" type="Marker3D" parent="Camera3D" unique_id=1313763717]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, -0.8)
