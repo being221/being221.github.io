@@ -315,7 +315,7 @@ function update(){
   for(var i=fishes.length-1;i>=0;i--){
     var f=fishes[i];var dx=player.x-f.x,dy=player.y-f.y;var dd=Math.sqrt(dx*dx+dy*dy);
     if(dd<(player.size+f.size)*0.65){
-      if(player.size>f.size*1.25){player.grow(player.size*0.02);player.score+=Math.floor(f.size);burst(f.x,f.y,f.species.c[f.cid],8);fishes.splice(i,1)}
+      if(player.size>f.size*1.25){player.grow(player.size*0.02);player.score+=Math.floor(f.size);burst(f.x,f.y,f.species.c[f.cid],8);fishes.splice(i,1);playEatSound(f.size)}
       else if(player.invincible<=0){player.lives--;player.invincible=150;player.vx=0;player.vy=0;burst(player.x,player.y,"#ff4444",25);if(player.lives<=0)gameOver()}
     }
   }
