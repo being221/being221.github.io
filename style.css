@@ -203,6 +203,12 @@ textarea:focus-visible {
   opacity: 0.8;
   transform: translateY(-2px);
 }
+.proj-buggy {
+  border-left: 3px solid #e67e22;
+}
+.proj-buggy p {
+  opacity: 0.75;
+}
 .proj-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 8px 20px rgba(0,0,0,0.3);
