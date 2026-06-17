@@ -74,32 +74,34 @@ function create() {
   GameState.cursors = this.input.keyboard.createCursorKeys();
   GameState.keys = this.input.keyboard.addKeys('W,A,S,D');
 
-  // 6. 鼠标点击移动
-  this.input.on('pointerdown', (pointer) => {
-    if (GameState.paused) return;
-    // 设置目标点
-    GameState.targetX = pointer.x;
-    GameState.targetY = pointer.y;
-  });
-
-  // 触屏滑动
-  let touchStartX = 0, touchStartY = 0;
-  this.input.on('pointerdown', (pointer) => {
-    touchStartX = pointer.x;
-    touchStartY = pointer.y;
-  });
-  this.input.on('pointermove', (pointer) => {
-    if (!pointer.isDown) return;
-    GameState.player.vx = (pointer.x - touchStartX) * 0.15;
-    GameState.player.vy = (pointer.y - touchStartY) * 0.15;
-    // 更新起点以实现持续滑动
-    touchStartX = pointer.x;
-    touchStartY = pointer.y;
-  });
-  this.input.on('pointerup', () => {
-    GameState.player.vx = 0;
-    GameState.player.vy = 0;
-  });
+	  // 6. 鼠标点击 / 触屏滑动（合并处理器）
+	  let touchStartX = 0, touchStartY = 0;
+	  this.input.on('pointerdown', (pointer) => {
+	    if (GameState.paused) return;
+	    // 设置点击目标点（鼠标模式）
+	    GameState.targetX = pointer.x;
+	    GameState.targetY = pointer.y;
+	    // 记录触屏滑动起点
+	    touchStartX = pointer.x;
+	    touchStartY = pointer.y;
+	  });
+	  this.input.on('pointermove', (pointer) => {
+	    if (!pointer.isDown || GameState.paused) return;
+	    // 滑动时清除点击目标（避免两种模式冲突）
+	    if (GameState.targetX !== undefined) {
+	      delete GameState.targetX;
+	      delete GameState.targetY;
+	    }
+	    GameState.player.vx = (pointer.x - touchStartX) * 0.15;
+	    GameState.player.vy = (pointer.y - touchStartY) * 0.15;
+	    // 更新起点以实现持续滑动
+	    touchStartX = pointer.x;
+	    touchStartY = pointer.y;
+	  });
+	  this.input.on('pointerup', () => {
+	    GameState.player.vx = 0;
+	    GameState.player.vy = 0;
+	  });
 
   // 7. 初始刷新碎片
   spawnInitialFragments(this);
