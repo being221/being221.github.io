@@ -44,7 +44,7 @@ func attack(aim_direction: Vector2) -> void:
 	# 墨痕拖尾弧形
 	var start_point = owner.global_position
 	var sweep_end = start_point + aim_direction * weapon_range
-	ink_trail.draw_arc(start_point, sweep_end)
+	ink_trail.spawn_arc(start_point, sweep_end)
 
 	# 短暂开启碰撞区做命中检测
 	collision_shape.disabled = false

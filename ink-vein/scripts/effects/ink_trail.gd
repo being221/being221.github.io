@@ -20,7 +20,7 @@ func _ready() -> void:
 	begin_cap_mode = Line2D.LINE_CAP_ROUND
 
 
-func draw_arc(start: Vector2, end: Vector2) -> void:
+func spawn_arc(start: Vector2, end: Vector2) -> void:
 	clear_points()
 	visible = true
 	_active = true
