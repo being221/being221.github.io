@@ -3,7 +3,7 @@ extends CanvasLayer
 class_name HUD
 
 @onready var combo_label: Label = $MarginContainer/VBoxContainer/TopRow/ComboLabel
-@onready var timer_label: Label = $MarginContainer/VBoxContainer/TopRow/Spacer/TimerLabel
+@onready var timer_label: Label = $MarginContainer/VBoxContainer/TopRow/TimerLabel
 @onready var health_bar: ProgressBar = $MarginContainer/VBoxContainer/BottomRow/HealthContainer/HealthBar
 @onready var ink_container: HBoxContainer = $MarginContainer/VBoxContainer/BottomRow/HealthContainer/InkSurgeBar
 
