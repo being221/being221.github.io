@@ -3,12 +3,22 @@ extends Line2D
 class_name InkTrail
 
 @export var lifetime: float = 0.25
-@export var start_width: float = 5.0
-@export var end_width: float = 0.5
-@export var arc_points: int = 10  # 弧线采样点数
 
 var _elapsed: float = 0.0
 var _active: bool = false
+
+# 静态缓存的宽度曲线，不每次创建
+static var _width_curve: Curve
+
+
+static func _ensure_curve() -> void:
+	if _width_curve:
+		return
+	_width_curve = Curve.new()
+	_width_curve.add_point(Vector2(0, 1.0))
+	_width_curve.add_point(Vector2(0.5, 0.6))
+	_width_curve.add_point(Vector2(0.85, 0.2))
+	_width_curve.add_point(Vector2(1.0, 0.03))
 
 
 func _ready() -> void:
@@ -18,6 +28,8 @@ func _ready() -> void:
 	default_color = Color(0.91, 0.88, 0.83, 0.85)
 	end_cap_mode = Line2D.LINE_CAP_ROUND
 	begin_cap_mode = Line2D.LINE_CAP_ROUND
+	_ensure_curve()
+	width_curve = _width_curve
 
 
 func spawn_arc(start: Vector2, end: Vector2) -> void:
@@ -26,25 +38,15 @@ func spawn_arc(start: Vector2, end: Vector2) -> void:
 	_active = true
 	_elapsed = 0.0
 
-	# 弧线——从起点画到终点，中间带轻微弯曲
 	var mid = (start + end) * 0.5
 	var perp = (end - start).orthogonal().normalized()
-	var arc_height = (end - start).length() * randf_range(-0.15, 0.15)
+	var arc_height = (end - start).length() * randf_range(-0.12, 0.12)
 	mid += perp * arc_height
 
-	for i in range(arc_points + 1):
-		var t = float(i) / float(arc_points)
-		# 二次贝塞尔
+	for i in range(8):
+		var t = float(i) / 7.0
 		var p = start.lerp(mid, t).lerp(mid.lerp(end, t), t)
 		add_point(p)
-
-	# 宽度渐变——起笔粗，收笔细（飞白）
-	var curve = Curve.new()
-	curve.add_point(Vector2(0, 1.0))           # 起笔最粗
-	curve.add_point(Vector2(0.6, 0.5))          # 行笔渐细
-	curve.add_point(Vector2(0.9, 0.15))          # 收笔飞白
-	curve.add_point(Vector2(1.0, 0.02))
-	width_curve = curve
 
 
 func _process(delta: float) -> void:
@@ -58,5 +60,3 @@ func _process(delta: float) -> void:
 		_active = false
 		return
 	default_color.a = fade * 0.85
-	# 整体宽度随时间略微缩小
-	width = lerp(0.0, start_width, fade)

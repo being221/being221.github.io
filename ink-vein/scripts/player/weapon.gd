@@ -76,7 +76,7 @@ func _on_hitbox_body_entered(body: Node2D) -> void:
 	Events.screen_shake_requested.emit(0.3)
 	# 伤害数字
 	var is_crit = multiplier > 1.2
-	DamageNumber.spawn(get_tree().get_first_node_in_group("player"), body.global_position, damage, is_crit)
+	DamageNumber.spawn(get_tree().root, body.global_position, damage, is_crit)
 
 	# 更新连击
 	combo_count += 1

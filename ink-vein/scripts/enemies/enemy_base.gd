@@ -2,22 +2,18 @@
 extends CharacterBody2D
 class_name Enemy
 
-## 敌人 ID
 @export var enemy_id: String = ""
-## 生命值
 @export var max_health: int = 20
-## 移动速度
 @export var move_speed: float = 80.0
-## 击杀提供的涨墨值
 @export var ink_charge_on_kill: float = 10.0
-## 接触伤害
 @export var contact_damage: int = 5
 
 var health: int
 var _player_ref: Player = null
 var _is_dying: bool = false
-var _enemy_color: Color = Color(0.91, 0.88, 0.83, 0.85)  # 纸白半透明
+var _enemy_color: Color = Color(0.91, 0.88, 0.83, 0.85)
 var _body_radius: float = 8.0
+var _draw_frame: int = 0  # 隔帧绘制优化
 
 @onready var hurtbox_area: Area2D = $HurtboxArea
 
@@ -32,7 +28,11 @@ func _physics_process(delta: float) -> void:
 	if not _player_ref or not _player_ref.is_alive:
 		return
 	_move_toward_player(delta)
-	queue_redraw()
+
+	# 只隔3帧重绘一次，25个敌人从25次/帧降到~8次/帧
+	_draw_frame = (_draw_frame + 1) % 3
+	if _draw_frame == 0:
+		queue_redraw()
 
 
 func _move_toward_player(_delta: float) -> void:
@@ -44,11 +44,8 @@ func _move_toward_player(_delta: float) -> void:
 func _draw() -> void:
 	if _is_dying:
 		return
-	# 圆形身体
 	draw_circle(Vector2.ZERO, _body_radius, _enemy_color)
-	# 苍青微光点（眼睛）
 	draw_circle(Vector2.ZERO, _body_radius * 0.35, Color(0.23, 0.49, 0.65, 0.7))
-	# 描边
 	draw_arc(Vector2.ZERO, _body_radius, 0, TAU, 16, _enemy_color.lightened(0.15), 1.0)
 
 
@@ -56,7 +53,6 @@ func take_damage(amount: int) -> void:
 	if _is_dying:
 		return
 	health -= amount
-	# 受击闪白
 	modulate = Color.RED
 	var tween = create_tween()
 	tween.tween_property(self, "modulate", Color.WHITE, 0.08)
