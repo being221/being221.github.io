@@ -70,6 +70,8 @@ func trigger_surge() -> void:
 	Events.ink_surge_triggered.emit()
 	Events.hit_stop_requested.emit(8)
 	Events.screen_shake_requested.emit(0.8)
+	# 爆发粒子
+	InkParticles.spawn_surge(player.get_parent(), player.global_position)
 
 	# 全屏清场
 	var space = player.get_world_2d().direct_space_state

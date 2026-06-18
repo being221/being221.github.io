@@ -41,22 +41,18 @@ func attack(aim_direction: Vector2) -> void:
 	_hit_targets_this_swing.clear()
 	attack_timer.start(base_cooldown)
 
-	# 墨痕拖尾
+	# 墨痕拖尾弧形
 	var start_point = owner.global_position
-	ink_trail.start_trail(start_point)
+	var sweep_end = start_point + aim_direction * weapon_range
+	ink_trail.draw_arc(start_point, sweep_end)
 
 	# 短暂开启碰撞区做命中检测
 	collision_shape.disabled = false
 
-	# 挥砍方向计算
-	var sweep_end = start_point + aim_direction * weapon_range
-	ink_trail.update_trail(sweep_end)
-
-	# 延迟关闭碰撞区和拖尾
-	var swing_duration = base_cooldown * 0.5
+	# 延迟关闭碰撞区
+	var swing_duration = base_cooldown * 0.4
 	await get_tree().create_timer(swing_duration).timeout
 	collision_shape.disabled = true
-	ink_trail.end_trail()
 
 
 func _on_hitbox_body_entered(body: Node2D) -> void:
@@ -78,6 +74,9 @@ func _on_hitbox_body_entered(body: Node2D) -> void:
 	# 命中反馈
 	Events.hit_stop_requested.emit(4)
 	Events.screen_shake_requested.emit(0.3)
+	# 伤害数字
+	var is_crit = multiplier > 1.2
+	DamageNumber.spawn(get_tree().get_first_node_in_group("player"), body.global_position, damage, is_crit)
 
 	# 更新连击
 	combo_count += 1

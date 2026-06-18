@@ -4,96 +4,87 @@ class_name InkBloom
 
 enum BloomType { NORMAL, CRITICAL, HEAVY, BOIL, SURGE }
 
-const PETAL_COUNTS := {
-	BloomType.NORMAL: 6,
-	BloomType.CRITICAL: 10,
-	BloomType.HEAVY: 14,
-	BloomType.BOIL: 10,
-	BloomType.SURGE: 8,
+const COLORS := {
+	BloomType.NORMAL: Color(0.91, 0.88, 0.83),
+	BloomType.CRITICAL: Color(0.91, 0.88, 0.83),
+	BloomType.HEAVY: Color(0.91, 0.88, 0.83),
+	BloomType.BOIL: Color(0.23, 0.49, 0.65),
+	BloomType.SURGE: Color(0.91, 0.88, 0.83),
 }
-
-const PETAL_COLORS := {
-	BloomType.NORMAL: Color("#e8e0d4"),
-	BloomType.CRITICAL: Color("#e8e0d4"),
-	BloomType.HEAVY: Color("#e8e0d4"),
-	BloomType.BOIL: Color("#3a7ca5"),
-	BloomType.SURGE: Color("#e8e0d4"),
-}
-
-@export var lifetime: float = 0.5
-@export var bloom_radius: float = 60.0
 
 var _elapsed: float = 0.0
-var _petal_points: Array[PackedVector2Array] = []
-var _petal_angles: Array[float] = []
-var _bloom_type: BloomType
+var _lifetime: float = 0.45
+var _petal_count: int = 6
+var _radius: float = 50.0
+var _color: Color = Color.WHITE
+var _angles: Array[float] = []
+var _lengths: Array[float] = []
+var _offsets: Array[float] = []
 
 
-func _init(p_type: BloomType = BloomType.NORMAL) -> void:
-	_bloom_type = p_type
+func _init(bloom_type: BloomType = BloomType.NORMAL) -> void:
+	_lifetime = 0.45
+	match bloom_type:
+		BloomType.NORMAL: _petal_count = 6; _radius = 45
+		BloomType.CRITICAL: _petal_count = 10; _radius = 60
+		BloomType.HEAVY: _petal_count = 12; _radius = 55
+		BloomType.BOIL: _petal_count = 8; _radius = 50
+		BloomType.SURGE: _petal_count = 6; _radius = 40
+	_color = COLORS.get(bloom_type, Color.WHITE)
+	for i in range(_petal_count):
+		_angles.append(float(i) / float(_petal_count) * TAU + randf_range(-0.12, 0.12))
+		_lengths.append(_radius * randf_range(0.5, 1.0))
+		_offsets.append(randf_range(-6, 6))
 
 
 func _ready() -> void:
 	top_level = true
-	_generate_petals()
-
-
-func _generate_petals() -> void:
-	var count = PETAL_COUNTS.get(_bloom_type, 6)
-	for i in range(count):
-		var angle = float(i) / float(count) * TAU + randf_range(-0.1, 0.1)
-		_petal_angles.append(angle)
-		var petal = _generate_petal(angle)
-		_petal_points.append(petal)
-
-
-func _generate_petal(angle: float) -> PackedVector2Array:
-	var points := PackedVector2Array()
-	var length = bloom_radius * randf_range(0.6, 1.0)
-	var steps = 6
-	for i in range(steps + 1):
-		var t = float(i) / float(steps)
-		var r = length * t
-		var curve_offset = sin(t * PI) * randf_range(-8, 8)
-		var dir = Vector2.RIGHT.rotated(angle)
-		var perp = dir.orthogonal() * curve_offset
-		points.append(dir * r + perp)
-	return points
 
 
 func _process(delta: float) -> void:
 	_elapsed += delta
-	if _elapsed >= lifetime:
+	if _elapsed >= _lifetime:
 		queue_free()
 		return
 	queue_redraw()
 
 
 func _draw() -> void:
-	var t = _elapsed / lifetime
-	var color = PETAL_COLORS.get(_bloom_type, Color.WHITE)
+	var t = min(_elapsed / _lifetime, 1.0)
+	var grow_t = min(t * 2.5, 1.0)
+	var fade = 1.0 - t
 
-	for pi in range(_petal_points.size()):
-		var petal = _petal_points[pi]
-		if petal.size() < 2:
-			continue
-		var draw_points := PackedVector2Array()
-		for i in range(petal.size()):
-			var p = petal[i]
-			if t < 0.5:
-				p *= Utils.ease_out_cubic(t * 2.0)
-			draw_points.append(p)
+	for i in range(_petal_count):
+		var angle = _angles[i]
+		var length = _lengths[i]
+		var offset = _offsets[i]
+		var dir = Vector2.RIGHT.rotated(angle)
+		var perp = dir.orthogonal()
 
-		var line_color = color
-		line_color.a = clamp(1.0 - t, 0.0, 1.0)
-		for i in range(draw_points.size() - 1):
-			var progress = float(i) / float(max(1, draw_points.size() - 2))
-			var line_width = lerp(4.0, 0.5, progress)
-			draw_line(draw_points[i], draw_points[i + 1], line_color, line_width, true)
+		# 花瓣从中心向外伸展
+		var p0 = Vector2.ZERO
+		var p1 = dir * length * grow_t * 0.5 + perp * offset * grow_t
+		var p2 = dir * length * grow_t
+
+		var line_color = _color
+		line_color.a = fade * 0.7
+		draw_line(p0, p1, line_color, 3.0 * fade, true)
+		draw_line(p1, p2, line_color, 1.5 * fade, true)
+
+	# 中心墨点
+	draw_circle(Vector2.ZERO, 3.0 * grow_t, Color(_color, fade * 0.9))
 
 
-## 静态工厂方法
+## 限制全局活跃墨花数量
+static var _active_count: int = 0
+static var MAX_ACTIVE: int = 30
+
+
 static func spawn_bloom(parent: Node, position: Vector2, bloom_type: BloomType = BloomType.NORMAL) -> void:
+	if _active_count > MAX_ACTIVE:
+		return
+	_active_count += 1
 	var bloom = InkBloom.new(bloom_type)
 	bloom.global_position = position
+	bloom.tree_exited.connect(func(): _active_count -= 1)
 	parent.add_child(bloom)
