@@ -1,15 +1,20 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/player.tscn" id="1_player"]
 [ext_resource type="PackedScene" path="res://scenes/hud.tscn" id="2_hud"]
 [ext_resource type="Script" path="res://scripts/systems/enemy_spawner.gd" id="3_spawner"]
 [ext_resource type="Script" path="res://scripts/effects/screen_shake.gd" id="4_shake"]
-[ext_resource type="Script" path="res://scripts/world/paper_bg.gd" id="5_paperbg"]
 
 [node name="Game" type="Node2D"]
 
-[node name="PaperBG" type="CanvasLayer" parent="."]
-script = ExtResource("5_paperbg")
+[node name="DarkBG" type="CanvasLayer" parent="."]
+layer = -10
+
+[node name="ColorRect" type="ColorRect" parent="DarkBG"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.07, 0.07, 0.09, 1)
 
 [node name="Player" parent="." instance=ExtResource("1_player")]
 position = Vector2(0, 0)

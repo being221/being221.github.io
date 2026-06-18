@@ -65,10 +65,9 @@ func _draw() -> void:
 	# 肩膀线条
 	draw_line(side * (-5), side * 5, Color(0.91, 0.88, 0.83, 0.4), 1.5)
 
-	# === 墨核（胸口苍青光点） ===
+	# === 墨核 ===
 	var core_brightness = 1.0
-	# 涨墨时更亮
-	if ink_surge.segments > 0:
+	if ink_surge and ink_surge.segments > 0:
 		core_brightness = 1.0 + ink_surge.segments * 0.5
 	var core = Color(0.23, 0.49, 0.65, 0.7 * core_brightness)
 	draw_circle(back * (-3), 2.5, core)
