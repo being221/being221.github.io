@@ -1,7 +1,6 @@
 # scripts/audio/audio_manager.gd
 ## 音效管理器 — Autoload
 extends Node
-class_name AudioManager
 
 const MAX_PLAYERS: int = 16
 
