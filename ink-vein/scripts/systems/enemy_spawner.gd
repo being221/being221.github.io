@@ -18,6 +18,7 @@ var _burst_scene: PackedScene = preload("res://scenes/enemies/ink_burst.tscn")
 func _ready() -> void:
 	_container = Node2D.new(); _container.name = "Enemies"
 	add_child(_container)
+	DamageNumber.set_parent(get_parent())  # 伤害数字挂在 Game 节点
 	Events.enemy_killed.connect(_on_kill)
 	for i in range(5): _spawn_one()
 
