@@ -3,7 +3,8 @@ extends Node2D
 class_name EnemySpawner
 
 @export var max_enemies: int = 30
-@export var spawn_interval: float = 2.0
+@export var spawn_interval: float = 1.5
+@export var spawn_distance: float = 500.0
 
 var _spawn_timer: float = 0.0
 var _enemy_container: Node2D
@@ -17,10 +18,12 @@ func _ready() -> void:
 	_enemy_container.name = "Enemies"
 	add_child(_enemy_container)
 	Events.enemy_killed.connect(_on_enemy_killed)
+	# 开局立刻出几个敌人
+	for i in range(5):
+		_spawn_one()
 
 
 func _on_enemy_killed(enemy: Enemy, pos: Vector2) -> void:
-	# 生成墨花 + 墨骸
 	InkBloom.spawn_bloom(_enemy_container, pos, InkBloom.BloomType.NORMAL)
 	InkHusk.spawn(_enemy_container, pos)
 
@@ -50,11 +53,5 @@ func _spawn_one() -> void:
 func _random_spawn_position() -> Vector2:
 	var player = get_tree().get_first_node_in_group("player")
 	var center = player.global_position if player else Vector2.ZERO
-	var side = randi() % 4
-	var pos: Vector2
-	match side:
-		0: pos = center + Vector2(randf_range(-400, 400), -250)
-		1: pos = center + Vector2(randf_range(-400, 400), 250)
-		2: pos = center + Vector2(-500, randf_range(-300, 300))
-		3: pos = center + Vector2(500, randf_range(-300, 300))
-	return pos
+	var angle = randf() * TAU
+	return center + Vector2.RIGHT.rotated(angle) * spawn_distance * randf_range(0.8, 1.2)

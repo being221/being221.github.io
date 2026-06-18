@@ -4,7 +4,7 @@ class_name InkHusk
 
 @export var lifetime: float = 15.0
 @export var slow_radius: float = 40.0
-@export var slow_amount: float = 0.3  # 敌人减速 30%
+@export var slow_amount: float = 0.3
 
 var _elapsed: float = 0.0
 var _area: Area2D
@@ -13,7 +13,7 @@ var _slowed_bodies: Array[Node2D] = []
 
 func _ready() -> void:
 	top_level = true
-	# 绘制圆形墨渍
+	# 圆形墨渍（可见浅灰色）
 	var image = Image.create(64, 64, false, Image.FORMAT_RGBA8)
 	image.fill(Color(0, 0, 0, 0))
 	for y in range(64):
@@ -22,9 +22,9 @@ func _ready() -> void:
 			var dy = y - 32
 			var d = sqrt(dx * dx + dy * dy)
 			if d < 28:
-				var alpha = clamp(1.0 - d / 28.0, 0.0, 0.6)
-				alpha *= randf_range(0.8, 1.0)  # 自然纹理
-				image.set_pixel(x, y, Color(0, 0, 0, alpha))
+				var alpha = clamp(1.0 - d / 28.0, 0.0, 0.55)
+				alpha *= randf_range(0.8, 1.0)
+				image.set_pixel(x, y, Color(0.35, 0.34, 0.31, alpha))
 	var tex = ImageTexture.create_from_image(image)
 	texture = tex
 	scale = Vector2.ONE * randf_range(0.8, 1.2)
@@ -40,7 +40,7 @@ func _ready() -> void:
 	_area.add_child(shape)
 	add_child(_area)
 	_area.collision_layer = 0
-	_area.collision_mask = 2  # enemies layer
+	_area.collision_mask = 2
 
 	_area.body_entered.connect(_on_body_entered)
 	_area.body_exited.connect(_on_body_exited)

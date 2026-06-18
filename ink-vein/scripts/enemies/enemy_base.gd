@@ -2,7 +2,7 @@
 extends CharacterBody2D
 class_name Enemy
 
-## 敌人 ID（用于图鉴）
+## 敌人 ID
 @export var enemy_id: String = ""
 ## 生命值
 @export var max_health: int = 20
@@ -16,6 +16,8 @@ class_name Enemy
 var health: int
 var _player_ref: Player = null
 var _is_dying: bool = false
+var _enemy_color: Color = Color(0.91, 0.88, 0.83, 0.85)  # 纸白半透明
+var _body_radius: float = 8.0
 
 @onready var hurtbox_area: Area2D = $HurtboxArea
 
@@ -30,6 +32,7 @@ func _physics_process(delta: float) -> void:
 	if not _player_ref or not _player_ref.is_alive:
 		return
 	_move_toward_player(delta)
+	queue_redraw()
 
 
 func _move_toward_player(_delta: float) -> void:
@@ -38,14 +41,25 @@ func _move_toward_player(_delta: float) -> void:
 	move_and_slide()
 
 
+func _draw() -> void:
+	if _is_dying:
+		return
+	# 圆形身体
+	draw_circle(Vector2.ZERO, _body_radius, _enemy_color)
+	# 苍青微光点（眼睛）
+	draw_circle(Vector2.ZERO, _body_radius * 0.35, Color(0.23, 0.49, 0.65, 0.7))
+	# 描边
+	draw_arc(Vector2.ZERO, _body_radius, 0, TAU, 16, _enemy_color.lightened(0.15), 1.0)
+
+
 func take_damage(amount: int) -> void:
 	if _is_dying:
 		return
 	health -= amount
-	# 受击后仰
+	# 受击闪白
+	modulate = Color.RED
 	var tween = create_tween()
-	tween.tween_property(self, "modulate", Color.RED, 0.05)
-	tween.tween_property(self, "modulate", Color.WHITE, 0.1)
+	tween.tween_property(self, "modulate", Color.WHITE, 0.08)
 	if health <= 0:
 		_die()
 

@@ -7,11 +7,11 @@
 [ext_resource type="Script" path="res://scripts/player/ink_surge.gd" id="5_surge"]
 [ext_resource type="Script" path="res://scripts/player/combo_system.gd" id="6_combo"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_player"]
-radius = 12.0
+[sub_resource type="CircleShape2D" id="CircleShape2D_body"]
+radius = 10.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_weapon"]
-radius = 36.0
+radius = 38.0
 
 [node name="Player" type="CharacterBody2D" groups=["player"]]
 collision_layer = 1
@@ -19,15 +19,7 @@ collision_mask = 3
 script = ExtResource("1_player")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("CircleShape2D_player")
-
-[node name="Sprite2D" type="Sprite2D" parent="."]
-modulate = Color(0.04, 0.04, 0.06, 1)
-
-[node name="PointLight2D" type="PointLight2D" parent="."]
-color = Color(0.227, 0.486, 0.647, 1)
-energy = 0.3
-range_z = 80
+shape = SubResource("CircleShape2D_body")
 
 [node name="PlayerMovement" type="Node" parent="."]
 script = ExtResource("2_movement")
@@ -43,7 +35,7 @@ script = ExtResource("4_trail")
 
 [node name="HitboxArea" type="Area2D" parent="Weapon"]
 collision_layer = 8
-collision_mask = 4
+collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Weapon/HitboxArea"]
 shape = SubResource("CircleShape2D_weapon")
