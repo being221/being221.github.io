@@ -1,23 +1,28 @@
-[gd_scene load_steps=8 format=3 uid="uid://dplr001000000000"]
+[gd_scene load_steps=8 format=3]
 
-[ext_resource type="Script" uid="uid://dplr001000000001" path="res://scripts/player/player.gd" id="1_player"]
-[ext_resource type="Script" uid="uid://dplr001000000002" path="res://scripts/player/player_movement.gd" id="2_movement"]
-[ext_resource type="Script" uid="uid://dplr001000000003" path="res://scripts/player/weapon.gd" id="3_weapon"]
-[ext_resource type="Script" uid="uid://dplr001000000004" path="res://scripts/effects/ink_trail.gd" id="4_trail"]
-[ext_resource type="Script" uid="uid://dplr001000000005" path="res://scripts/player/ink_surge.gd" id="5_surge"]
-[ext_resource type="Script" uid="uid://dplr001000000006" path="res://scripts/player/combo_system.gd" id="6_combo"]
+[ext_resource type="Script" path="res://scripts/player/player.gd" id="1_player"]
+[ext_resource type="Script" path="res://scripts/player/player_movement.gd" id="2_movement"]
+[ext_resource type="Script" path="res://scripts/player/weapon.gd" id="3_weapon"]
+[ext_resource type="Script" path="res://scripts/effects/ink_trail.gd" id="4_trail"]
+[ext_resource type="Script" path="res://scripts/player/ink_surge.gd" id="5_surge"]
+[ext_resource type="Script" path="res://scripts/player/combo_system.gd" id="6_combo"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_player"]
+radius = 12.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_weapon"]
+radius = 36.0
 
 [node name="Player" type="CharacterBody2D" groups=["player"]]
 collision_layer = 1
-collision_mask = 1
+collision_mask = 3
 script = ExtResource("1_player")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("CircleShape2D_8n25b")
+shape = SubResource("CircleShape2D_player")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 modulate = Color(0.04, 0.04, 0.06, 1)
-offset = Vector2(0, 0)
 
 [node name="PointLight2D" type="PointLight2D" parent="."]
 color = Color(0.227, 0.486, 0.647, 1)
@@ -34,15 +39,14 @@ script = ExtResource("3_weapon")
 width = 6.0
 default_color = Color(0.91, 0.878, 0.831, 1)
 end_cap_mode = 2
-closed = false
 script = ExtResource("4_trail")
 
 [node name="HitboxArea" type="Area2D" parent="Weapon"]
-collision_layer = 1
-collision_mask = 2
+collision_layer = 8
+collision_mask = 4
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Weapon/HitboxArea"]
-shape = SubResource("CircleShape2D_36px")
+shape = SubResource("CircleShape2D_weapon")
 
 [node name="AttackTimer" type="Timer" parent="Weapon"]
 one_shot = true
@@ -53,9 +57,3 @@ script = ExtResource("5_surge")
 
 [node name="ComboSystem" type="Node" parent="."]
 script = ExtResource("6_combo")
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_8n25b"]
-radius = 12.0
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_36px"]
-radius = 36.0

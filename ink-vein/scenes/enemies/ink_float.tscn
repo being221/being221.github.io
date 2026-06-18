@@ -1,31 +1,27 @@
-[gd_scene load_steps=2 format=3 uid="uid://dple001000000000"]
+[gd_scene load_steps=3 format=3]
 
-[ext_resource type="Script" uid="uid://dple001000000001" path="res://scripts/enemies/ink_float.gd" id="1_script"]
+[ext_resource type="Script" path="res://scripts/enemies/ink_float.gd" id="1_script"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_body"]
+radius = 8.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_hurt"]
+radius = 12.0
 
 [node name="InkFloat" type="CharacterBody2D" groups=["enemy"]]
 collision_layer = 2
 collision_mask = 3
 script = ExtResource("1_script")
-move_speed = 60.0
-max_health = 15
-contact_damage = 5
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("CircleShape2D_8px")
+shape = SubResource("CircleShape2D_body")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 modulate = Color(0.04, 0.04, 0.06, 1)
-scale = Vector2(1, 1)
 
 [node name="HurtboxArea" type="Area2D" parent="."]
-collision_layer = 2
+collision_layer = 4
 collision_mask = 1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="HurtboxArea"]
-shape = SubResource("CircleShape2D_12px")
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_8px"]
-radius = 8.0
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_12px"]
-radius = 12.0
+shape = SubResource("CircleShape2D_hurt")
