@@ -12,8 +12,7 @@ var health: int
 var _player_ref: Player = null
 var _is_dying: bool = false
 var _enemy_color: Color = Color(0.91, 0.88, 0.83, 0.85)
-var _body_radius: float = 8.0
-var _draw_frame: int = 0  # 隔帧绘制优化
+var _draw_counter: int = 0
 
 @onready var hurtbox_area: Area2D = $HurtboxArea
 
@@ -28,25 +27,19 @@ func _physics_process(delta: float) -> void:
 	if not _player_ref or not _player_ref.is_alive:
 		return
 	_move_toward_player(delta)
-
-	# 只隔3帧重绘一次，25个敌人从25次/帧降到~8次/帧
-	_draw_frame = (_draw_frame + 1) % 3
-	if _draw_frame == 0:
+	_draw_counter += 1
+	if _draw_counter >= 4:  # 每4帧才重绘
+		_draw_counter = 0
 		queue_redraw()
 
 
 func _move_toward_player(_delta: float) -> void:
-	var direction = (_player_ref.global_position - global_position).normalized()
-	velocity = direction * move_speed
+	var dir = (_player_ref.global_position - global_position).normalized()
+	velocity = dir * move_speed
 	move_and_slide()
 
 
-func _draw() -> void:
-	if _is_dying:
-		return
-	draw_circle(Vector2.ZERO, _body_radius, _enemy_color)
-	draw_circle(Vector2.ZERO, _body_radius * 0.35, Color(0.23, 0.49, 0.65, 0.7))
-	draw_arc(Vector2.ZERO, _body_radius, 0, TAU, 16, _enemy_color.lightened(0.15), 1.0)
+# 基类不做 _draw —— 子类各自画，避免基类浪费
 
 
 func take_damage(amount: int) -> void:
