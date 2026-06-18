@@ -27,17 +27,21 @@ static func _ensure_cache() -> void:
 	_mat_surge.gravity = Vector3(0, 15, 0)
 	_mat_surge.scale_min = 0.8; _mat_surge.scale_max = 3.5
 	_mat_surge.color = Color(0.23, 0.49, 0.65, 0.8)
+	_mat_surge.color_ramp = _ramp(Color(0.23, 0.49, 0.65))
 	# 贴图
 	var img = Image.create(8, 8, false, Image.FORMAT_RGBA8)
 	img.fill(Color(1, 1, 1, 1))
 	_tex = ImageTexture.create_from_image(img)
 
 
-static func _ramp(c: Color) -> Gradient:
+static func _ramp(c: Color) -> GradientTexture1D:
 	var g = Gradient.new()
 	g.colors = PackedColorArray([c, Color(c, 0.0)])
 	g.offsets = PackedFloat32Array([0.0, 1.0])
-	return g
+	var tex = GradientTexture1D.new()
+	tex.gradient = g
+	tex.width = 16
+	return tex
 
 
 static func spawn(parent: Node, pos: Vector2) -> void:
