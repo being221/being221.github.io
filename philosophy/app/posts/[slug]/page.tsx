@@ -21,25 +21,21 @@ export default async function PostPage({ params }: Props) {
 
   return (
     <article className="max-w-2xl mx-auto">
-      {/* 文章头部 */}
       <header className="mb-10">
-        <time
-          dateTime={post.date}
-          className="text-xs font-mono text-text-dim/50 mb-4 block"
-        >
+        <time dateTime={post.date} className="text-xs font-mono text-text-muted/60 block mb-5">
           {post.date}
         </time>
 
-        <h1 className="text-xl font-bold leading-snug mb-4 tracking-tight">
+        <h1 className="text-2xl font-bold text-text leading-snug mb-4 tracking-tight">
           {post.title}
         </h1>
 
         {post.tags.length > 0 && (
-          <div className="flex gap-1.5 flex-wrap">
+          <div className="flex gap-2 flex-wrap">
             {post.tags.map((tag) => (
               <span
                 key={tag}
-                className="px-2 py-0.5 rounded text-xs font-mono bg-surface text-text-dim/60"
+                className="px-2.5 py-1 rounded-md text-xs font-mono bg-surface-raised text-text-muted border border-border/50"
               >
                 {tag}
               </span>
@@ -48,17 +44,11 @@ export default async function PostPage({ params }: Props) {
         )}
       </header>
 
-      {/* 正文 */}
       <div className="prose">
         <ArticleBody content={post.content} />
       </div>
 
-      {/* 文末 */}
-      <div className="mt-14 pt-6 border-t border-border/50">
-        <p className="text-xs font-mono text-text-dim/30">
-          {/* end of {slug}.mdx */}
-        </p>
-      </div>
+      <div className="mt-16 pt-6 border-t border-border/50" />
     </article>
   );
 }

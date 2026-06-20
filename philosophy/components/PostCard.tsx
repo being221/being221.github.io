@@ -5,31 +5,29 @@ export function PostCard({ post }: { post: Post }) {
   return (
     <Link
       href={`/posts/${post.slug}`}
-      className="group block"
+      className="group block -mx-3 px-3 py-4 rounded-lg hover:bg-accent-glow transition-colors duration-200"
     >
-      <article className="flex items-baseline gap-4 py-3">
-        {/* 日期——mono 小字 */}
-        <time
-          dateTime={post.date}
-          className="text-xs font-mono text-text-dim/50 shrink-0 w-24 text-right select-none"
-        >
-          {post.date}
-        </time>
+      <article>
+        <h2 className="text-base font-semibold text-text group-hover:text-accent transition-colors duration-200 mb-1">
+          {post.title}
+        </h2>
 
-        {/* 圆点 + 竖线 */}
-        <div className="shrink-0 flex flex-col items-center self-stretch pt-1.5">
-          <span className="w-2 h-2 rounded-full bg-border group-hover:bg-accent transition-colors duration-200" />
-          <span className="w-px flex-1 bg-border/50 mt-1" />
-        </div>
+        <p className="text-sm text-text-muted mb-3 leading-relaxed">
+          {post.description}
+        </p>
 
-        {/* 标题 + 描述 */}
-        <div className="pb-3">
-          <h2 className="text-base font-semibold group-hover:text-accent transition-colors duration-200 mb-0.5">
-            {post.title}
-          </h2>
-          <p className="text-sm text-text-dim/60 line-clamp-1">
-            {post.description}
-          </p>
+        <div className="flex items-center gap-3 text-xs font-mono text-text-muted/60">
+          <time dateTime={post.date}>{post.date}</time>
+          {post.tags.length > 0 && (
+            <>
+              <span aria-hidden="true">·</span>
+              <span className="flex gap-1.5">
+                {post.tags.map((tag) => (
+                  <span key={tag}>{tag}</span>
+                ))}
+              </span>
+            </>
+          )}
         </div>
       </article>
     </Link>
