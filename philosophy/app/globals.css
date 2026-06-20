@@ -1,61 +1,193 @@
 @import "tailwindcss";
 
-/* 文章内容排版 */
-.prose {
-  @apply max-w-none;
-}
-.prose h1 { @apply text-2xl font-bold mt-10 mb-4; }
-.prose h2 { @apply text-xl font-semibold mt-8 mb-3 border-b border-border pb-2; }
-.prose h3 { @apply text-lg font-semibold mt-6 mb-2; }
-.prose p { @apply my-3 leading-relaxed; }
-.prose ul { @apply list-disc pl-6 my-3; }
-.prose ol { @apply list-decimal pl-6 my-3; }
-.prose li { @apply my-1; }
-.prose blockquote {
-  @apply border-l-4 border-blue-500 pl-4 my-4 italic opacity-80;
-}
-.prose code {
-  @apply bg-muted px-1.5 py-0.5 rounded text-sm font-mono;
-}
-.prose pre {
-  @apply bg-muted p-4 rounded-lg overflow-x-auto my-4;
-}
-.prose pre code {
-  @apply bg-transparent p-0;
-}
-.prose a {
-  @apply text-blue-500 underline;
-}
-.prose strong { @apply font-bold; }
-.prose em { @apply italic; }
+/* ========================================
+   哲学 IDE — 代码编辑器美学
+   VS Code Dark+ 灵感 × 哲学阅读氛围
+   ======================================== */
 
-/* Tailwind v4 暗色模式 */
 @custom-variant dark (&:is(.dark *));
 
+/* ---- Theme Tokens ---- */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
   --color-border: var(--border);
+  --color-text: var(--text);
+  --color-text-dim: var(--text-dim);
   --color-accent: var(--accent);
-  --color-card: var(--card);
+  --color-keyword: var(--keyword);
+  --color-string: var(--string);
+  --color-comment: var(--comment);
+  --color-function: var(--function);
+  --color-type: var(--type);
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 }
 
 :root {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --border: oklch(1 0 0 / 10%);
-  --accent: oklch(0.269 0 0);
-  --card: oklch(0.205 0 0);
+  --bg: #1a1b1e;
+  --surface: #252528;
+  --border: #3a3b3f;
+  --text: #d4d4d4;
+  --text-dim: #808080;
+  --accent: #e2b96f;
+  --keyword: #569cd6;
+  --string: #ce9178;
+  --comment: #6a9955;
+  --function: #dcdcaa;
+  --type: #4ec9b0;
 }
 
+/* ---- Base ---- */
 @layer base {
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply bg-bg text-text font-sans antialiased;
   }
+
+  /* 编辑器网格背景 */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image:
+      radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  /* 所有内容在网格之上 */
+  body > * {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+/* ---- 光标闪烁动画 ---- */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.cursor-blink {
+  animation: blink 1s step-end infinite;
+}
+
+/* ---- 文章排版（prose 升级版） ---- */
+.prose {
+  @apply max-w-none;
+}
+.prose h1 {
+  @apply text-2xl font-bold mt-10 mb-4 font-mono;
+  color: var(--function);
+}
+.prose h2 {
+  @apply text-xl font-semibold mt-10 mb-3 pb-2 font-mono;
+  color: var(--keyword);
+  border-bottom: 1px solid var(--border);
+}
+.prose h3 {
+  @apply text-lg font-semibold mt-8 mb-2;
+  color: var(--text);
+}
+.prose p {
+  @apply my-4 leading-relaxed;
+  color: var(--text);
+}
+.prose ul { @apply list-disc pl-6 my-3 space-y-1; }
+.prose ol { @apply list-decimal pl-6 my-3 space-y-1; }
+.prose li { @apply my-0.5; }
+
+.prose blockquote {
+  @apply border-l-4 pl-4 my-5 py-2 italic;
+  border-color: var(--comment);
+  color: var(--comment);
+  background: rgba(106, 153, 85, 0.06);
+  border-radius: 0 8px 8px 0;
+}
+
+.prose code {
+  @apply px-1.5 py-0.5 rounded text-sm font-mono;
+  background: var(--surface);
+  color: var(--string);
+}
+
+.prose pre {
+  @apply p-5 rounded-lg overflow-x-auto my-5 font-mono text-sm;
+  background: #15131a;
+  border: 1px solid var(--border);
+  position: relative;
+}
+
+/* editor top bar dots on code blocks */
+.prose pre::before {
+  content: "● ● ●";
+  position: absolute;
+  top: 10px;
+  left: 16px;
+  font-size: 10px;
+  letter-spacing: 4px;
+  color: var(--text-dim);
+  opacity: 0.4;
+}
+
+.prose pre code {
+  @apply bg-transparent p-0;
+  color: var(--text);
+}
+.prose pre {
+  padding-top: 36px;
+}
+
+.prose a {
+  color: var(--keyword);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.15s;
+}
+.prose a:hover {
+  color: var(--accent);
+}
+
+.prose strong { @apply font-bold; color: var(--text); }
+.prose em { @apply italic; }
+
+/* ---- 行号 ---- */
+.line-numbers {
+  counter-reset: line;
+}
+.line-numbers p,
+.line-numbers h2,
+.line-numbers h3,
+.line-numbers ul,
+.line-numbers ol,
+.line-numbers blockquote,
+.line-numbers pre {
+  position: relative;
+  padding-left: 3rem;
+}
+.line-numbers p::before,
+.line-numbers h2::before,
+.line-numbers h3::before {
+  counter-increment: line;
+  content: counter(line);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 2rem;
+  text-align: right;
+  font-size: 0.75rem;
+  font-family: var(--font-geist-mono), monospace;
+  color: var(--text-dim);
+  opacity: 0.35;
+  user-select: none;
+}
+
+/* ---- 注释风格装饰 ---- */
+.comment-decoration {
+  color: var(--comment);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.85rem;
+  opacity: 0.6;
+  user-select: none;
 }

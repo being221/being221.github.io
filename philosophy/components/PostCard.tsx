@@ -5,24 +5,39 @@ export function PostCard({ post }: { post: Post }) {
   return (
     <Link
       href={`/posts/${post.slug}`}
-      className="block p-5 rounded-lg border border-border bg-card hover:border-foreground/20 transition-colors"
+      className="group block p-5 rounded-lg border border-border bg-surface/60 hover:bg-surface hover:border-keyword/30 transition-all duration-200"
     >
-      <h2 className="text-lg font-semibold mb-1">{post.title}</h2>
-      <p className="text-sm text-muted-foreground mb-2">{post.description}</p>
-      <div className="flex items-center gap-3 text-xs text-muted-foreground">
+      {/* 文件名行 */}
+      <div className="flex items-center gap-2 mb-2">
+        <span className="text-keyword text-sm">📄</span>
+        <h2 className="text-base font-mono font-semibold text-text group-hover:text-accent transition-colors">
+          {post.slug}.mdx
+        </h2>
+      </div>
+
+      {/* 描述——像注释 */}
+      <p className="text-sm mb-3 ml-6" style={{ color: "var(--comment)" }}>
+        {"// "}{post.description}
+      </p>
+
+      {/* 元数据行——像 Git blame */}
+      <div className="flex items-center gap-3 ml-6 text-xs font-mono text-text-dim">
         <time dateTime={post.date}>{post.date}</time>
-        {post.tags.length > 0 && (
-          <span className="flex gap-1">
-            {post.tags.map((tag) => (
-              <span
-                key={tag}
-                className="px-2 py-0.5 rounded bg-muted text-muted-foreground"
-              >
-                {tag}
-              </span>
-            ))}
-          </span>
-        )}
+        <span>·</span>
+        <span className="flex gap-1.5">
+          {post.tags.map((tag) => (
+            <span
+              key={tag}
+              className="px-2 py-0.5 rounded text-xs"
+              style={{
+                background: "rgba(86, 156, 214, 0.12)",
+                color: "var(--keyword)",
+              }}
+            >
+              {tag}
+            </span>
+          ))}
+        </span>
       </div>
     </Link>
   );
