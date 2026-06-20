@@ -5,40 +5,33 @@ export function PostCard({ post }: { post: Post }) {
   return (
     <Link
       href={`/posts/${post.slug}`}
-      className="group block p-5 rounded-lg border border-border bg-surface/60 hover:bg-surface hover:border-keyword/30 transition-all duration-200"
+      className="group block"
     >
-      {/* 文件名行 */}
-      <div className="flex items-center gap-2 mb-2">
-        <span className="text-keyword text-sm">📄</span>
-        <h2 className="text-base font-mono font-semibold text-text group-hover:text-accent transition-colors">
-          {post.slug}.mdx
-        </h2>
-      </div>
+      <article className="flex items-baseline gap-4 py-3">
+        {/* 日期——mono 小字 */}
+        <time
+          dateTime={post.date}
+          className="text-xs font-mono text-text-dim/50 shrink-0 w-24 text-right select-none"
+        >
+          {post.date}
+        </time>
 
-      {/* 描述——像注释 */}
-      <p className="text-sm mb-3 ml-6" style={{ color: "var(--comment)" }}>
-        {"// "}{post.description}
-      </p>
+        {/* 圆点 + 竖线 */}
+        <div className="shrink-0 flex flex-col items-center self-stretch pt-1.5">
+          <span className="w-2 h-2 rounded-full bg-border group-hover:bg-accent transition-colors duration-200" />
+          <span className="w-px flex-1 bg-border/50 mt-1" />
+        </div>
 
-      {/* 元数据行——像 Git blame */}
-      <div className="flex items-center gap-3 ml-6 text-xs font-mono text-text-dim">
-        <time dateTime={post.date}>{post.date}</time>
-        <span>·</span>
-        <span className="flex gap-1.5">
-          {post.tags.map((tag) => (
-            <span
-              key={tag}
-              className="px-2 py-0.5 rounded text-xs"
-              style={{
-                background: "rgba(86, 156, 214, 0.12)",
-                color: "var(--keyword)",
-              }}
-            >
-              {tag}
-            </span>
-          ))}
-        </span>
-      </div>
+        {/* 标题 + 描述 */}
+        <div className="pb-3">
+          <h2 className="text-base font-semibold group-hover:text-accent transition-colors duration-200 mb-0.5">
+            {post.title}
+          </h2>
+          <p className="text-sm text-text-dim/60 line-clamp-1">
+            {post.description}
+          </p>
+        </div>
+      </article>
     </Link>
   );
 }
