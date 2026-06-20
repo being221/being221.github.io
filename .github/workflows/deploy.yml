@@ -31,7 +31,7 @@ jobs:
       - name: Build philosophy blog
         working-directory: philosophy
         run: |
-          npm ci
+          npm install
           npm run build
           # 将 out/ 输出复制到 philosophy 目录，覆盖同名文件
           # 源码文件（app/ components/ lib/ content/ package.json 等）不会被覆盖
