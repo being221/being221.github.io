@@ -30,6 +30,9 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} dark`}
     >
       <body className="min-h-screen flex flex-col">
+        {/* 顶部微光 */}
+        <div className="top-glow" aria-hidden="true" />
+
         <Header />
         <main className="flex-1 w-full px-4 pb-16 relative z-10">
           {children}
